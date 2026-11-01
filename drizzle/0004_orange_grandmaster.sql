@@ -1,0 +1,1 @@
+ALTER TABLE `demo_requests` MODIFY COLUMN `status` enum('new','under_review','needs_information','demo_approved','proposal_sent','converted','declined','archived') NOT NULL DEFAULT 'new';
