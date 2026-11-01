@@ -1,0 +1,160 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "title": "AI Virtual Receptionist \u2014 Managed AI Receptionist"
+    },
+    {
+      "path": "/features",
+      "title": "Features"
+    },
+    {
+      "path": "/how-it-works",
+      "title": "How It Works"
+    },
+    {
+      "path": "/pricing",
+      "title": "Pricing"
+    },
+    {
+      "path": "/industries/plumbers",
+      "title": "AI Receptionist for Plumbers"
+    },
+    {
+      "path": "/industries/hvac",
+      "title": "AI Receptionist for HVAC"
+    },
+    {
+      "path": "/industries/roofers",
+      "title": "AI Receptionist for Roofers"
+    },
+    {
+      "path": "/industries/contractors",
+      "title": "AI Receptionist for Contractors"
+    },
+    {
+      "path": "/industries/salons",
+      "title": "AI Receptionist for Salons"
+    },
+    {
+      "path": "/industries/real-estate",
+      "title": "AI Receptionist for Real Estate"
+    },
+    {
+      "path": "/industries/auto-repair",
+      "title": "AI Receptionist for Auto Repair"
+    },
+    {
+      "path": "/industries/cleaning",
+      "title": "AI Receptionist for Cleaning Companies"
+    },
+    {
+      "path": "/about",
+      "title": "About AI Virtual Receptionist"
+    },
+    {
+      "path": "/contact",
+      "title": "Contact AI Virtual Receptionist"
+    },
+    {
+      "path": "/blog",
+      "title": "AI Virtual Receptionist Blog"
+    },
+    {
+      "path": "/blog/:slug",
+      "title": "AI Virtual Receptionist Article"
+    },
+    {
+      "path": "/help",
+      "title": "AI Virtual Receptionist Help Center"
+    },
+    {
+      "path": "/legal/terms",
+      "title": "Terms of Service"
+    },
+    {
+      "path": "/legal/privacy",
+      "title": "Privacy Policy"
+    },
+    {
+      "path": "/legal/cookies",
+      "title": "Cookie Policy"
+    },
+    {
+      "path": "/legal/ai-disclosure",
+      "title": "AI Disclosure"
+    },
+    {
+      "path": "/legal/acceptable-use",
+      "title": "Acceptable Use Policy"
+    },
+    {
+      "path": "/legal/cancellation",
+      "title": "Cancellation & Refund Policy"
+    },
+    {
+      "path": "/legal/third-party",
+      "title": "Third-Party Service Disclosure"
+    },
+    {
+      "path": "/login",
+      "title": "Sign in"
+    },
+    {
+      "path": "/onboarding",
+      "title": "Get Your AI Receptionist"
+    },
+    {
+      "path": "/app",
+      "title": "Customer Workspace"
+    },
+    {
+      "path": "/app/configuration",
+      "title": "Customer Configuration"
+    },
+    {
+      "path": "/app/testing",
+      "title": "Testing & Approval"
+    },
+    {
+      "path": "/app/calls",
+      "title": "Calls & Reports"
+    },
+    {
+      "path": "/app/billing",
+      "title": "Billing"
+    },
+    {
+      "path": "/app/support",
+      "title": "Support"
+    },
+    {
+      "path": "/admin",
+      "title": "Admin Workspace"
+    },
+    {
+      "path": "/admin/customers",
+      "title": "Admin Customers"
+    },
+    {
+      "path": "/admin/changes",
+      "title": "Admin Change Requests"
+    },
+    {
+      "path": "/admin/tickets",
+      "title": "Admin Support Inbox"
+    },
+    {
+      "path": "/admin/content",
+      "title": "Admin Content & Pricing"
+    },
+    {
+      "path": "/demo",
+      "title": "Request a personalized demo"
+    },
+    {
+      "path": "/admin/demo-requests",
+      "title": "Demo requests"
+    }
+  ]
+}
