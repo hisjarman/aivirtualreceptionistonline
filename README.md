@@ -12,6 +12,10 @@ pnpm dev
 
 The app listens on `PORT` (3000 by default) and exposes `/api/health`. Use `pnpm check` for TypeScript diagnostics and `pnpm build` for the production bundle.
 
+## Customer authentication
+
+Public customer registration and login use Firebase email/password authentication with required email verification, password-reset email, ID-token refresh, and server-side Firebase token verification. Configure the Firebase web app and Cloudflare Worker values by following `FIREBASE_AUTH_SETUP.md`. The customer and administrator workspaces require a verified signed-in account; the admin console also requires the configured owner email.
+
 ## Product boundaries
 
 The reseller AI receptionist platform is treated as a manual fulfillment dependency in the first version. Onboarding submissions are stored for administrator review. Customer configuration edits are proposed change requests; they are not pushed to a live agent without a verified API adapter. Appointment handling falls back to booking requests when a supported calendar connection is unavailable. The site never changes phone routing automatically and never collects third-party account passwords.
