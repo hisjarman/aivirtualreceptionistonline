@@ -49,7 +49,7 @@ async function identityRequest<T>(method: string, body: Record<string, unknown>)
     const messages: Record<string, string> = {
       EMAIL_EXISTS: "An account with this email already exists. Sign in instead.",
       INVALID_LOGIN_CREDENTIALS: "Email or password is incorrect.",
-      EMAIL_NOT_FOUND: "No account was found with this email.",
+      EMAIL_NOT_FOUND: "If an account exists for that email, Firebase will send a password-reset link. Check your inbox and spam folder.",
       INVALID_PASSWORD: "Email or password is incorrect.",
       WEAK_PASSWORD: "Choose a stronger password with at least 6 characters.",
       USER_DISABLED: "This account has been disabled. Contact support.",
@@ -124,33 +124,43 @@ export async function sendPasswordReset(email: string) {
   await identityRequest("sendOobCode", { requestType: "PASSWORD_RESET", email, continueUrl: `${window.location.origin}/login?reset=1` });
 }
 
+let refreshInFlight: Promise<string | null> | null = null;
+
 export async function getFirebaseIdToken(): Promise<string | null> {
   const session = readSession();
   if (!session) return null;
   if (session.expiresAt > Date.now() + 60_000) return session.idToken;
-  const { apiKey } = config();
-  const response = await fetch(`https://securetoken.googleapis.com/v1/token?key=${encodeURIComponent(apiKey)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token: session.refreshToken,
-    }),
-  });
-  if (!response.ok) {
-    clearFirebaseSession();
-    return null;
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = (async () => {
+    const { apiKey } = config();
+    const response = await fetch(`https://securetoken.googleapis.com/v1/token?key=${encodeURIComponent(apiKey)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: session.refreshToken,
+      }),
+    });
+    if (!response.ok) {
+      clearFirebaseSession();
+      return null;
+    }
+    const refreshed = await response.json() as { id_token: string; refresh_token: string; expires_in: string; user_id: string };
+    const next = {
+      ...session,
+      idToken: refreshed.id_token,
+      refreshToken: refreshed.refresh_token,
+      expiresAt: Date.now() + Number(refreshed.expires_in || 3600) * 1000,
+      localId: refreshed.user_id,
+    };
+    saveSession(next);
+    return next.idToken;
+  })();
+  try {
+    return await refreshInFlight;
+  } finally {
+    refreshInFlight = null;
   }
-  const refreshed = await response.json() as { id_token: string; refresh_token: string; expires_in: string; user_id: string };
-  const next = {
-    ...session,
-    idToken: refreshed.id_token,
-    refreshToken: refreshed.refresh_token,
-    expiresAt: Date.now() + Number(refreshed.expires_in || 3600) * 1000,
-    localId: refreshed.user_id,
-  };
-  saveSession(next);
-  return next.idToken;
 }
 
 export function clearFirebaseSession() {
