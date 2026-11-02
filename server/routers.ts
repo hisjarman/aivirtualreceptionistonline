@@ -6,7 +6,8 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { demoRequests, legalConsents, memberships, onboardingSubmissions, organizations, proposedChanges, supportTickets } from "../drizzle/schema";
+import { agents, demoRequests, legalConsents, memberships, onboardingSubmissions, organizations, proposedChanges, supportTickets } from "../drizzle/schema";
+import { getRetellCallForAgents, listRetellCalls } from "./retell";
 
 async function getOrCreateOrganization(user: { id: number; name: string | null; openId: string }, businessName?: string) {
   const db = await getDb();
@@ -69,6 +70,48 @@ export const appRouter = router({
     }),
   }),
   portal: router({
+    calls: router({
+      list: protectedProcedure.input(z.object({
+        limit: z.number().int().min(1).max(100).default(50),
+        paginationKey: z.string().max(2000).optional(),
+      }).optional()).query(async ({ ctx, input }) => {
+        if (!process.env.RETELL_API_KEY) return { configured: false as const, items: [], paginationKey: null, total: 0 };
+        const db = await getDb();
+        if (!db) return { configured: false as const, items: [], paginationKey: null, total: 0 };
+        const organizationId = await getOrganizationId(ctx.user.id);
+        if (!organizationId) return { configured: true as const, items: [], paginationKey: null, total: 0 };
+        const assigned = await db.select({ agentId: agents.providerAgentId })
+          .from(agents)
+          .where(and(eq(agents.organizationId, organizationId), eq(agents.providerName, "retell")));
+        const agentIds = assigned.map(row => row.agentId).filter((id): id is string => Boolean(id));
+        if (!agentIds.length) return { configured: true as const, items: [], paginationKey: null, total: 0 };
+        const result = await listRetellCalls({
+          agentIds,
+          limit: input?.limit ?? 50,
+          paginationKey: input?.paginationKey,
+        });
+        return {
+          configured: true as const,
+          items: result.items ?? [],
+          paginationKey: result.pagination_key ?? null,
+          total: result.total ?? null,
+        };
+      }),
+      detail: protectedProcedure.input(z.object({ callId: z.string().trim().min(1).max(180) })).query(async ({ ctx, input }) => {
+        if (!process.env.RETELL_API_KEY) return { configured: false as const, call: null };
+        const db = await getDb();
+        if (!db) return { configured: false as const, call: null };
+        const organizationId = await getOrganizationId(ctx.user.id);
+        if (!organizationId) return { configured: true as const, call: null };
+        const assigned = await db.select({ agentId: agents.providerAgentId })
+          .from(agents)
+          .where(and(eq(agents.organizationId, organizationId), eq(agents.providerName, "retell")));
+        const agentIds = assigned.map(row => row.agentId).filter((id): id is string => Boolean(id));
+        if (!agentIds.length) return { configured: true as const, call: null };
+        const call = await getRetellCallForAgents(input.callId, agentIds);
+        return { configured: true as const, call };
+      }),
+    }),
     consents: router({
       record: protectedProcedure.input(z.object({ consents: z.array(z.object({ consentType: z.string().min(1).max(100), documentKey: z.string().min(1).max(120), documentVersion: z.string().min(1).max(80), documentHash: z.string().max(128).optional(), accepted: z.literal(true), source: z.string().min(1).max(80) })).min(1) })).mutation(async ({ ctx, input }) => {
         const db = await getDb();
