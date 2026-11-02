@@ -28,7 +28,7 @@ npx wrangler secret put FIREBASE_AUTH_DOMAIN
 npx wrangler secret put OWNER_EMAIL
 ```
 
-Enter the Firebase Web API Key when prompted for the first value, `aivirtualreceptionist-a8a56` for the project ID, and the Firebase Auth domain from Project settings for the third value (usually `aivirtualreceptionist-a8a56.firebaseapp.com`). Set the owner email to the verified email address that should receive administrator privileges.
+Enter the Firebase Web API Key when prompted for the first value, `aivirtualreceptionist-a8a56` for the project ID, and the Firebase Auth domain from Project settings for the third value (usually `aivirtualreceptionist-a8a56.firebaseapp.com`). Set `OWNER_EMAIL` to `hisjarman@gmail.com` for the verified owner account that should receive administrator privileges.
 
 The Web API Key and project ID are public Firebase client configuration, not privileged credentials. They are stored as Worker secrets here for simpler configuration and are intentionally emitted by the server's public config endpoint. The server verifies Firebase ID tokens using Google's signing keys, the configured project issuer/audience, and the `email_verified` claim. The Retell secret remains separate and server-only.
 
@@ -48,7 +48,7 @@ New registrations must accept the site's Terms and Privacy links. Unverified Fir
 
 ## 4. Administrator account
 
-After the verified owner email signs in for the first time, the server promotes that exact verified email (configured in `OWNER_EMAIL`) to the administrator role. Set `OWNER_EMAIL` to the owner account only. Do not use a public/shared inbox.
+After the verified owner email signs in for the first time, the server promotes that exact verified email (configured in `OWNER_EMAIL`) to the administrator role. Keep `OWNER_EMAIL` set to `hisjarman@gmail.com` and use that same address to create and verify the owner account. Do not use a public/shared inbox.
 
 ## 5. Security and production checklist
 
