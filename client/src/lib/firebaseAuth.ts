@@ -87,6 +87,7 @@ function persist(result: TokenResponse) {
 
 export async function registerWithEmail(email: string, password: string, displayName: string) {
   const result = await identityRequest<TokenResponse>("signUp", { email, password, returnSecureToken: true });
+  await identityRequest("update", { idToken: result.idToken, displayName, returnSecureToken: true });
   persist(result);
   await identityRequest("sendOobCode", {
     requestType: "VERIFY_EMAIL",
