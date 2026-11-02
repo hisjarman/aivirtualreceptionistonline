@@ -16,16 +16,11 @@
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 
-  // Set the sales inbox in this one place before publishing.
-  const SALES_EMAIL = "SET_YOUR_SALES_EMAIL";
+  // Sales inbox for demo and onboarding inquiries.
+  const SALES_EMAIL = "hisjarman@gmail.com";
   const form = document.getElementById("lead-form");
   if (form) form.addEventListener("submit", event => {
     event.preventDefault();
-    if (SALES_EMAIL === "SET_YOUR_SALES_EMAIL") {
-      const message = document.getElementById("form-message");
-      message.textContent = "The website is ready, but the sales inbox has not been configured yet. Set SALES_EMAIL in script.js before publishing.";
-      return;
-    }
     const data = new FormData(form);
     const subject = encodeURIComponent("AI receptionist demo request — " + data.get("business"));
     const body = encodeURIComponent([
