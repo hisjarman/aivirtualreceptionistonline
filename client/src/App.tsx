@@ -195,7 +195,6 @@ function CustomerCalls() {
         </div>}
       </WorkspaceCard>
     </div>}
-    {calls.data?.paginationKey && <div className="workspace-page-title"><Button variant="secondary" onClick={() => calls.fetchNextPage?.()}>More calls</Button></div>}
     <p className="consent-required">Call recordings and transcripts are displayed only when Retell makes them available and your service configuration permits their storage and access.</p>
   </main></WorkspaceShell>;
 }
