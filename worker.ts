@@ -13,6 +13,7 @@ type Env = {
   MANUS_API_KEY: string;
   MANUS_API_BROWSER_KEY: string;
   OWNER_OPEN_ID: string;
+  OWNER_EMAIL: string;
   RETELL_API_KEY?: string;
   FIREBASE_API_KEY: string;
   FIREBASE_PROJECT_ID: string;
@@ -41,6 +42,7 @@ export class CallPilotContainer extends Container {
       MANUS_API_KEY: env.MANUS_API_KEY,
       MANUS_API_BROWSER_KEY: env.MANUS_API_BROWSER_KEY,
       OWNER_OPEN_ID: env.OWNER_OPEN_ID,
+      OWNER_EMAIL: env.OWNER_EMAIL,
       RETELL_API_KEY: env.RETELL_API_KEY ?? "",
       FIREBASE_API_KEY: env.FIREBASE_API_KEY,
       FIREBASE_PROJECT_ID: env.FIREBASE_PROJECT_ID,
