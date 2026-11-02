@@ -6,6 +6,7 @@ import {
   ArrowRight, BarChart3, Bell, BookOpen, Bot, BriefcaseBusiness, Building2, Calendar, Check, ChevronDown, ChevronRight, CircleHelp, ClipboardCheck, Clock3, Code2, FileText, Headphones, House, KeyRound, LayoutDashboard, LifeBuoy, LockKeyhole, Mail, Menu, MessageSquare, Phone, Plus, Search, Send, Settings2, ShieldCheck, Sparkles, Target, Ticket, UserRound, Users, WandSparkles, Wind, Wrench, X, Zap, CarFront, HardHat, SprayCan, Stethoscope
 } from "lucide-react";
 import { startLogin } from "@/const";
+import { registerWithEmail, signInWithEmail, sendPasswordReset, resendVerificationEmail } from "@/lib/firebaseAuth";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { articles, faqs, helpArticles, industries, legalDrafts, plans } from "@/data/site";
@@ -131,7 +132,89 @@ function HelpPage() { const [query, setQuery] = useState(""); const results = he
 
 function LegalPage({ slug }: { slug: keyof typeof legalDrafts }) { const page = legalDrafts[slug]; return <StandardPage eyebrow="Legal draft · review before launch" title={<>{page.title}<br /><em>Initial working copy.</em></>} intro="This page is editable in the administrator portal and must be reviewed by a demo_approved professional before the service is launched in any jurisdiction."><div className="container section-pad legal-body"><div className="legal-warning"><ShieldCheck size={19} /><div><strong>Draft for professional review</strong><p>Do not treat this initial copy as legal advice or as a claim of compliance, certification, or regulatory coverage.</p></div></div><h2>{page.title}</h2><p>{page.body}</p><h3>What to confirm before launch</h3><ul><li>Applicable privacy, telecommunications, and call-recording requirements.</li><li>Which providers, vendors, contracts, and data flows are actually in use.</li><li>Retention, deletion, consent, security, and customer disclosure settings.</li><li>Country-specific terms, fees, refunds, and support commitments.</li></ul><Button href="/contact" variant="secondary">Ask a setup question <ArrowRight size={15} /></Button></div></StandardPage>; }
 
-function LoginPage() { const { user } = useAuth(); const [accepted, setAccepted] = useState(false); return <PageShell><main className="auth-page"><div className="auth-card"><Brand /><div className="auth-icon"><LockKeyhole size={23} /></div><h1>Welcome back.</h1><p>Sign in to review your setup, request changes, and keep your receptionist moving in the right direction.</p>{user ? <><StatusPill tone="teal">Signed in</StatusPill><Button href="/app" className="full-btn">Open customer workspace <ArrowRight size={15} /></Button></> : <><label className="check-row legal-consent"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} /><span>I have read and agree to the <Link href="/legal/terms">Terms of Service</Link> and acknowledge the <Link href="/legal/privacy">Privacy Policy</Link>.</span></label><Button onClick={startLogin} disabled={!accepted} className="full-btn">Continue with Manus <ArrowRight size={15} /></Button><p className="consent-required">You must accept the current account terms before continuing.</p></>}<div className="auth-note"><ShieldCheck size={14} /> Secure account access is handled through the configured authentication provider.</div><Link href="/onboarding" className="auth-secondary">New here? Start your setup brief <ArrowRight size={14} /></Link></div></main></PageShell>; }
+function LoginPage() {
+  const { user } = useAuth();
+  const [mode, setMode] = useState<"signin" | "signup" | "reset">("signin");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [accepted, setAccepted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [verificationPending, setVerificationPending] = useState(false);
+  const nextPath = new URLSearchParams(window.location.search).get("next");
+  const destination = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/app";
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setBusy(true); setError(""); setMessage("");
+    try {
+      if (mode === "signup") {
+        if (!accepted) throw new Error("Please accept the Terms of Service and Privacy Policy to create an account.");
+        if (password.length < 6) throw new Error("Your password must be at least 6 characters.");
+        await registerWithEmail(email.trim(), password, name.trim());
+        setVerificationPending(true);
+        setMessage("Your account has been created. Check your inbox for the verification link. You must verify your email before accessing the customer portal.");
+      } else if (mode === "signin") {
+        await signInWithEmail(email.trim(), password);
+        window.location.assign(destination);
+      } else {
+        await sendPasswordReset(email.trim());
+        setMessage("If an account exists for that email, Firebase has sent a password-reset link. Check your inbox and spam folder.");
+      }
+    } catch (e) {
+      const text = e instanceof Error ? e.message : "Something went wrong. Please try again.";
+      if (text === "EMAIL_NOT_VERIFIED") {
+        setVerificationPending(true);
+        setError("Your email address is not verified yet. Open the verification email before signing in.");
+      } else setError(text);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resend = async () => {
+    setBusy(true); setError(""); setMessage("");
+    try {
+      await resendVerificationEmail();
+      setMessage("A new verification email has been sent. Check your inbox and spam folder.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to resend the verification email.");
+    } finally { setBusy(false); }
+  };
+
+  return <PageShell><main className="auth-page"><div className="auth-card">
+    <Brand />
+    <div className="auth-icon"><LockKeyhole size={23} /></div>
+    {user ? <>
+      <h1>You're signed in.</h1><p>Your account is ready to manage your AI receptionist.</p>
+      <StatusPill tone="teal">Verified account</StatusPill>
+      <Button href="/app" className="full-btn">Open customer workspace <ArrowRight size={15} /></Button>
+    </> : <>
+      <h1>{mode === "signup" ? "Create your account." : mode === "reset" ? "Reset your password." : "Welcome back."}</h1>
+      <p>{mode === "signup" ? "Create a secure customer account to manage your receptionist, calls, recordings and reports." : mode === "reset" ? "Enter your account email and we'll send a secure password-reset link." : "Sign in to review your setup, calls, recordings and receptionist settings."}</p>
+      <div className="auth-tabs">
+        <button type="button" className={mode === "signin" ? "active" : ""} onClick={() => { setMode("signin"); setError(""); setMessage(""); }}>Sign in</button>
+        <button type="button" className={mode === "signup" ? "active" : ""} onClick={() => { setMode("signup"); setError(""); setMessage(""); }}>Create account</button>
+      </div>
+      <form className="auth-form" onSubmit={submit}>
+        {mode === "signup" && <label>Full name<input autoComplete="name" required value={name} onChange={e => setName(e.target.value)} placeholder="Your name" /></label>}
+        <label>Email address<input type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" /></label>
+        {mode !== "reset" && <label>Password<input type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} required minLength={6} value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" /></label>}
+        {mode === "signup" && <label className="check-row legal-consent"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} /><span>I agree to the <Link href="/legal/terms">Terms of Service</Link> and acknowledge the <Link href="/legal/privacy">Privacy Policy</Link>.</span></label>}
+        {error && <div className="auth-feedback error" role="alert">{error}</div>}
+        {message && <div className="auth-feedback success" role="status">{message}</div>}
+        <Button type="submit" disabled={busy || (mode === "signup" && !accepted)} className="full-btn">{busy ? "Please wait…" : mode === "signup" ? "Create account" : mode === "reset" ? "Send reset link" : "Sign in"} <ArrowRight size={15} /></Button>
+      </form>
+      {mode === "signin" && <button type="button" className="auth-text-button" onClick={() => { setMode("reset"); setError(""); setMessage(""); }}>Forgot your password?</button>}
+      {mode === "reset" && <button type="button" className="auth-text-button" onClick={() => { setMode("signin"); setError(""); setMessage(""); }}>Back to sign in</button>}
+      {verificationPending && <div className="verification-panel"><Mail size={17} /><div><strong>Email verification required</strong><p>Verify your email before opening the customer portal. You can request another verification message below.</p><button type="button" onClick={resend} disabled={busy}>Resend verification email</button></div></div>}
+    </>}
+    <div className="auth-note"><ShieldCheck size={14} /> Firebase verifies account credentials and email addresses. Your password is never sent to our application server.</div>
+    <Link href="/onboarding" className="auth-secondary">Need a receptionist? Start your setup brief <ArrowRight size={14} /></Link>
+  </div></main></PageShell>;
+}
 
 function Stepper({ current }: { current: number }) { return <div className="wizard-stepper">{["Business", "Hours", "Personality", "FAQs", "Rules", "Leads", "Booking", "Integrations", "Phone", "Review"].map((s, i) => <div className={i <= current ? "active" : ""} key={s}><span>{i < current ? <Check size={11} /> : i + 1}</span><label>{s}</label></div>)}</div>; }
 
