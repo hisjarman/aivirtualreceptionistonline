@@ -46,9 +46,10 @@ export async function createContext(opts: CreateExpressContextOptions): Promise<
   const authorization = opts.req.headers.authorization;
   const bearer = authorization?.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
   if (bearer && firebaseProjectId()) {
+    // A supplied Firebase bearer token must pass Firebase verification and
+    // email verification; never fall back to a different cookie session.
     user = await authenticateFirebaseToken(bearer);
-  }
-  if (!user) {
+  } else {
     try {
       user = await sdk.authenticateRequest(opts.req);
     } catch {
