@@ -50,13 +50,17 @@ export const appRouter = router({
       specialNotes: z.string().max(5000).optional(),
       preferredReviewTime: z.string().max(180).optional(),
       contactConsent: z.literal(true),
+      privacyConsent: z.literal(true),
       privacyNoticeVersion: z.string().min(1).max(80),
     })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) return { created: false, reason: "database_unavailable" as const };
       const result = await db.insert(demoRequests).values(input);
       const demoRequestId = Number(result[0].insertId);
-      await db.insert(legalConsents).values({ demoRequestId, consentType: "contact", documentKey: "privacy", documentVersion: input.privacyNoticeVersion, accepted: true, source: "demo_request", ipAddress: ctx.req.ip, userAgent: ctx.req.get("user-agent") });
+      await db.insert(legalConsents).values([
+        { demoRequestId, consentType: "contact", documentKey: "contact-consent", documentVersion: input.privacyNoticeVersion, accepted: input.contactConsent, source: "demo_request", ipAddress: ctx.req.ip, userAgent: ctx.req.get("user-agent") },
+        { demoRequestId, consentType: "privacy_notice_acknowledgement", documentKey: "privacy", documentVersion: input.privacyNoticeVersion, accepted: input.privacyConsent, source: "demo_request", ipAddress: ctx.req.ip, userAgent: ctx.req.get("user-agent") },
+      ]);
       return { created: true, demoRequestId };
     }),
   }),
