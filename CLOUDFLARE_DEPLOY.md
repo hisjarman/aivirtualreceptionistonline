@@ -20,9 +20,10 @@ npx wrangler secret put MANUS_JWT_SECRET
 npx wrangler secret put PAYMENT_PROVIDER_SECRET
 npx wrangler secret put PAYMENT_WEBHOOK_SECRET
 npx wrangler secret put EMAIL_PROVIDER_API_KEY
+npx wrangler secret put RETELL_API_KEY
 ```
 
-Set non-secret values with `wrangler.toml`/`wrangler.jsonc` vars or the Cloudflare dashboard only after confirming their intended production values. The application also needs the authentication runtime values documented in `.env.example`; the current app is Manus OAuth-compatible, so choose whether to retain that provider or replace it with a separately configured production identity provider before launch.
+Set non-secret values with `wrangler.toml`/`wrangler.jsonc` vars or the Cloudflare dashboard only after confirming their intended production values. The Worker explicitly forwards configured Worker secrets and runtime variables into the Container process. The current app is Manus OAuth-compatible, so configure and test the production identity provider before launch. Add `RETELL_API_KEY` as a Worker secret; it is passed only to the server container and must never be exposed to the browser. See `RETELL_PORTAL_SETUP.md` for agent assignment and customer call-history setup.
 
 ## GitHub deployment
 
@@ -73,3 +74,8 @@ The owner builds and reviews the demo, records the secure hosted payment link on
 ## Important limitations
 
 Cloudflare Container deployment is not complete merely because the Worker deploys. The production database, authentication provider, payment provider, email provider, domain, backups, retention policy, and legal documents must each be configured and verified. Keep the app's honest `Unconfigured` states until those integrations are tested.
+
+
+## Retell client portal
+
+The `/app/calls` customer page reads calls from Retell for agent IDs assigned to the signed-in customer organization. The administrator assignment screen is `/admin/retell`. Configure `RETELL_API_KEY` as a Worker secret and follow `RETELL_PORTAL_SETUP.md`. Test with two separate customer accounts to verify tenant isolation before inviting real customers.
