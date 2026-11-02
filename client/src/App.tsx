@@ -142,6 +142,7 @@ function LoginPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [verificationPending, setVerificationPending] = useState(false);
+  useEffect(() => { if (new URLSearchParams(window.location.search).get("verified") === "1") setMessage("Your email is verified. Sign in to open your customer workspace."); }, []);
   const nextPath = new URLSearchParams(window.location.search).get("next");
   const destination = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/app";
 
