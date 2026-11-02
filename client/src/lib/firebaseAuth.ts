@@ -121,7 +121,7 @@ export async function resendVerificationEmail() {
 }
 
 export async function sendPasswordReset(email: string) {
-  await identityRequest("sendOobCode", { requestType: "PASSWORD_RESET", email });
+  await identityRequest("sendOobCode", { requestType: "PASSWORD_RESET", email, continueUrl: `${window.location.origin}/login?reset=1` });
 }
 
 export async function getFirebaseIdToken(): Promise<string | null> {
