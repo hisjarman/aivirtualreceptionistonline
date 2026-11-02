@@ -27,7 +27,7 @@ npx wrangler secret put FIREBASE_AUTH_DOMAIN
 npx wrangler secret put OWNER_EMAIL
 ```
 
-Set non-secret values with `wrangler.toml`/`wrangler.jsonc` vars or the Cloudflare dashboard only after confirming their intended production values. The Worker explicitly forwards configured Worker secrets and runtime variables into the Container process. The current app is Manus OAuth-compatible, so configure and test the production identity provider before launch. Add `RETELL_API_KEY` as a Worker secret; it is passed only to the server container and must never be exposed to the browser. See `RETELL_PORTAL_SETUP.md` for agent assignment and customer call-history setup.
+The Worker explicitly forwards configured Worker secrets and runtime variables into the Container process. Firebase email/password authentication is the public customer login; configure it as described in `FIREBASE_AUTH_SETUP.md`. Legacy Manus OAuth remains only as a migration fallback for existing sessions. Add `RETELL_API_KEY` as a Worker secret; it is passed only to the server container and must never be exposed to the browser. See `RETELL_PORTAL_SETUP.md` for agent assignment and customer call-history setup.
 
 ## GitHub deployment
 
