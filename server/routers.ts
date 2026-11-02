@@ -188,6 +188,40 @@ export const appRouter = router({
         return { updated: true };
       }),
     }),
+    retell: router({
+      assignments: adminProcedure.query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        return db.select({
+          id: agents.id,
+          organizationId: agents.organizationId,
+          organizationName: organizations.name,
+          providerAgentId: agents.providerAgentId,
+          status: agents.status,
+        }).from(agents)
+          .leftJoin(organizations, eq(agents.organizationId, organizations.id))
+          .where(eq(agents.providerName, "retell"))
+          .orderBy(desc(agents.createdAt));
+      }),
+      assign: adminProcedure.input(z.object({
+        organizationId: z.number().int().positive(),
+        agentId: z.string().trim().min(4).max(180),
+        status: z.enum(["configuring", "testing", "awaiting_approval", "ready_for_deployment", "live", "paused"]).default("configuring"),
+      })).mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { assigned: false, reason: "database_unavailable" as const };
+        const organization = await db.select({ id: organizations.id }).from(organizations)
+          .where(eq(organizations.id, input.organizationId)).limit(1);
+        if (!organization.length) return { assigned: false, reason: "organization_not_found" as const };
+        await db.insert(agents).values({
+          organizationId: input.organizationId,
+          providerName: "retell",
+          providerAgentId: input.agentId,
+          status: input.status,
+        });
+        return { assigned: true };
+      }),
+    }),
     overview: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) return { configured: false, organizations: 0, awaitingReview: 0, openTickets: 0 };
