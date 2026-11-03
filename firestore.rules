@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Migration-safe default: clients cannot read or write application data
+    // directly. Trusted Cloud Functions use the Admin SDK and must enforce
+    // authentication, tenant membership and role checks in server procedures.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
