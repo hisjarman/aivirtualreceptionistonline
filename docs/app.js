@@ -13,7 +13,6 @@ const progress = document.querySelector("#progress-fill");
 const stepLabel = document.querySelector("#step-label");
 const stepPercent = document.querySelector("#step-percent");
 const errorBox = document.querySelector("#form-error");
-const configNote = document.querySelector("#form-config");
 let currentStep = 0;
 
 function showStep(index) {
@@ -57,7 +56,6 @@ form.addEventListener("submit", async event => {
   if (!FORM_ENDPOINT || FORM_ENDPOINT.includes("REPLACE_WITH_YOUR_FORM_ID")) {
     errorBox.textContent = "The onboarding form is not connected yet. The website is ready, but the owner must add a Formspree endpoint in docs/app.js before client submissions can be delivered.";
     errorBox.hidden = false;
-    configNote.textContent = "Action required: connect the Formspree endpoint in docs/app.js. See docs/README.md.";
     return;
   }
   submit.disabled = true;
@@ -74,14 +72,13 @@ form.addEventListener("submit", async event => {
     });
     if (!response.ok) throw new Error("Submission failed");
     form.hidden = true;
-    configNote.hidden = true;
     document.querySelector("#form-success").hidden = false;
   } catch {
     errorBox.textContent = "We couldn't send your brief. Please try again in a moment or contact the business owner directly.";
     errorBox.hidden = false;
   } finally {
     submit.disabled = false;
-    submit.textContent = "Submit discovery brief ↗";
+    submit.textContent = "Submit onboarding request →";
   }
 });
 
