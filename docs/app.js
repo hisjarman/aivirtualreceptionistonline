@@ -46,7 +46,7 @@ document.querySelectorAll("[data-plan]").forEach(link => {
   link.addEventListener("click", () => {
     const plan = link.dataset.plan;
     const select = document.querySelector("#plan-interest");
-    select.value = plan + (plan === "Launch" ? " — $39/month" : plan === "Growth" ? " — $79/month" : " — $129/month");
+    select.value = plan + (plan === "Starter" ? " — $149/month" : plan === "Growth" ? " — $249/month" : " — $399/month");
   });
 });
 
