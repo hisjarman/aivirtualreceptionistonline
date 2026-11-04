@@ -46,3 +46,10 @@ Still requiring configuration or verified implementation: Manus OAuth deployment
 ## Deployment
 
 The initialized Webdev project includes the container and health route defaults. Before publishing, run `pnpm check`, `pnpm build`, verify `GET /manus-routes.json` returns JSON rather than SPA HTML, confirm `/api/health` returns an unauthenticated 2xx response, and review the configured runtime/publish settings. Keep browser-facing URLs relative so embedded Preview and published routing remain compatible.
+
+
+## GitHub Pages client-onboarding website
+
+A standalone static marketing and client-discovery site is available in `docs/`. The original full-stack application and its server/database source remain in place; the Pages version is separate and does not replace the backend.
+
+To publish it, open **Settings → Pages**, choose **Deploy from a branch**, select `main` and `/docs`, then save. Before accepting client submissions, connect a Formspree endpoint by replacing the placeholder `FORM_ENDPOINT` in `docs/app.js`. Full instructions are in [docs/README.md](docs/README.md).
