@@ -30,3 +30,20 @@
 .managed-close .text-link{white-space:nowrap;font-size:10px;font-weight:800;color:#087f70}
 @media(max-width:900px){.managed-intro{grid-template-columns:1fr;gap:15px}.managed-intro>div:first-child{padding:5px 0}.managed-pillars{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.managed-section{padding:68px 0}.managed-pillars{grid-template-columns:1fr}.managed-pillars article{min-height:unset}.managed-compare{padding:17px 14px}.compare-heading,.compare-row{gap:10px}.compare-row{font-size:9px}.managed-close{align-items:flex-start;flex-direction:column;gap:12px}}
+
+/* Competitor pricing comparison */
+.competitor-compare{margin-top:54px;padding:34px;border:1px solid var(--line);border-radius:12px;background:#f8fafb}
+.competitor-compare h3{font:800 clamp(22px,3vw,30px)/1.2 Manrope,sans-serif;margin:10px 0}
+.competitor-intro{max-width:760px;color:#657482;font-size:14px;line-height:1.7;margin:0 0 22px}
+.competitor-table-wrap{overflow-x:auto}
+.competitor-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px;line-height:1.55;background:#fff}
+.competitor-table th{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#637382;background:#edf2f3;padding:13px 14px}
+.competitor-table td{padding:15px 14px;border-top:1px solid #e4eaed;vertical-align:top;min-width:130px}
+.competitor-table td:first-child{min-width:125px}
+.competitor-table td:nth-child(2){min-width:190px}
+.competitor-table td:nth-child(3){min-width:220px}
+.competitor-table small{display:block;color:#6d7b87;font-size:11px;margin-top:4px}
+.competitor-table a{color:#087e72;text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.you-label{display:block;color:#087e72;font:700 10px 'DM Mono',monospace;text-transform:uppercase;margin-top:5px}
+.legal-disclosure{margin:18px 0 0;color:#687784;font-size:11px;line-height:1.7}
+@media(max-width:700px){.competitor-compare{padding:22px 16px;margin-top:38px}.competitor-table{min-width:760px}.competitor-intro{font-size:13px}}
