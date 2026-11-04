@@ -97,3 +97,24 @@ nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
 }));
 document.querySelector("#year").textContent = new Date().getFullYear();
 showStep(0);
+
+/* Missed-call opportunity calculator */
+const calcFields = [
+  ["calls-range","calls-value",v=>String(v)],
+  ["missed-range","missed-value",v=>v+"%"],
+  ["revenue-range","revenue-value",v=>"$"+Number(v).toLocaleString("en-US")],
+  ["conversion-range","conversion-value",v=>v+"%"]
+];
+function updateOpportunity(){
+  const values=calcFields.map(([id])=>Number(document.getElementById(id).value));
+  calcFields.forEach(([id,out,format],i)=>{document.getElementById(out).textContent=format(values[i]);});
+  const [calls,missed,average,conversion]=values;
+  const missedCalls=calls*missed/100;
+  const potentialCustomers=missedCalls*conversion/100;
+  const money=potentialCustomers*average;
+  document.getElementById("potential-value").textContent="$"+Math.round(money).toLocaleString("en-US");
+  document.getElementById("missed-count").textContent=String(Math.round(missedCalls));
+  document.getElementById("customer-count").textContent=potentialCustomers.toFixed(1);
+}
+calcFields.forEach(([id])=>document.getElementById(id).addEventListener("input",updateOpportunity));
+updateOpportunity();
