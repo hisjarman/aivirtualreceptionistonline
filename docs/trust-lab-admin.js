@@ -113,7 +113,7 @@
       await window.Clerk.load({ui:{ClerkUI:window.__internal_ClerkUICtor}});
       clerk=window.Clerk;
       if (clerk.isSignedIn) setSignedIn(); else setSignedOut();
-      clerk.addListener(state => { if (state?.isSignedIn) setSignedIn(); else setSignedOut(); });
+      clerk.addListener(() => { if (clerk.isSignedIn) setSignedIn(); else setSignedOut(); });
     } catch(error) {
       authTitle.textContent="Sign-in could not initialize";
       authCopy.textContent=error.message || "Please refresh and try again.";
