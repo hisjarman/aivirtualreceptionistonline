@@ -104,3 +104,32 @@
   .managed-intro h3{font-size:29px;line-height:1.2}
   .managed-intro>div:first-child>p{font-size:15px;line-height:1.85}
 }
+
+/* Founder story — personal, editorial, and premium */
+.founder-section{background:#0b141d;color:#f4f8f7;padding:108px 0;position:relative;overflow:hidden}
+.founder-section:before{content:"";position:absolute;width:520px;height:520px;border:1px solid #1b3938;border-radius:50%;right:-260px;top:-245px;box-shadow:0 0 0 45px #10211f,0 0 0 46px #1b3938,0 0 0 100px #0d1a20;opacity:.55;pointer-events:none}
+.founder-layout{display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(42px,8vw,112px);align-items:start;position:relative}
+.founder-aside{position:sticky;top:120px;padding-top:10px}
+.founder-mark{width:112px;height:112px;border:1px solid #47685f;border-radius:50%;display:grid;place-items:center;position:relative;margin-bottom:30px;background:radial-gradient(circle at 35% 30%,#1a3935,#0c1b22 70%);box-shadow:0 18px 50px #0005}
+.founder-mark span{font:600 31px Manrope, sans-serif;letter-spacing:-.08em;color:#e9f4ef}
+.founder-mark i{position:absolute;width:12px;height:12px;border-radius:50%;background:#70e1cb;right:8px;bottom:13px;box-shadow:0 0 18px #70e1cb80}
+.founder-aside-label{font:500 9px 'DM Mono';letter-spacing:.18em;color:#70e1cb;margin-bottom:17px}
+.founder-aside-quote{font:600 clamp(22px,2.5vw,30px)/1.42 Manrope;color:#f0f5f2;letter-spacing:-.035em;margin:0 0 30px;max-width:330px}
+.founder-signature{font:italic 26px Georgia,serif;color:#b8d9ce;margin-bottom:5px}
+.founder-company{font:500 8px 'DM Mono';letter-spacing:.11em;color:#82999a;text-transform:uppercase}
+.founder-letter{max-width:700px}
+.founder-kicker{color:#70e1cb}
+.founder-letter h2{font:800 clamp(36px,4.5vw,54px)/1.1 Manrope;letter-spacing:-.06em;color:#f4f8f7;margin:17px 0 12px}
+.founder-letter h2 em{font-style:normal;color:#70e1cb}
+.founder-intro{font-size:13px;line-height:1.8;color:#aab9bb;margin:0}
+.founder-rule{height:1px;background:linear-gradient(90deg,#47766b,#25383d 70%,transparent);margin:32px 0}
+.founder-letter h3{font:700 19px Manrope;color:#eef5f1;margin:0 0 22px}
+.founder-letter>p{font-size:13px;line-height:1.95;color:#b7c4c4;margin:0 0 17px}
+.founder-letter .founder-emphasis{font:600 16px/1.8 Manrope;color:#f0f6f2;border-left:2px solid #70e1cb;padding:4px 0 4px 20px;margin:26px 0}
+.founder-closing{display:flex;flex-direction:column;gap:6px;margin-top:34px}
+.founder-closing span{font-size:12px;color:#aab9bb}
+.founder-closing strong{font:italic 30px Georgia,serif;color:#d5e8df;font-weight:500;margin-top:4px}
+.founder-closing small{font:500 8px 'DM Mono';letter-spacing:.12em;text-transform:uppercase;color:#70bda9}
+.founder-motto{border-top:1px solid #293c42;margin-top:34px;padding-top:17px;font:500 8px 'DM Mono';letter-spacing:.15em;color:#7bcab7}
+@media(max-width:800px){.founder-section{padding:76px 0}.founder-layout{grid-template-columns:1fr;gap:42px}.founder-aside{position:static;display:grid;grid-template-columns:76px 1fr;column-gap:18px;align-items:center}.founder-mark{width:76px;height:76px;grid-row:1/4;margin:0}.founder-mark span{font-size:23px}.founder-aside-label{align-self:end;margin:0 0 4px}.founder-aside-quote{font-size:18px;max-width:none;margin:0 0 5px}.founder-signature,.founder-company{display:none}.founder-letter{max-width:none}}
+@media(max-width:520px){.founder-section{padding:64px 0}.founder-aside{grid-template-columns:62px 1fr;column-gap:14px}.founder-mark{width:62px;height:62px}.founder-mark span{font-size:20px}.founder-aside-quote{font-size:16px}.founder-letter>p{font-size:12px;line-height:1.9}.founder-letter .founder-emphasis{font-size:14px}}
