@@ -53,11 +53,6 @@ document.querySelectorAll("[data-plan]").forEach(link => {
 form.addEventListener("submit", async event => {
   event.preventDefault();
   if (!validateStep()) return;
-  if (!FORM_ENDPOINT || FORM_ENDPOINT.includes("REPLACE_WITH_YOUR_FORM_ID")) {
-    errorBox.textContent = "The onboarding form is not connected yet. The website is ready, but the owner must add a Formspree endpoint in docs/app.js before client submissions can be delivered.";
-    errorBox.hidden = false;
-    return;
-  }
   submit.disabled = true;
   submit.textContent = "Sending…";
   errorBox.hidden = true;
@@ -65,14 +60,13 @@ form.addEventListener("submit", async event => {
   payload.submittedAt = new Date().toISOString();
   payload.source = "AIVirtualReceptionist.online GitHub Pages onboarding";
   try {
-    const response = await fetch(FORM_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    if (!response.ok) throw new Error("Submission failed");
+    const response = await fetch(API_BASE + "/api/contact", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ ...payload, type: "onboarding", subject: "New custom receptionist onboarding request", message: "A business submitted the full onboarding discovery brief.", contactConsent: payload.contactConsent === "yes" }) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.message || "Submission failed");
     form.hidden = true;
-    document.querySelector("#form-success").hidden = false;
+    const success = document.querySelector("#form-success");
+    success.querySelector("p").textContent = payload.contactConsent === "yes" ? "Your brief has been sent securely. We will send a confirmation email and follow up about your custom demo." : "Your brief has been received. You selected not to be contacted, so we will not send a follow-up email.";
+    success.hidden = false;
   } catch {
     errorBox.textContent = "We couldn't send your brief. Please try again in a moment or contact the business owner directly.";
     errorBox.hidden = false;
