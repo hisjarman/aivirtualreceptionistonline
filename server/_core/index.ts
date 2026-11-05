@@ -1,5 +1,9 @@
 import "dotenv/config";
 import express from "express";
+import { desc, eq } from "drizzle-orm";
+import { z } from "zod";
+import { trustLabSubmissions } from "../../drizzle/schema";
+import { getDb } from "../db";
 import { createServer } from "http";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -38,6 +42,76 @@ async function startServer() {
     res.set("Cache-Control", "no-store").type("application/javascript").send(publicPlatformScript());
   });
   registerOAuthRoutes(app);
+  // Public Trust Lab API for the GitHub Pages docs site.
+  // Only the public website origins are allowed to read these endpoints.
+  const trustLabOrigins = new Set([
+    "https://aivirtualreceptionist.online",
+    "https://www.aivirtualreceptionist.online",
+  ]);
+  app.use("/api/trust-lab", (req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && trustLabOrigins.has(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Vary", "Origin");
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    }
+    if (req.method === "OPTIONS") return res.sendStatus(204);
+    next();
+  });
+  app.get("/api/trust-lab/wall", async (_req, res) => {
+    try {
+      const db = await getDb();
+      if (!db) return res.status(503).json({ error: "database_unavailable" });
+      const posts = await db.select({
+        id: trustLabSubmissions.id,
+        kind: trustLabSubmissions.kind,
+        title: trustLabSubmissions.title,
+        body: trustLabSubmissions.body,
+        displayName: trustLabSubmissions.displayName,
+        industry: trustLabSubmissions.industry,
+        createdAt: trustLabSubmissions.createdAt,
+      }).from(trustLabSubmissions)
+        .where(eq(trustLabSubmissions.status, "approved"))
+        .orderBy(desc(trustLabSubmissions.createdAt))
+        .limit(30);
+      return res.json({ posts });
+    } catch (error) {
+      console.error("Trust Lab wall error:", error);
+      return res.status(500).json({ error: "server_error" });
+    }
+  });
+  app.post("/api/trust-lab/submit", async (req, res) => {
+    const parsed = z.object({
+      kind: z.enum(["challenge", "question", "stress_test"]),
+      title: z.string().trim().max(180).optional(),
+      body: z.string().trim().min(8).max(3000),
+      displayName: z.string().trim().max(80).optional(),
+      industry: z.string().trim().max(120).optional(),
+      impactScore: z.number().int().min(0).max(100).optional(),
+      website: z.string().max(200).optional(),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: "invalid_submission" });
+    if (parsed.data.website) return res.json({ created: true, status: "pending" });
+    try {
+      const db = await getDb();
+      if (!db) return res.status(503).json({ error: "database_unavailable" });
+      await db.insert(trustLabSubmissions).values({
+        kind: parsed.data.kind,
+        title: parsed.data.title || null,
+        body: parsed.data.body,
+        displayName: parsed.data.displayName || "Anonymous",
+        industry: parsed.data.industry || null,
+        impactScore: parsed.data.impactScore ?? null,
+        status: "pending",
+      });
+      return res.status(201).json({ created: true, status: "pending" });
+    } catch (error) {
+      console.error("Trust Lab submission error:", error);
+      return res.status(500).json({ error: "server_error" });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
