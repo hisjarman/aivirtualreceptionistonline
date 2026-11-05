@@ -2,7 +2,7 @@
 // 1) Create a form at https://formspree.io/
 // 2) Replace the value below with your form endpoint, e.g. https://formspree.io/f/abcdwxyz
 // 3) Commit and publish this file. Do not put API keys or private credentials here.
-const FORM_ENDPOINT = "https://formspree.io/f/mrppjqdb";
+const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
 
 const form = document.querySelector("#intake-form");
 const fields = [...form.querySelectorAll("fieldset")];
