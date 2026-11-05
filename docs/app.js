@@ -2,7 +2,7 @@
 // 1) Create a form at https://formspree.io/
 // 2) Replace the value below with your form endpoint, e.g. https://formspree.io/f/abcdwxyz
 // 3) Commit and publish this file. Do not put API keys or private credentials here.
-const FORM_ENDPOINT = "https://formspree.io/f/mrppjqdb";
+const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
 
 const form = document.querySelector("#intake-form");
 const fields = [...form.querySelectorAll("fieldset")];
@@ -53,26 +53,26 @@ document.querySelectorAll("[data-plan]").forEach(link => {
 form.addEventListener("submit", async event => {
   event.preventDefault();
   if (!validateStep()) return;
-  if (!FORM_ENDPOINT || FORM_ENDPOINT.includes("REPLACE_WITH_YOUR_FORM_ID")) {
-    errorBox.textContent = "The onboarding form is not connected yet. The website is ready, but the owner must add a Formspree endpoint in docs/app.js before client submissions can be delivered.";
-    errorBox.hidden = false;
-    return;
-  }
   submit.disabled = true;
   submit.textContent = "Sending…";
   errorBox.hidden = true;
   const payload = Object.fromEntries(new FormData(form).entries());
   payload.submittedAt = new Date().toISOString();
   payload.source = "AIVirtualReceptionist.online GitHub Pages onboarding";
+  const brief = [
+    ["Business", payload.business], ["Industry", payload.industry], ["Website", payload.website],
+    ["Service area", payload.serviceArea], ["Services", payload.services], ["Monthly call volume", payload.callVolume],
+    ["Business hours", payload.hours], ["Caller tasks", payload.callTasks], ["Common questions", payload.faqs],
+    ["Phone setup", payload.phoneSetup], ["Plan interest", payload.planInterest], ["Additional notes", payload.notes]
+  ].map(([label, value]) => label + ": " + (String(value || "").trim() || "Not provided")).join("\n");
   try {
-    const response = await fetch(FORM_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    if (!response.ok) throw new Error("Submission failed");
+    const response = await fetch(API_BASE + "/api/contact", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ ...payload, type: "onboarding", subject: "New custom receptionist onboarding request", message: brief, contactConsent: payload.contactConsent === "yes" }) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.message || "Submission failed");
     form.hidden = true;
-    document.querySelector("#form-success").hidden = false;
+    const success = document.querySelector("#form-success");
+    success.querySelector("p").textContent = payload.contactConsent !== "yes" ? "Your brief has been received. You selected not to be contacted, so we will not send a follow-up email." : result.confirmationSent ? "Your brief has been received. Check your inbox for a confirmation; we will follow up about your custom demo." : "Your brief has been received, but the confirmation email could not be sent. Please email admin@aivirtualreceptionist.online if you need confirmation.";
+    success.hidden = false;
   } catch {
     errorBox.textContent = "We couldn't send your brief. Please try again in a moment or contact the business owner directly.";
     errorBox.hidden = false;
@@ -94,6 +94,18 @@ nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
 }));
 document.querySelector("#year").textContent = new Date().getFullYear();
 showStep(0);
+
+
+const quickContact = document.querySelector("#quick-contact-form");
+if (quickContact) quickContact.addEventListener("submit", async event => {
+  event.preventDefault(); if (!quickContact.reportValidity()) return;
+  const button=quickContact.querySelector('button[type="submit"]'), status=quickContact.querySelector("[data-contact-status]"), data=new FormData(quickContact);
+  const payload={type:"quick_question",name:String(data.get("name")||"").trim(),email:String(data.get("email")||"").trim(),phone:String(data.get("phone")||"").trim(),subject:String(data.get("subject")||"").trim(),message:String(data.get("message")||"").trim(),meetingRequest:data.get("meetingRequest")==="on",contactConsent:true,website:String(data.get("website")||"")};
+  button.disabled=true;button.textContent="Sending…";status.textContent="";
+  try { const response=await fetch(API_BASE+"/api/contact",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.message||"We couldn't send your message. Please try again.");quickContact.reset();status.textContent=!result.notificationSent?"Your message was saved, but our notification service had a problem. Please email admin@aivirtualreceptionist.online if your request is urgent.":result.meetingRequested?(result.confirmationSent?"Message received. Check your inbox; we will contact you to arrange an engineering call.":"Message received. We will contact you to arrange an engineering call. A confirmation email could not be sent."):(result.confirmationSent?"Message received. A confirmation email is on its way.":"Message received, but the confirmation email could not be sent.");status.classList.remove("error");}
+  catch(error){status.textContent=error.message||"Please email admin@aivirtualreceptionist.online directly.";status.classList.add("error");}
+  finally{button.disabled=false;button.textContent="Send message ↗";}
+});
 
 /* Missed-call opportunity calculator */
 const calcFields = [
