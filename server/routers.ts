@@ -6,7 +6,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { demoRequests, legalConsents, memberships, onboardingSubmissions, organizations, proposedChanges, supportTickets } from "../drizzle/schema";
+import { demoRequests, legalConsents, memberships, onboardingSubmissions, organizations, proposedChanges, supportTickets, trustLabSubmissions } from "../drizzle/schema";
 
 async function getOrCreateOrganization(user: { id: number; name: string | null; openId: string }, businessName?: string) {
   const db = await getDb();
@@ -30,6 +30,20 @@ async function getOrganizationId(userId: number) {
 export const appRouter = router({
   system: systemRouter,
   publicIntake: router({
+    trustLab: router({
+      wall: publicProcedure.query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        return db.select({ id: trustLabSubmissions.id, kind: trustLabSubmissions.kind, title: trustLabSubmissions.title, body: trustLabSubmissions.body, displayName: trustLabSubmissions.displayName, industry: trustLabSubmissions.industry, createdAt: trustLabSubmissions.createdAt }).from(trustLabSubmissions).where(eq(trustLabSubmissions.status, "approved")).orderBy(desc(trustLabSubmissions.createdAt)).limit(30);
+      }),
+      submit: publicProcedure.input(z.object({ kind: z.enum(["challenge", "question", "stress_test"]), title: z.string().trim().max(180).optional(), body: z.string().trim().min(8).max(3000), displayName: z.string().trim().max(80).optional(), industry: z.string().trim().max(120).optional(), impactScore: z.number().int().min(0).max(100).optional(), website: z.string().max(200).optional() })).mutation(async ({ input }) => {
+        if (input.website) return { created: true, status: "pending" as const };
+        const db = await getDb();
+        if (!db) return { created: false, reason: "database_unavailable" as const };
+        await db.insert(trustLabSubmissions).values({ kind: input.kind, title: input.title || null, body: input.body, displayName: input.displayName || "Anonymous", industry: input.industry || null, impactScore: input.impactScore ?? null, status: "pending" });
+        return { created: true, status: "pending" as const };
+      }),
+    }),
     demoRequest: publicProcedure.input(z.object({
       name: z.string().trim().min(2).max(180),
       role: z.string().max(120).optional(),
@@ -131,6 +145,19 @@ export const appRouter = router({
     }),
   }),
   admin: router({
+    trustLab: router({
+      list: adminProcedure.query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        return db.select().from(trustLabSubmissions).orderBy(desc(trustLabSubmissions.createdAt)).limit(200);
+      }),
+      moderate: adminProcedure.input(z.object({ id: z.number().int().positive(), status: z.enum(["approved", "rejected", "pending"]) })).mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { updated: false, reason: "database_unavailable" as const };
+        await db.update(trustLabSubmissions).set({ status: input.status, reviewedAt: new Date() }).where(eq(trustLabSubmissions.id, input.id));
+        return { updated: true };
+      }),
+    }),
     demoRequests: router({
       list: adminProcedure.query(async () => {
         const db = await getDb();
