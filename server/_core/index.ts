@@ -109,6 +109,13 @@ async function startServer() {
       createContext,
     })
   );
+  // Allow the branded HelloAnswer workspace to frame only the dedicated agency-support page.
+  // Keep this narrow: the rest of the application does not need to be embeddable.
+  app.use("/embed/agency-support", (_req, res, next) => {
+    res.setHeader("Content-Security-Policy", "frame-ancestors 'self' https://helloanswer.ai https://clients.aivirtualreceptionist.online");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    next();
+  });
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
