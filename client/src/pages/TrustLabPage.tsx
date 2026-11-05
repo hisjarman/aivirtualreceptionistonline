@@ -28,8 +28,8 @@ export default function TrustLabPage() {
 
 export function AdminTrustLabPage(){
  const query=trpc.admin.trustLab.list.useQuery(); const moderate=trpc.admin.trustLab.moderate.useMutation({onSuccess:()=>query.refetch()});
- const {user,isLoading}=useAuth();
- if(isLoading)return <div className="p-8">Loading admin access…</div>;
+ const {user,loading}=useAuth();
+ if(loading)return <div className="p-8">Loading admin access…</div>;
  if(!user||user.role!=="admin")return <main className="container py-16"><h1>Admin access required</h1><p>Sign in with an administrator account to moderate Trust Lab submissions.</p></main>;
  return <div className="min-h-screen bg-mist"><div className="container py-10"><div className="workspace-page-title"><div><span className="mono-small">AI TRUST LAB / MODERATION</span><h2>Community submissions</h2><p>Approve posts before they appear publicly. Reject spam or sensitive information.</p></div><Link href="/trust-lab" className="arrow-link">View public Trust Lab <ArrowRight size={15}/></Link></div><div className="trust-lab-panel mt-6">{query.isLoading?"Loading submissions…":query.data?.length?query.data.map(item=><article className="trust-lab-admin-row" key={item.id}><div><div className="flex flex-wrap gap-2 items-center"><strong>{item.title||item.kind.replaceAll("_"," ")}</strong><span className="status-pill status-slate">{item.status}</span></div><p>{item.body}</p><small>{item.displayName||"Anonymous"} · {item.industry||"No industry"} · {new Date(item.createdAt).toLocaleString()}</small></div><button className="approve" disabled={moderate.isPending} onClick={()=>moderate.mutate({id:item.id,status:"approved"})}>Approve</button><button disabled={moderate.isPending} onClick={()=>moderate.mutate({id:item.id,status:"rejected"})}>Reject</button></article>):<p>No submissions yet.</p>}</div></div></div>;
 }
