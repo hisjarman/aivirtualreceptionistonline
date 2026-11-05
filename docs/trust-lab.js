@@ -1,7 +1,7 @@
 (() => {
   // The API base is intentionally unset until the new backend is deployed.
   // Never put Clerk Secret Keys or HubSpot tokens in this public file.
-  const API_BASE = window.AVR_CONFIG?.apiBase || "";
+  const API_BASE = window.AVR_CONFIG?.apiBase || "https://avr-trust-lab-api.hisjarman.workers.dev";
   const form = document.querySelector("#tl-form");
   const message = document.querySelector("#tl-message");
   const submit = document.querySelector("#tl-submit");
