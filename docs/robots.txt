@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /newsletter-admin.html
+Sitemap: https://aivirtualreceptionist.online/sitemap.xml
