@@ -4,6 +4,31 @@
 // 3) Commit and publish this file. Do not put API keys or private credentials here.
 const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
 
+// Initialize mobile navigation first so unrelated page scripts cannot disable it.
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector("#primary-navigation");
+if (menuToggle && nav) {
+  const closeMenu = () => {
+    nav.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Open navigation menu");
+  };
+  menuToggle.addEventListener("click", () => {
+    const open = !nav.classList.contains("open");
+    nav.classList.toggle("open", open);
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+  });
+  nav.querySelectorAll("a").forEach(link => link.addEventListener("click", closeMenu));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeMenu();
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 650) closeMenu();
+  });
+}
+
+
 const form = document.querySelector("#intake-form");
 const fields = [...form.querySelectorAll("fieldset")];
 const back = document.querySelector("#back-button");
@@ -82,31 +107,8 @@ form.addEventListener("submit", async event => {
   }
 });
 
-// Mobile navigation is initialized independently so an unrelated form error
-// cannot prevent the menu from working.
-const menuToggle = document.querySelector(".menu-toggle");
-const nav = document.querySelector("#primary-navigation");
-if (menuToggle && nav) {
-  const closeMenu = () => {
-    nav.classList.remove("open");
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", "Open navigation menu");
-  };
-  menuToggle.addEventListener("click", () => {
-    const open = !nav.classList.contains("open");
-    nav.classList.toggle("open", open);
-    menuToggle.setAttribute("aria-expanded", String(open));
-    menuToggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
-  });
-  nav.querySelectorAll("a").forEach(link => link.addEventListener("click", closeMenu));
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") closeMenu();
-  });
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 650) closeMenu();
-  });
-}
-document.querySelector("#year").textContent = new Date().getFullYear();
+const yearLabel = document.querySelector("#year");
+if (yearLabel) yearLabel.textContent = new Date().getFullYear();
 showStep(0);
 
 
