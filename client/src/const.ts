@@ -20,7 +20,8 @@ export const startLogin = () => {
 
   const nonce = crypto.randomUUID();
   document.cookie = `${OAUTH_STATE_COOKIE}=${nonce}; Path=/; Max-Age=600; SameSite=None; Secure`;
-  const state = encodeOAuthState({ redirectUri, nonce });
+  const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  const state = encodeOAuthState({ redirectUri, nonce, returnTo });
 
   const url = new URL(`${oauthPortalUrl}/app-auth`);
   url.searchParams.set("appId", appId);
