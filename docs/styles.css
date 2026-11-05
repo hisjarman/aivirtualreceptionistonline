@@ -77,3 +77,11 @@
  .compare-row b{font-size:12.5px;line-height:1.55}
  .compare-footnote{font-size:11.5px!important}
 }
+
+
+/* Clear hybrid SaaS + managed-service positioning at the top of the homepage */
+.business-model-banner{display:flex;flex-direction:column;gap:6px;max-width:520px;margin:20px 0 0;padding:15px 17px;border:1px solid #3a7468;border-left:3px solid var(--teal);border-radius:7px;background:linear-gradient(110deg,#102b29 0%,#13232b 100%);box-shadow:0 10px 28px #0003}
+.business-model-banner .model-label{font:600 8px 'DM Mono',monospace;letter-spacing:.16em;color:#8daaa6}
+.business-model-banner strong{font:800 15px/1.3 Manrope,sans-serif;letter-spacing:.045em;color:#8aefda}
+.business-model-banner .model-description{max-width:450px;font-size:11px;line-height:1.65;color:#d0dddc}
+@media(max-width:700px){.business-model-banner{margin-top:17px;padding:13px 14px}.business-model-banner strong{font-size:13px}.business-model-banner .model-description{font-size:10px}}
