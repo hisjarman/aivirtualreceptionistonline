@@ -5,15 +5,15 @@ export class CallPilotContainer extends Container {
   sleepAfter = "10m";
 
   override onStart() {
-    console.log("CallPilot container started");
+    console.log("AI Virtual Receptionist container started");
   }
 
   override onStop() {
-    console.log("CallPilot container stopped");
+    console.log("AI Virtual Receptionist container stopped");
   }
 
   override onError(error: unknown) {
-    console.error("CallPilot container error", error);
+    console.error("AI Virtual Receptionist container error", error);
   }
 }
 
@@ -23,7 +23,7 @@ type Env = {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const container = env.CALLPILOT_CONTAINER.getByName("callpilot-production");
+    const container = env.CALLPILOT_CONTAINER.getByName("aivirtualreceptionist-production");
     return container.fetch(request);
   },
 };
