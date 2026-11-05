@@ -320,3 +320,107 @@ main>.section,
  .calculator-section,.capabilities,.pricing-section,.managed-section,
  .dashboard-showcase,.faq-section,.onboard-section{background:#182831!important}
 }
+
+
+/* Retro-futurist / playful 3D layer: Y2K arcade energy without sacrificing B2B clarity. */
+:root{
+ --retro-cyan:#70e1cb;
+ --retro-blue:#7aa7ff;
+ --retro-lilac:#a99aff;
+ --retro-metal:#c5d5dc;
+}
+.hero.dark-shell{
+ background:
+  radial-gradient(ellipse at 50% 110%,rgba(51,174,160,.24),transparent 56%),
+  radial-gradient(ellipse at 80% 18%,rgba(91,111,204,.18),transparent 42%),
+  linear-gradient(180deg,#080f1c 0%,#122631 100%)!important;
+}
+.hero.dark-shell:before{
+ opacity:.8;
+ background:
+  linear-gradient(rgba(112,225,203,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(112,225,203,.035) 1px,transparent 1px),
+  radial-gradient(ellipse 34% 28% at 50% 45%,rgba(112,225,203,.16),transparent 75%),
+  radial-gradient(1px 1px at 12% 18%,#fff 99%,transparent),
+  radial-gradient(1px 1px at 24% 11%,#d8f7ff 99%,transparent),
+  radial-gradient(1px 1px at 39% 27%,#fff 99%,transparent),
+  radial-gradient(1px 1px at 63% 12%,#fff 99%,transparent),
+  radial-gradient(1px 1px at 81% 22%,#d8f7ff 99%,transparent);
+ background-size:44px 44px,44px 44px,auto,auto,auto,auto,auto,auto;
+ mask-image:linear-gradient(to bottom,black 0%,rgba(0,0,0,.7) 65%,transparent 100%);
+}
+.hero-copy{perspective:1000px}
+.hero h1{text-shadow:0 3px 0 rgba(0,0,0,.16),0 12px 35px rgba(76,214,190,.10)}
+.hero h1 em{
+ color:#8de8d7;
+ text-shadow:0 0 28px rgba(112,225,203,.28);
+}
+.hero .eyebrow{
+ display:inline-flex;padding:9px 14px;border:1px solid rgba(112,225,203,.28);
+ border-radius:999px;background:linear-gradient(145deg,rgba(44,73,83,.76),rgba(17,35,47,.7));
+ box-shadow:inset 0 1px rgba(255,255,255,.12),0 8px 24px rgba(0,0,0,.18);
+}
+.product-stage{
+ transform:perspective(1200px) rotateX(2deg);
+ border:1px solid rgba(133,220,211,.36)!important;
+ border-radius:18px;
+ background:linear-gradient(145deg,rgba(36,61,72,.96),rgba(10,22,34,.96))!important;
+ box-shadow:0 32px 0 -18px rgba(112,225,203,.12),0 38px 90px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.15)!important;
+}
+.product-stage:after{
+ content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ background:linear-gradient(125deg,rgba(255,255,255,.10),transparent 24%,transparent 72%,rgba(112,225,203,.07));
+}
+.button{
+ border:1px solid rgba(150,245,225,.48);
+ background:linear-gradient(180deg,#8cebd8 0%,#54bfae 100%);
+ color:#102b32;
+ box-shadow:0 5px 0 #287d76,0 9px 22px rgba(35,177,155,.22),inset 0 1px rgba(255,255,255,.62);
+ transform:translateY(0);
+ transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+}
+.button:hover{
+ transform:translateY(-2px);
+ filter:saturate(1.12);
+ box-shadow:0 7px 0 #287d76,0 14px 28px rgba(35,177,155,.28),inset 0 1px rgba(255,255,255,.7);
+}
+.button:active{transform:translateY(3px);box-shadow:0 2px 0 #287d76,inset 0 1px rgba(255,255,255,.4)}
+.quiet-link{color:#b8d5d5}
+.section-kicker,.section-label,.eyebrow,.mono,.video-label,.stage-caption,
+.price-label,.dashboard-demo-top,.dashboard-demo-tab{
+ font-family:"DM Mono",monospace;letter-spacing:.09em;
+}
+.section-kicker{color:#83d9cb;text-shadow:0 0 18px rgba(112,225,203,.2)}
+/* Raised translucent panels with subtle dimensional edge lighting. */
+.price-card,.calculator,.form-panel,.dashboard-shell,.cap-card,
+.managed-pillars article,.industry-grid article,.step-card{
+ border:1px solid rgba(151,190,190,.22)!important;
+ box-shadow:0 12px 0 -7px rgba(112,225,203,.12),0 20px 48px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.055);
+ transform-style:preserve-3d;
+}
+.price-card:hover,.cap-card:hover,.managed-pillars article:hover,
+.industry-grid article:hover,.step-card:hover{
+ transform:translateY(-5px) perspective(900px) rotateX(1deg);
+ box-shadow:0 17px 0 -7px rgba(112,225,203,.18),0 28px 55px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.08);
+}
+.price-card.recommended{
+ border-color:rgba(112,225,203,.62)!important;
+ box-shadow:0 0 0 1px rgba(112,225,203,.12),0 18px 48px rgba(42,169,148,.13),inset 0 1px rgba(255,255,255,.1);
+}
+.dashboard-shell{overflow:hidden}
+.dashboard-demo-top{border-bottom:1px solid rgba(112,225,203,.22)}
+.dashboard-demo-tab.active{box-shadow:inset 0 -2px #70e1cb}
+.brand-mark{filter:drop-shadow(0 0 9px rgba(112,225,203,.32))}
+.footer{border-top:1px solid rgba(112,225,203,.16)}
+/* Small retro-future details; restrained motion and no flashing effects. */
+.trust-strip b{color:#9ccfc4}
+.trust-strip{border-top:1px solid rgba(112,225,203,.12);border-bottom:1px solid rgba(112,225,203,.12)}
+@media(max-width:650px){
+ .product-stage{transform:none}
+ .price-card,.calculator,.form-panel,.dashboard-shell,.cap-card,
+ .managed-pillars article,.industry-grid article,.step-card{box-shadow:0 10px 28px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.05)}
+}
+@media(prefers-reduced-motion:reduce){
+ .button,.price-card,.cap-card,.managed-pillars article,.industry-grid article,.step-card{transition:none}
+ .button:hover,.price-card:hover,.cap-card:hover,.managed-pillars article:hover,.industry-grid article:hover,.step-card:hover{transform:none}
+}
