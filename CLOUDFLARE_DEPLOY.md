@@ -1,37 +1,31 @@
 # Deploy AI Virtual Receptionist to Cloudflare Containers
 
-AI Virtual Receptionist is a full-stack Express + tRPC + Drizzle/MySQL application. Deploy it as a Cloudflare Worker front door backed by a Cloudflare Container. Do not deploy it to Pages as a static-only site: Pages would omit the server, authentication, consent recording, tRPC procedures, and database access.
+AI Virtual Receptionist is a full-stack Express + tRPC + Drizzle/MySQL application. Deploy it as a Cloudflare Worker front door backed by a Cloudflare Container. Do not deploy it as a static-only Pages site: Pages would omit the server, authentication, tRPC procedures, and database access.
 
 ## Prerequisites
 
 - A Cloudflare account with Workers/Containers enabled.
-- Wrangler authenticated with the correct account: `npx wrangler login` followed by `npx wrangler whoami`.
-- Docker installed and running locally. Cloudflare's Wrangler container flow builds and pushes the Docker image during `wrangler deploy`.
-- A reachable production MySQL database and its connection string.
-- Production authentication configuration and secrets. Manus OAuth values from the managed Webdev environment do not automatically transfer to a standalone Cloudflare account.
+- Wrangler authenticated to the intended account: `npx wrangler login` and `npx wrangler whoami`.
+- Docker installed and running locally.
+- A reachable production MySQL database.
+- The existing OAuth identity provider configured for the production hostname. The current sign-in implementation depends on that provider; replacing it requires a separate authentication migration and testing.
 
 ## Configure secrets
 
-From the project root, set production secrets using Wrangler. Do not commit them:
+Set production secrets through Wrangler or the Cloudflare dashboard. Never commit credentials:
 
 ```bash
 npx wrangler secret put DATABASE_URL
-npx wrangler secret put MANUS_JWT_SECRET
 npx wrangler secret put PAYMENT_PROVIDER_SECRET
 npx wrangler secret put PAYMENT_WEBHOOK_SECRET
 npx wrangler secret put EMAIL_PROVIDER_API_KEY
 ```
 
-Set non-secret values with `wrangler.toml`/`wrangler.jsonc` vars or the Cloudflare dashboard only after confirming their intended production values. The application also needs the authentication runtime values documented in `.env.example`; the current app is Manus OAuth-compatible, so choose whether to retain that provider or replace it with a separately configured production identity provider before launch.
+Configure the existing authentication provider's required environment values separately, using the names expected by the current application. Do not rename or remove them until an alternative sign-in provider is implemented and verified.
 
 ## GitHub deployment
 
-The repository includes `.github/workflows/deploy-cloudflare.yml`. After connecting the repository to GitHub, add these GitHub Actions secrets:
-
-- `CLOUDFLARE_API_TOKEN` — a scoped token with Workers Scripts, Workers Routes, Containers/Cloudchamber, and account read permissions.
-- `CLOUDFLARE_ACCOUNT_ID` — the Cloudflare account ID for the intended production account.
-
-The workflow deploys the Worker and Container on pushes to `main` or from a manual workflow dispatch. It does not upload application secrets or activate billing automatically.
+The repository may be connected to GitHub Actions using a scoped Cloudflare API token and the intended account ID. Review the workflow before enabling automatic production deployment. The workflow must not contain credentials in source control.
 
 ## First deployment
 
@@ -40,36 +34,32 @@ npx wrangler whoami
 npx wrangler deploy --config wrangler.jsonc
 ```
 
-Wrangler will build the Docker image from `Dockerfile`, push it to Cloudflare's managed registry, deploy the Worker and Container, and print the `workers.dev` URL. The first request may take longer while the container provisions.
+The first request may take longer while the container provisions.
 
 ## Database
 
-Run the Drizzle migration against the production database through a trusted release environment, not from a public request:
+Run Drizzle migrations against the production database through a trusted release environment, not from a public request:
 
 ```bash
-DATABASE_URL='[production connection string]' pnpm drizzle-kit migrate
+pnpm db:migrate
 ```
 
-Confirm the consent migration is applied before accepting registrations, demo requests, or checkout orders.
+Confirm the target database and backup before applying migrations.
 
 ## Approval-first sales flow
 
-Public pricing buttons lead to `/demo`, not an instant checkout. A prospect submits the discovery form and explicitly agrees to the contact and privacy notices. The owner queue at `/admin/demo-requests` supports these stages:
-
-`New → Under review → Needs information → Demo approved → Payment link sent → Converted`
-
-The owner builds and reviews the demo, records the secure hosted payment link only after the prospect approves the proposed direction, and then sends that link through a configured transactional-email provider. The form never collects card details and does not activate a subscription. Payment webhooks must be implemented and verified before a payment link can activate service.
+Public pricing buttons lead to the discovery flow, not an instant checkout. The owner reviews the brief, prepares a demo, and shares a secure hosted payment link only after the customer approves the proposed service. Payment webhooks must be implemented, signature-verified, and tested before they can activate subscriptions.
 
 ## Required production checks
 
 - `GET /api/health` returns an unauthenticated 2xx response.
-- `GET /manus-routes.json` returns JSON rather than SPA HTML.
-- OAuth callback and secure session cookies work on the Cloudflare hostname.
-- Consent rows are written with document versions and request context.
-- Database access works from the Container network.
+- OAuth callback and secure session cookies work on the production hostname.
+- Database reads and writes work from the Container network.
+- Trust Lab submissions are saved as pending and only approved entries appear publicly.
+- Consent records, backups, retention rules, and deletion workflows are verified.
 - Hosted checkout is not activated until webhook signature verification and idempotency are configured.
-- Configure a custom domain only after the `workers.dev` deployment is healthy.
+- Configure a custom domain only after the deployment is healthy.
 
 ## Important limitations
 
-Cloudflare Container deployment is not complete merely because the Worker deploys. The production database, authentication provider, payment provider, email provider, domain, backups, retention policy, and legal documents must each be configured and verified. Keep the app's honest `Unconfigured` states until those integrations are tested.
+A successful Worker deployment does not by itself complete production setup. The database, authentication provider, payment provider, email provider, domain, backups, privacy controls, and legal documents must each be configured and verified. Keep unconfigured features clearly labeled.
