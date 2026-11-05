@@ -1,9 +1,9 @@
-# CallPilot AI delivery tasks
+# AI Virtual Receptionist delivery tasks
 
 ## 1. Public brand shell and route coverage
-- [ ] Build the CallPilot AI responsive shell with original premium SaaS styling, dark navy/charcoal text, white surfaces, restrained teal/blue accents, generous whitespace, rounded cards, subtle shadows, readable accessible typography, mobile navigation, and a consistent footer.
+- [ ] Build the AI Virtual Receptionist responsive shell with original premium SaaS styling, dark navy/charcoal text, white surfaces, restrained teal/blue accents, generous whitespace, rounded cards, subtle shadows, readable accessible typography, mobile navigation, and a consistent footer.
 - [ ] Add working routes and navigation for Home, Features, How It Works, Pricing, About, Contact, Blog, Help Center, Terms, Privacy, Cookie Policy, AI Disclosure, Acceptable Use, Cancellation & Refund, Third-Party Service Disclosure, eight industry pages (plumber, HVAC, roofer, contractor, salon, real estate, auto repair, cleaning), customer login/onboarding/workspace, and admin workspace.
-- [ ] Add `public/manus-routes.json`, semantic metadata, canonical/OG data, sitemap/robots handling, and conversion-event hooks without personal information.
+- [ ] Maintain semantic metadata, canonical/OG data, sitemap/robots handling, and conversion-event hooks without personal information.
 
 ## 2. Conversion-focused marketing and honest demo
 - [ ] Plan CTAs must open a discovery form rather than instant checkout; the form collects contact, business, call-volume, service, phone-setup, caller-question, and workflow information, requires separate contact/privacy acknowledgements, and clearly states that no payment is collected.
@@ -16,7 +16,7 @@
 - [ ] No fabricated testimonials, awards, credentials, office history, contact information, revenue claims, or compliance certifications.
 
 ## 3. Authentication, tenant model, and onboarding
-- [ ] Preserve Manus OAuth-compatible application sessions and server-side role checks; support login/logout, account profile, business profile, customer/admin roles, and organization data isolation.
+- [ ] Preserve the existing OAuth-compatible application sessions and server-side role checks; support login/logout, account profile, business profile, customer/admin roles, and organization data isolation.
 - [ ] Require explicit acceptance before account registration continues: Terms of Service and Privacy Policy are separate linked documents, unchecked by default, and the current document versions are recorded server-side.
 - [ ] Build save-and-resume onboarding with progress, validation, review, and the ten requested steps: business info; hours/contact; personality; services/FAQs; call handling; lead capture; appointment handling; integrations/notifications; phone setup; plan/review/disclosures.
 - [ ] FAQs are dynamic add/edit/delete; booking captures a request when no verified calendar integration exists; third-party passwords are never collected; phone routing is never changed automatically.
