@@ -1,4 +1,4 @@
-# CallPilot legal-consent implementation specification
+# AI Virtual Receptionist legal-consent implementation specification
 
 This document defines the product behavior for consent capture. It is not legal advice and must be reconciled with counsel-reviewed Terms, Privacy Policy, AI/Call Recording Disclosure, Acceptable Use Policy, Cancellation/Refund Policy, and any Data Processing Addendum.
 
