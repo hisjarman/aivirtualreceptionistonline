@@ -1,0 +1,49 @@
+/* Experience redesign: visual rhythm, readability and restrained motion */
+:root{--reading-progress:0}
+html{scroll-padding-top:104px;scroll-behavior:smooth}
+body{line-height:1.55}
+.topbar{backdrop-filter:saturate(140%) blur(14px);background:rgba(9,15,23,.94);box-shadow:0 8px 28px rgba(3,12,18,.12)}
+.nav{gap:clamp(14px,2vw,27px)}
+.nav a{transition:color .2s ease,opacity .2s ease}
+.nav a[aria-current="location"]{color:var(--teal)}
+.topbar:after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:var(--reading-progress);background:var(--teal);pointer-events:none}
+.hero-grid{padding-top:clamp(58px,7vw,88px);padding-bottom:clamp(62px,7vw,88px);min-height:620px}
+.hero h1{max-width:650px}
+.hero-lede{font-size:clamp(14px,1.15vw,16px);line-height:1.8}
+.product-stage{box-shadow:0 28px 80px rgba(0,0,0,.32)}
+.trust-inner{min-height:82px}
+.section{padding-top:clamp(76px,8vw,108px);padding-bottom:clamp(76px,8vw,108px)}
+.section-heading{margin-bottom:clamp(28px,4vw,44px);gap:clamp(25px,5vw,64px)}
+.section-heading>div>p,.section-heading>p{font-size:13px;line-height:1.85}
+.section-heading h2,.dark-band h2,.industry-section h2,.faq-layout h2{line-height:1.12}
+.calculator,.price-card,.step-card,.cap-card,.industry-grid article,.form-panel,.dashboard-shell{transition:box-shadow .25s ease,border-color .25s ease,transform .25s ease}
+.price-card:hover,.step-card:hover,.industry-grid article:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(12,35,43,.09)}
+.dark-band,.managed-section,.capabilities,.industry-section,.dashboard-showcase,.pricing-section,.faq-section,.onboard-section{scroll-margin-top:92px}
+.dark-band{padding:clamp(76px,8vw,104px) 0}
+.managed-section{padding:clamp(76px,8vw,104px) 0;background:linear-gradient(180deg,#f5f9f8 0%,#edf5f2 100%)}
+.capabilities{background:#fff}
+.industry-section{padding:clamp(76px,8vw,104px) 0}
+.dashboard-showcase{padding:clamp(76px,8vw,104px) 0;background:linear-gradient(180deg,#f5f8f8 0%,#edf4f3 100%)}
+.dashboard-showcase .section-heading h2{max-width:650px}
+.dashboard-shell{box-shadow:0 22px 65px rgba(14,42,49,.10)}
+.pricing-section{padding-top:clamp(76px,8vw,104px)}
+.price-card{padding:clamp(22px,2.4vw,30px)}
+.faq-section{padding:clamp(76px,8vw,100px) 0}
+.faq-list details{transition:border-color .2s ease}
+.faq-list summary{line-height:1.55}
+.faq-list details[open]{border-color:#9ccfc4}
+.onboard-section{padding:clamp(76px,8vw,104px) 0}
+.form-panel{box-shadow:0 20px 60px rgba(15,50,46,.08)}
+.button:focus-visible,.nav a:focus-visible,.dashboard-demo-tab:focus-visible,.menu-toggle:focus-visible,.faq-list summary:focus-visible{outline:3px solid #48cbb1;outline-offset:4px}
+.button:hover{box-shadow:0 8px 20px rgba(25,150,128,.15)}
+section[id]{scroll-margin-top:98px}
+.experience-reveal{opacity:1;transform:none}
+.js-motion .experience-reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.65,.25,1)}
+.js-motion .experience-reveal.is-visible{opacity:1;transform:translateY(0)}
+.experience-reveal.delay-1{transition-delay:.08s}.experience-reveal.delay-2{transition-delay:.16s}.experience-reveal.delay-3{transition-delay:.24s}
+.back-to-top{position:fixed;right:22px;bottom:22px;z-index:35;width:44px;height:44px;border:1px solid #d5e2e1;border-radius:50%;background:#fff;color:#0c7668;box-shadow:0 8px 24px #0b25251c;display:grid;place-items:center;font-size:19px;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease,visibility .2s}
+.back-to-top.visible{opacity:1;visibility:visible;transform:translateY(0)}
+.back-to-top:hover{background:#e8f7f2}
+@media(max-width:900px){.hero-grid{min-height:unset}.nav{gap:13px}.nav a{font-size:10px}}
+@media(max-width:650px){html{scroll-padding-top:76px}.topbar{box-shadow:0 5px 20px #0002}.nav{gap:0}.nav a{padding:10px 0;font-size:13px}.hero-grid{padding-top:48px;padding-bottom:55px}.hero h1{font-size:clamp(43px,12vw,52px)}.hero-metrics{flex-wrap:wrap}.trust-inner{gap:12px 16px}.section,.dark-band,.industry-section,.faq-section,.onboard-section{padding:66px 0}.managed-section,.dashboard-showcase{padding:66px 0}.section-heading h2,.dark-band h2,.industry-section h2{font-size:clamp(32px,9vw,38px)}.back-to-top{right:14px;bottom:14px;width:40px;height:40px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.js-motion .experience-reveal{opacity:1;transform:none}}
