@@ -158,6 +158,46 @@ export const appRouter = router({
         return { updated: true };
       }),
     }),
+    changes: router({
+      list: adminProcedure.query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        return db.select({
+          id: proposedChanges.id,
+          organizationId: proposedChanges.organizationId,
+          organizationName: organizations.name,
+          requestedBy: proposedChanges.requestedBy,
+          requesterName: users.name,
+          requesterEmail: users.email,
+          title: proposedChanges.title,
+          description: proposedChanges.description,
+          status: proposedChanges.status,
+          approvalStatus: proposedChanges.approvalStatus,
+          administratorResponse: proposedChanges.administratorResponse,
+          createdAt: proposedChanges.createdAt,
+          updatedAt: proposedChanges.updatedAt,
+        }).from(proposedChanges)
+          .innerJoin(organizations, eq(proposedChanges.organizationId, organizations.id))
+          .leftJoin(users, eq(proposedChanges.requestedBy, users.id))
+          .orderBy(desc(proposedChanges.createdAt))
+          .limit(300);
+      }),
+      update: adminProcedure.input(z.object({
+        id: z.number().int().positive(),
+        status: z.enum(["draft", "submitted", "under_review", "awaiting_customer_information", "approved", "in_progress", "testing", "completed", "rejected"]).optional(),
+        administratorResponse: z.string().trim().max(5000).optional(),
+        approvalStatus: z.enum(["pending", "approved", "rejected"]).optional(),
+      })).mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { updated: false, reason: "database_unavailable" as const };
+        const { id, ...changes } = input;
+        await db.update(proposedChanges).set({
+          ...changes,
+          completionDate: input.status === "completed" ? new Date() : undefined,
+        }).where(eq(proposedChanges.id, id));
+        return { updated: true };
+      }),
+    }),
     demoRequests: router({
       list: adminProcedure.query(async () => {
         const db = await getDb();
