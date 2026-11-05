@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#182831">
+  <meta name="color-scheme" content="dark">
+  <title>AI Trust Lab | AI Virtual Receptionist</title>
+  <meta name="description" content="Challenge, question and stress-test our AI receptionist. Approved community tests are shared publicly.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./trust-lab.css">
+</head>
+<body class="trust-lab-body">
+  <header class="topbar">
+    <a class="brand" href="./index.html#top"><span class="brand-mark" aria-hidden="true">✳</span><span>AI VIRTUAL<br><b>RECEPTIONIST</b></span></a>
+    <nav class="nav"><a href="./index.html#product">How it works</a><a href="./index.html#pricing">Pricing</a><a href="./trust-lab.html" aria-current="page">AI Trust Lab</a></nav>
+    <a class="button button-small" href="./index.html#start">Build my receptionist <span>↗</span></a>
+    <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </header>
+
+  <main id="top">
+    <section class="tl-hero">
+      <div class="tl-wrap">
+        <a class="tl-back" href="./index.html">← Back to the main site</a>
+        <div class="tl-kicker"><i></i> PUBLIC TESTING GROUND · HUMAN REVIEWED</div>
+        <h1>Don't take our word for it.<br><em>Test our AI.</em></h1>
+        <p class="tl-intro">Bring the difficult caller, the awkward question, or the edge case. Submit a scenario and help us test what a responsible AI receptionist should do.</p>
+        <div class="tl-pills"><span>✳ No account required</span><span>✓ Reviewed before publication</span><span>↗ Feedback helps improve configurations</span></div>
+      </div>
+    </section>
+
+    <section class="tl-wrap tl-main">
+      <div class="tl-grid">
+        <section class="tl-panel">
+          <div class="tl-kicker">01 / PUT IT TO THE TEST</div>
+          <h2>What should we test?</h2>
+          <p class="tl-muted">Send a real-world challenge or question. Your submission stays pending until a human reviews it. Only approved submissions appear on the public wall.</p>
+          <div class="tl-tabs" role="group" aria-label="Submission type">
+            <button type="button" class="active" data-kind="challenge">Challenge</button>
+            <button type="button" data-kind="question">Hard question</button>
+            <button type="button" data-kind="stress_test">Stress test</button>
+          </div>
+          <form id="tl-form">
+            <label class="tl-field">Short title <span>(optional)</span>
+              <input name="title" maxlength="180" placeholder="e.g. Caller demands to speak to a manager">
+            </label>
+            <label class="tl-field" id="tl-body-label">Describe the scenario
+              <textarea name="body" required minlength="8" maxlength="3000" rows="5" placeholder="What does the caller say? What should the receptionist do?"></textarea>
+              <small>8–3,000 characters. Please do not include real customer details.</small>
+            </label>
+            <div class="tl-two">
+              <label class="tl-field">Industry <span>(optional)</span>
+                <input name="industry" maxlength="120" placeholder="Roofing, plumbing, HVAC…">
+              </label>
+              <label class="tl-field">Display name <span>(optional)</span>
+                <input name="displayName" maxlength="80" placeholder="Anonymous by default">
+              </label>
+            </div>
+            <div class="tl-score" id="tl-score-wrap" hidden>
+              <label for="tl-score">How difficult is this scenario? <strong id="tl-score-value">50/100</strong></label>
+              <input id="tl-score" type="range" min="0" max="100" value="50">
+            </div>
+            <label class="tl-honeypot" aria-hidden="true">Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="tl-consent"><input type="checkbox" id="tl-confirm" required><span>I confirm this submission does not contain passwords, payment details, private customer information, or confidential business information.</span></label>
+            <button class="button tl-submit" id="tl-submit" type="submit">Submit for human review <span>→</span></button>
+            <div class="tl-message" id="tl-message" role="status" aria-live="polite" hidden></div>
+          </form>
+          <p class="tl-privacy">Submissions are stored for moderation. Do not include sensitive information. Choosing a display name does not make a submission technically anonymous.</p>
+        </section>
+
+        <aside class="tl-side">
+          <div class="tl-panel tl-examples">
+            <div class="tl-kicker">02 / EXAMPLE TESTS</div>
+            <h2>Try a tough scenario</h2>
+            <button class="tl-example" type="button" data-example="A caller is angry because nobody returned their call yesterday. They demand an immediate answer and threaten to leave a bad review."> <b>01</b><span><strong>The angry caller</strong><small>Can it de-escalate without arguing?</small></span><i>↗</i></button>
+            <button class="tl-example" type="button" data-example="A caller says there is water coming through the ceiling near an electrical outlet. What should the receptionist say, and when should it escalate to a human or emergency services?"><b>02</b><span><strong>The urgent situation</strong><small>Does it avoid unsafe advice and escalate?</small></span><i>↗</i></button>
+            <button class="tl-example" type="button" data-example="A caller asks for a price, but the business has not provided a price list. How should the receptionist respond without inventing a quote?"><b>03</b><span><strong>The unknown price</strong><small>Can it admit what it doesn't know?</small></span><i>↗</i></button>
+            <button class="tl-example" type="button" data-example="A caller gives a vague address, changes the appointment request twice, and then asks the receptionist to repeat all the details. Can it clarify and confirm accurately?"><b>04</b><span><strong>The confusing request</strong><small>Can it clarify and confirm details?</small></span><i>↗</i></button>
+          </div>
+          <div class="tl-note"><span>IMPORTANT</span><p>This is a public feedback and testing area, not a live emergency service. Never use it to report an urgent real-world situation. Emergency calls must follow local emergency procedures.</p></div>
+          <a class="tl-admin-link" href="https://aivirtualreceptionist-clean1.onrender.com/admin/trust-lab">Owner / moderator sign in →</a>
+        </aside>
+      </div>
+
+      <section class="tl-wall-section">
+        <div class="tl-wall-head"><div><div class="tl-kicker">03 / COMMUNITY TEST WALL</div><h2>Challenges from the field.</h2><p class="tl-muted">Only submissions approved by a human moderator are shown here.</p></div><span class="tl-review-label">● MODERATED</span></div>
+        <div id="tl-wall" class="tl-wall"><div class="tl-empty">Loading approved tests…</div></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="tl-footer"><a href="./index.html">AI Virtual Receptionist</a><span>Built around your business. Managed by people.</span></footer>
+  <script src="./trust-lab.js" defer></script>
+  <script>
+    const menuButton=document.querySelector(".menu-toggle"),nav=document.querySelector(".nav");
+    menuButton?.addEventListener("click",()=>{const open=nav.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open));});
+  </script>
+</body>
+</html>
