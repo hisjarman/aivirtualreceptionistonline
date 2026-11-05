@@ -278,3 +278,17 @@ export const consentPreferences = mysqlTable("consent_preferences", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+
+export const trustLabSubmissions = mysqlTable("trust_lab_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  kind: mysqlEnum("kind", ["challenge", "question", "stress_test"]).notNull(),
+  title: varchar("title", { length: 180 }),
+  body: text("body").notNull(),
+  displayName: varchar("displayName", { length: 80 }),
+  industry: varchar("industry", { length: 120 }),
+  impactScore: int("impactScore"),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+});
