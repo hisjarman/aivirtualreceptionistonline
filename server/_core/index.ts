@@ -5,8 +5,6 @@ import { z } from "zod";
 import { trustLabSubmissions } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { createServer } from "http";
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { publicPlatformScript } from "./publicConfig";
@@ -21,15 +19,6 @@ async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
-  app.get("/manus-routes.json", (_req, res) => {
-    const candidates = [
-      join(process.cwd(), "public/manus-routes.json"),
-      join(process.cwd(), "dist/public/manus-routes.json"),
-    ];
-    const routeFile = candidates.find(path => existsSync(path));
-    if (!routeFile) return res.status(404).json({ routes: [] });
-    res.type("application/json").send(readFileSync(routeFile, "utf8"));
-  });
   app.get("/robots.txt", (_req, res) => {
     res.type("text/plain").send("User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n");
   });
