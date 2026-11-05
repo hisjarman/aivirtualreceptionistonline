@@ -55,3 +55,6 @@
 .service-mark.partial{color:#94620c}
 .service-mark.no{color:#667784}
 .competitor-table td:nth-child(4) small{max-width:190px}
+
+/* Privacy disclosure and explicit contact permission */
+.privacy-disclosure{border:1px solid rgba(112,225,203,.22);background:rgba(112,225,203,.045);border-radius:12px;padding:16px;margin:16px 0;font-size:.9rem;line-height:1.6}.privacy-disclosure p{margin:8px 0;color:var(--muted,#b8c4c8)}.privacy-disclosure a{color:#70e1cb;text-decoration:underline}.consent-choice{border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:14px 16px;margin:16px 0}.consent-choice legend{font-weight:700;padding:0 6px}.consent-choice label{display:flex;gap:10px;align-items:flex-start;margin:10px 0}.consent-choice input{accent-color:#70e1cb;margin-top:4px}.consent-choice small{display:block;color:var(--muted,#b8c4c8);line-height:1.5;margin-top:8px}

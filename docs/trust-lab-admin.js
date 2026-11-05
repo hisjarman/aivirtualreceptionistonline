@@ -60,7 +60,7 @@
       const title = document.createElement("h2"); title.textContent = item.title || "Untitled submission";
       const body = document.createElement("p"); body.textContent = item.body || "";
       const meta = document.createElement("div"); meta.className = "ta-meta";
-      [item.displayName || "Anonymous", item.industry || "General", item.impactScore != null ? "Difficulty: "+item.impactScore+"/100" : ""].filter(Boolean).forEach(value => { const span=document.createElement("span"); span.textContent=value; meta.append(span); });
+      [item.displayName || "Anonymous", item.industry || "General", item.impactScore != null ? "Difficulty: "+item.impactScore+"/100" : "", "Contact permission: "+(item.contactConsent ? "Yes" : "No")].filter(Boolean).forEach(value => { const span=document.createElement("span"); span.textContent=value; meta.append(span); });
       const actions = document.createElement("div"); actions.className = "ta-actions";
       const reject = document.createElement("button"); reject.className = "ta-reject"; reject.type="button"; reject.textContent="Reject";
       const approve = document.createElement("button"); approve.className = "ta-approve"; approve.type="button"; approve.textContent="Approve & publish";

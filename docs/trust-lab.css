@@ -80,3 +80,12 @@
 .tl-user-button{flex:none}
 .tl-admin-link{color:#8fa7aa;font-size:11px;line-height:1.6}
 @media(max-width:560px){.tl-auth{align-items:flex-start;flex-direction:column}.tl-auth-actions{width:100%}.tl-auth-actions button{flex:1}}
+
+/* Privacy and contact-permission disclosure */
+.tl-contact-choice{border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:14px 16px;margin:18px 0;color:var(--text,#eef4f5)}
+.tl-contact-choice legend{padding:0 6px;font-weight:700}
+.tl-contact-choice legend span,.tl-contact-choice small{color:var(--muted,#aebbc0);font-size:.82rem}
+.tl-contact-choice label{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.tl-contact-choice input{accent-color:#70e1cb;margin-top:4px}
+.tl-privacy p{margin:8px 0;color:var(--muted,#aebbc0);font-size:.88rem;line-height:1.65}
+.tl-privacy a{color:#70e1cb;text-decoration:underline}
