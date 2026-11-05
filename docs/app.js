@@ -125,11 +125,36 @@ form.addEventListener("submit", async event => {
       throw new Error(detail || result.error || "Formspree could not accept your request. Please try again.");
     }
 
+    let confirmationSent = false;
+    if (payload.contactConsent === "yes") {
+      try {
+        const confirmationResponse = await fetch(API_BASE + "/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            type: "onboarding",
+            name: payload.name,
+            email: payload.email,
+            phone: payload.phone,
+            subject: "Business discovery request — " + (payload.business || "New business"),
+            message: brief,
+            contactConsent: true
+          })
+        });
+        const confirmationResult = await confirmationResponse.json().catch(() => ({}));
+        if (!confirmationResponse.ok) throw new Error(confirmationResult.error || "Confirmation service unavailable");
+        confirmationSent = confirmationResult.confirmationSent === true;
+      } catch (confirmationFailure) {
+      }
+    }
+
     form.hidden = true;
     const success = document.querySelector("#form-success");
     success.querySelector("p").textContent = payload.contactConsent !== "yes"
       ? "Your business brief has been received. You selected not to be contacted, so we will not follow up."
-      : "Your business brief has been received through our secure form provider. We will review it and contact you about this request.";
+      : confirmationSent
+        ? "Your business brief has been received. A confirmation email is on its way, and we will review your details and contact you about this request."
+        : "Your business brief has been received. We could not send the confirmation email automatically, but your request was submitted successfully.";
     success.hidden = false;
   } catch (error) {
     errorBox.textContent = error.message || "We couldn't send your brief. Please try again in a moment or contact admin@aivirtualreceptionist.online.";
