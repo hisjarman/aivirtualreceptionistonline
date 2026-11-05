@@ -133,3 +133,31 @@
 .founder-motto{border-top:1px solid #293c42;margin-top:34px;padding-top:17px;font:500 8px 'DM Mono';letter-spacing:.15em;color:#7bcab7}
 @media(max-width:800px){.founder-section{padding:76px 0}.founder-layout{grid-template-columns:1fr;gap:42px}.founder-aside{position:static;display:grid;grid-template-columns:76px 1fr;column-gap:18px;align-items:center}.founder-mark{width:76px;height:76px;grid-row:1/4;margin:0}.founder-mark span{font-size:23px}.founder-aside-label{align-self:end;margin:0 0 4px}.founder-aside-quote{font-size:18px;max-width:none;margin:0 0 5px}.founder-signature,.founder-company{display:none}.founder-letter{max-width:none}}
 @media(max-width:520px){.founder-section{padding:64px 0}.founder-aside{grid-template-columns:62px 1fr;column-gap:14px}.founder-mark{width:62px;height:62px}.founder-mark span{font-size:20px}.founder-aside-quote{font-size:16px}.founder-letter>p{font-size:12px;line-height:1.9}.founder-letter .founder-emphasis{font-size:14px}}
+
+
+/* Mobile navigation reliability and touch target */
+@media(max-width:650px){
+  .topbar{position:sticky;z-index:100;overflow:visible}
+  .menu-toggle{position:relative;z-index:102;display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:0;margin-left:2px;border:1px solid rgba(255,255,255,.22);border-radius:7px;background:#111d27;color:#fff;font-size:23px;line-height:1;cursor:pointer;touch-action:manipulation}
+  .menu-toggle:focus-visible{outline:2px solid #70e1cb;outline-offset:3px}
+  .nav{z-index:101;top:100%;max-height:calc(100vh - 66px);overflow-y:auto;overscroll-behavior:contain;box-shadow:0 18px 30px rgba(0,0,0,.35)}
+  .nav.open{display:flex}
+}
+
+/* Premium dark treatment for the managed-service section */
+.managed-section{background:#090f17;color:#edf3f1}
+.managed-section .section-heading h2{color:#f5f8f8}
+.managed-section .section-heading>p{color:#b7c4c9}
+.managed-section .managed-label{color:#70e1cb}
+.managed-intro h3{color:#f5f8f8}
+.managed-intro p{color:#b7c4c9}
+.managed-intro .button-dark{background:#70e1cb;border-color:#70e1cb;color:#071811}
+.managed-pillars article{background:#111d27;border-color:#263943;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.managed-pillars article>span{color:#70e1cb}
+.managed-pillars h3{color:#f1f6f5}
+.managed-pillars p{color:#b0bdc5}
+.pillar-icon{background:#17332f;color:#70e1cb}
+.managed-close{background:#132720;border:1px solid #29483f}
+.managed-close p{color:#c2d2ce}
+.managed-close strong{color:#f2faf7}
+.managed-close .text-link{color:#70e1cb}
