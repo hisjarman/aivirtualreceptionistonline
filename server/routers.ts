@@ -6,7 +6,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { demoRequests, legalConsents, memberships, onboardingSubmissions, organizations, proposedChanges, supportTickets, trustLabSubmissions } from "../drizzle/schema";
+import { demoRequests, legalConsents, memberships, onboardingSubmissions, organizations, proposedChanges, supportTickets, trustLabSubmissions, users } from "../drizzle/schema";
 
 async function getOrCreateOrganization(user: { id: number; name: string | null; openId: string }, businessName?: string) {
   const db = await getDb();
