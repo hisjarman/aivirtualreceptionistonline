@@ -161,3 +161,6 @@
 .managed-close p{color:#c2d2ce}
 .managed-close strong{color:#f2faf7}
 .managed-close .text-link{color:#70e1cb}
+
+/* Dedicated industry landing-page link */
+.industry-page-link{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:#70e1cb;font-size:12px;font-weight:800;border-bottom:1px solid #70e1cb;padding-bottom:4px}.industry-page-link:hover{color:#a0f1e2;border-color:#a0f1e2}
