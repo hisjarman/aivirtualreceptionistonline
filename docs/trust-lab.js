@@ -124,6 +124,7 @@
       displayName: form.elements.displayName.value.trim(),
       industry: form.elements.industry.value.trim(),
       website: form.elements.website.value,
+      contactConsent: form.elements.contactConsent.value,
       ...(kind === "stress_test" ? { impactScore: Number(score.value) } : {})
     };
     submit.disabled = true;
