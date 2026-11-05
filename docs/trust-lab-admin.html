@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#14252d">
+  <meta name="color-scheme" content="dark">
+  <title>Trust Lab Moderation | AI Virtual Receptionist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./trust-lab-admin.css">
+</head>
+<body class="trust-admin-body">
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark" aria-hidden="true">✳</span><span>AI VIRTUAL<br><b>RECEPTIONIST</b></span></a>
+    <nav class="nav"><a href="./trust-lab.html">Public Trust Lab</a><a href="./index.html#pricing">Pricing</a></nav>
+    <a class="button button-small" href="./trust-lab.html">Back to Trust Lab <span>↗</span></a>
+  </header>
+  <main class="ta-shell">
+    <div class="ta-heading">
+      <div><div class="ta-kicker"><i></i> PRIVATE MODERATION AREA</div><h1>Trust Lab <em>review desk</em></h1><p>Review new community tests before they appear on the public wall.</p></div>
+      <div class="ta-session" id="ta-session">Checking sign-in…</div>
+    </div>
+    <section class="ta-auth" id="ta-auth">
+      <div><strong id="ta-auth-title">Sign in to continue</strong><p id="ta-auth-copy">Use your verified administrator account to access the moderation queue.</p></div>
+      <div class="ta-auth-actions" id="ta-auth-actions"><button id="ta-sign-in" class="ta-primary" type="button">Sign in</button><button id="ta-sign-up" class="ta-secondary" type="button">Create account</button></div>
+      <div id="ta-user-button" hidden></div>
+    </section>
+    <section id="ta-dashboard" hidden>
+      <div class="ta-toolbar">
+        <div class="ta-stats"><div class="ta-stat"><span>AWAITING REVIEW</span><strong id="ta-count">—</strong></div><div class="ta-stat"><span>QUEUE STATUS</span><strong id="ta-status">Loading</strong></div></div>
+        <div class="ta-controls"><select id="ta-filter" aria-label="Filter submissions"><option value="all">All submission types</option><option value="challenge">Challenges</option><option value="question">Hard questions</option><option value="stress_test">Stress tests</option></select><button id="ta-refresh" class="ta-secondary" type="button">↻ Refresh queue</button></div>
+      </div>
+      <div id="ta-message" class="ta-message" role="status" aria-live="polite" hidden></div>
+      <div id="ta-list" class="ta-list"><div class="ta-empty">Loading pending submissions…</div></div>
+    </section>
+    <section class="ta-locked" id="ta-locked" hidden><strong>Administrator access required</strong><p>You are signed in, but this account is not authorized to moderate submissions. Sign out and use the administrator email configured on the API.</p></section>
+    <p class="ta-footnote">Approval publishes a submission to the public Trust Lab wall. Rejection keeps it private. Only verified accounts on the server-side administrator allowlist can take these actions.</p>
+  </main>
+  <script defer crossorigin="anonymous" src="https://aware-pegasus-8939.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"></script>
+  <script defer crossorigin="anonymous" data-clerk-publishable-key="pk_test_YXdhcmUtcGVnYXN1cy04OTM5LmNsZXJrLmFjY291bnRzLmRldiQ" src="https://aware-pegasus-8939.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
+  <script src="./trust-lab-admin.js" defer></script>
+</body>
+</html>
