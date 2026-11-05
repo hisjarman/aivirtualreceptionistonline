@@ -424,3 +424,93 @@ main>.section,
  .button,.price-card,.cap-card,.managed-pillars article,.industry-grid article,.step-card{transition:none}
  .button:hover,.price-card:hover,.cap-card:hover,.managed-pillars article:hover,.industry-grid article:hover,.step-card:hover{transform:none}
 }
+
+
+/* Readability repair: explicit foreground colors for pricing cards and onboarding form. */
+.pricing-grid .price-card{
+ background:linear-gradient(155deg,#304650 0%,#253943 100%)!important;
+ color:#f4f8f7!important;
+ border:1px solid #58717a!important;
+}
+.pricing-grid .price-card.recommended{
+ background:linear-gradient(155deg,#36534f 0%,#293f45 100%)!important;
+ border:1px solid #79cbb8!important;
+}
+.pricing-grid .price-card h3,
+.pricing-grid .price-card .price,
+.pricing-grid .price-card .price span,
+.pricing-grid .price-card p,
+.pricing-grid .price-card li,
+.pricing-grid .price-card li strong,
+.pricing-grid .price-card .plan-eyebrow,
+.pricing-grid .price-card .recommended-label{
+ color:#f4f8f7!important;
+}
+.pricing-grid .price-card p,
+.pricing-grid .price-card li small,
+.pricing-grid .price-card .minute-rate{color:#c5d4d7!important}
+.pricing-grid .price-card .price{ text-shadow:0 2px 16px rgba(112,225,203,.12)}
+.pricing-grid .price-card .price-cta{
+ display:inline-flex;align-items:center;justify-content:center;
+ color:#102b32!important;background:linear-gradient(180deg,#a0f0df,#70d4c1)!important;
+ border:1px solid #b5f5e8!important;border-radius:10px;
+ padding:12px 17px;font-weight:800;
+ box-shadow:0 4px 0 #347f77,0 9px 20px rgba(0,0,0,.22);
+}
+.pricing-grid .price-card .price-cta:hover{filter:brightness(1.06);transform:translateY(-2px)}
+.pricing-footnote,.pricing-footnote strong{color:#c5d4d7!important}
+.competitor-compare{color:#edf3f1!important}
+.competitor-compare h3,.competitor-compare p,.competitor-compare td,
+.competitor-compare th,.competitor-compare strong,.competitor-compare small{
+ color:#e8f0ee!important;
+}
+.competitor-table{background:#263b44!important}
+.competitor-table th{background:#344c55!important}
+.competitor-table td{background:#293f48!important;border-color:#405963!important}
+.competitor-table a{color:#8fe6d4!important}
+.onboard-section{color:#edf3f1!important}
+.onboard-copy h2,.onboard-copy p,.onboard-copy b,.onboard-copy small,
+.onboard-points p,.onboard-points span,.privacy-note{
+ color:#edf3f1!important;
+}
+.onboard-copy>p,.onboard-points small,.privacy-note{color:#c3d1d3!important}
+.form-panel{
+ background:linear-gradient(155deg,#304650 0%,#253943 100%)!important;
+ color:#f4f8f7!important;border:1px solid #58717a!important;
+}
+.form-panel .form-progress b,.form-panel .form-progress span,
+.form-panel .form-title span,.form-panel .form-title h3,
+.form-panel .form-title p,.form-panel label,
+.form-panel label>span,.form-panel legend,
+.form-panel .form-row label{color:#f1f6f4!important}
+.form-panel .form-title p{color:#c5d4d7!important}
+.form-panel input:not([type=checkbox]),
+.form-panel textarea,.form-panel select{
+ color:#f5f8f7!important;
+ background:#1b303a!important;
+ border:1px solid #617982!important;
+}
+.form-panel input:not([type=checkbox]):focus,
+.form-panel textarea:focus,.form-panel select:focus{
+ outline:2px solid #70e1cb!important;outline-offset:2px;
+ border-color:#8cebd8!important;
+}
+.form-panel input::placeholder,.form-panel textarea::placeholder{color:#aebfc3!important;opacity:1}
+.form-panel select option{background:#1b303a;color:#f5f8f7}
+.form-panel input[type=checkbox]{accent-color:#70d4c1}
+.form-panel .consent,.form-panel .consent span{color:#e5eeeb!important}
+.form-panel .setup-invoice-note,.form-panel .submit-note{
+ background:#344b4c!important;color:#f0f6f2!important;
+ border:1px solid #58736b!important;
+}
+.form-panel .setup-invoice-note strong{color:#a6f0d9!important}
+.form-panel button,.form-panel .button{color:#102b32!important}
+.form-panel .form-progress .progress-track{background:#152a33!important}
+.form-panel .form-progress .progress-track span{background:#70d4c1!important}
+.form-panel .form-title{border-color:#4b626b!important}
+.form-panel fieldset{border:0}
+.form-panel a{color:#8fe6d4!important}
+@media(max-width:650px){
+ .pricing-grid .price-card{padding:24px 20px}
+ .form-panel{padding:22px 17px!important}
+}
