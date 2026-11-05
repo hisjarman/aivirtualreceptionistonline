@@ -132,3 +132,106 @@ section[id]{scroll-margin-top:98px}
  .product-stage{padding:10px}
  .hero.dark-shell:after{bottom:-28%;height:43%}
 }
+
+
+/* Site-wide palette and section continuity: replace stark white with soft mineral neutrals */
+:root{
+ --page-surface:#edf2f0;
+ --surface-soft:#e7eeeb;
+ --surface-card:#f8faf9;
+ --surface-line:#d7e1dd;
+ --ink:#17262d;
+ --muted:#607078;
+}
+body{background:var(--page-surface);color:var(--ink)}
+main{background:var(--page-surface)}
+/* Light sections now share one quiet family of blue-grey and sage tones. */
+.calculator-section,
+.capabilities,
+.pricing-section{
+ background:linear-gradient(180deg,#edf2f0 0%,#e9efec 100%);
+}
+.managed-section,
+.dashboard-showcase,
+.onboard-section{
+ background:linear-gradient(180deg,#e6eeea 0%,#edf2f0 100%);
+}
+.faq-section{
+ background:linear-gradient(180deg,#e3ebe7 0%,#e9efec 100%);
+}
+/* Soft fades make the change of section feel intentional rather than abrupt. */
+.trust-strip{border-bottom:0}
+.calculator-section{position:relative}
+.calculator-section:before,
+.managed-section:before,
+.dashboard-showcase:before,
+.faq-section:before,
+.onboard-section:before{
+ content:"";display:block;height:1px;position:absolute;top:0;left:0;right:0;
+ background:linear-gradient(90deg,transparent,rgba(105,137,128,.18),transparent);
+}
+.calculator-section,.managed-section,.dashboard-showcase,.faq-section,.onboard-section{position:relative}
+.dark-band{
+ background:linear-gradient(180deg,#0c1822 0%,#0b141d 72%,#0d1b25 100%);
+}
+.industry-section{
+ background:linear-gradient(180deg,#0d1b25 0%,#0a151e 100%);
+}
+.final-cta.dark-shell{
+ background:
+  radial-gradient(ellipse 80% 80% at 50% 120%,rgba(27,105,105,.30),transparent 70%),
+  linear-gradient(180deg,#0a151e 0%,#0b1722 100%);
+}
+.final-cta{position:relative;overflow:hidden}
+.final-cta:before{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:radial-gradient(ellipse 60% 45% at 50% 100%,rgba(73,190,170,.12),transparent 72%);
+}
+.final-inner{position:relative;z-index:1}
+/* Panels remain slightly lighter than the page, never glaring pure white. */
+.calculator{background:#e3ebe7;border-color:#d2ded8}
+.calc-controls{background:#e8efeb}
+.price-card,
+.managed-compare,
+.managed-pillars article,
+.form-panel{
+ background:var(--surface-card);
+ border-color:#d7e2dd;
+}
+.competitor-compare{background:#e4ece8;border-color:#d2ded8}
+.competitor-table{background:#f7faf8}
+.competitor-table th{background:#e7eeea}
+.form-panel input:not([type=checkbox]),
+.form-panel textarea,
+.form-panel select{background:#fbfcfb;border-color:#d4dfda}
+.privacy-note{border-color:#d0ddd7}
+.setup-invoice-note{background:#e6f3ee}
+.submit-note{background:#eaf1ed}
+.faq-list details,.faq-list details:first-child{border-color:#cbd8d2}
+.faq-list summary{color:#20323a}
+.faq-list details p{color:#586b72}
+/* Cards have quiet separation from the background without bright white blocks. */
+.price-card{box-shadow:0 8px 24px rgba(16,43,40,.035)}
+.price-card.recommended{background:#f7fbf9;box-shadow:0 14px 36px rgba(11,111,93,.09)}
+.cap-grid{border-color:#d3ded9}
+.cap-card{border-color:#d3ded9;background:rgba(248,250,249,.54)}
+.industry-grid article{background:rgba(18,34,44,.78)}
+.dashboard-shell{background:#f8faf9;border-color:#d3dfda}
+.dashboard-demo-top,.dashboard-demo-side{background:#eef3f0}
+.dashboard-demo-main{background:#f8faf9}
+.dashboard-demo-kpi,.dashboard-demo-panel,.demo-agent,.demo-lead{background:#fbfcfb;border-color:#dce5e0}
+.dashboard-demo-tab.active{background:#dcece5}
+.dashboard-demo-disclaimer{background:#f3efe3}
+.footer{background:#071018}
+/* Keep every small text and control legible against the new muted surfaces. */
+.section-heading>div>p,.section-heading>p{color:#596b73}
+.estimate-note,.pricing-footnote,.legal-disclosure{color:#5d6d73}
+.cap-card p,.managed-pillars p,.managed-intro p{color:#5d6e73}
+.faq-layout>div:first-child>p{color:#596b73}
+.onboard-copy>p{color:#596b73}
+.onboard-points small{color:#65777c}
+.privacy-note{color:#586d6d}
+@media(max-width:650px){
+ .calculator-section,.capabilities,.pricing-section,.managed-section,.dashboard-showcase,.faq-section,.onboard-section{background-color:#eaf0ed}
+ .calculator{border-radius:10px}
+}
