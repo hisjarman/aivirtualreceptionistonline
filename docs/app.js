@@ -89,6 +89,18 @@ nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
 document.querySelector("#year").textContent = new Date().getFullYear();
 showStep(0);
 
+
+const quickContact = document.querySelector("#quick-contact-form");
+if (quickContact) quickContact.addEventListener("submit", async event => {
+  event.preventDefault(); if (!quickContact.reportValidity()) return;
+  const button=quickContact.querySelector('button[type="submit"]'), status=quickContact.querySelector("[data-contact-status]"), data=new FormData(quickContact);
+  const payload={type:"quick_question",name:String(data.get("name")||"").trim(),email:String(data.get("email")||"").trim(),phone:String(data.get("phone")||"").trim(),subject:String(data.get("subject")||"").trim(),message:String(data.get("message")||"").trim(),meetingRequest:data.get("meetingRequest")==="on",contactConsent:true,website:String(data.get("website")||"")};
+  button.disabled=true;button.textContent="Sending…";status.textContent="";
+  try { const response=await fetch(API_BASE+"/api/contact",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.message||"We couldn't send your message. Please try again.");quickContact.reset();status.textContent=result.meetingRequested?"Message received. We emailed you a confirmation and will contact you to arrange an engineering call.":"Message received. A confirmation email is on its way.";status.classList.remove("error");}
+  catch(error){status.textContent=error.message||"Please email admin@aivirtualreceptionist.online directly.";status.classList.add("error");}
+  finally{button.disabled=false;button.textContent="Send message ↗";}
+});
+
 /* Missed-call opportunity calculator */
 const calcFields = [
   ["calls-range","calls-value",v=>String(v)],
