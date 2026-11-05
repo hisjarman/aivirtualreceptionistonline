@@ -28,7 +28,7 @@
   $("#na-signin").addEventListener("click",()=>clerk?.openSignIn());
   $("#na-refresh").addEventListener("click",load);
   $("#na-export").addEventListener("click",()=>{
-    const rows=[["email","first_name","status","joined"],...subscribers.map(s=>[s.email,s.firstName||"",s.status,s.createdAt||""])];
+    const rows=[["email","first_name","status","joined","unsubscribe_url"],...subscribers.map(s=>[s.email,s.firstName||"",s.status,s.createdAt||"",s.unsubscribeUrl||""])];
     const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
     const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
     const a=document.createElement("a");a.href=url;a.download="avr-weekly-story-subscribers.csv";a.click();URL.revokeObjectURL(url);
