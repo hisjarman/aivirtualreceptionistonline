@@ -235,3 +235,88 @@ main{background:var(--page-surface)}
  .calculator-section,.capabilities,.pricing-section,.managed-section,.dashboard-showcase,.faq-section,.onboard-section{background-color:#eaf0ed}
  .calculator{border-radius:10px}
 }
+
+
+/* Unified low-glare midnight-slate system: no full-width white or pale section bands. */
+:root{
+ --page-surface:#182831;
+ --surface-soft:#202f38;
+ --surface-card:#293b43;
+ --surface-line:#3b5058;
+ --ink:#edf3f1;
+ --muted:#b8c6c9;
+}
+html,body,main{background:#182831!important;color:#edf3f1}
+body{color:#edf3f1}
+main>section,
+main>.section,
+.trust-strip,
+.calculator-section,
+.managed-section,
+.capabilities,
+.industry-section,
+.dashboard-showcase,
+.pricing-section,
+.faq-section,
+.onboard-section,
+.final-cta{
+ background:#182831!important;
+ color:#edf3f1;
+}
+.trust-strip,.calculator-section,.managed-section,.capabilities,
+.dashboard-showcase,.pricing-section,.faq-section,.onboard-section{
+ background:linear-gradient(180deg,#182831 0%,#1b2c35 100%)!important;
+}
+.dark-band,.industry-section{
+ background:linear-gradient(180deg,#1b2c35 0%,#17262f 100%)!important;
+}
+.final-cta.dark-shell{
+ background:radial-gradient(ellipse 75% 75% at 50% 115%,rgba(52,139,128,.20),transparent 72%),#17262f!important;
+}
+.calculator,.calc-controls,.competitor-compare,.competitor-table,
+.price-card,.managed-compare,.managed-pillars article,.form-panel,
+.dashboard-shell,.dashboard-demo-main,.dashboard-demo-top,
+.dashboard-demo-side,.dashboard-demo-kpi,.dashboard-demo-panel,
+.demo-agent,.demo-lead,.cap-card,.industry-grid article{
+ background:#293b43!important;
+ color:#edf3f1;
+ border-color:#40565e!important;
+}
+.competitor-table th,.dashboard-demo-tab.active{
+ background:#344a52!important;
+ color:#edf3f1!important;
+}
+.cap-grid{border-color:#40565e}
+.cap-card{background:#253740!important}
+.price-card.recommended{background:#30464b!important;border-color:#6caa9c!important}
+.form-panel input:not([type=checkbox]),
+.form-panel textarea,.form-panel select{
+ background:#1d3039!important;color:#f0f5f3!important;border-color:#52666d!important;
+}
+.form-panel input::placeholder,.form-panel textarea::placeholder{color:#a9b9bc}
+.setup-invoice-note,.submit-note,.dashboard-demo-disclaimer{
+ background:#34443f!important;color:#dce9e3!important;border-color:#52675f!important;
+}
+.faq-list details,.faq-list details:first-child{background:transparent!important;border-color:#40565e!important}
+.faq-list summary,.faq-list details p{color:#e3ece9!important}
+.section-heading h2,.section-heading h3,.dark-band h2,.industry-section h2,
+.faq-layout h2,.onboard-copy h2,.price-card h3,.cap-card h3,
+.managed-pillars h3,.faq-list summary{color:#edf3f1!important}
+.section-heading>div>p,.section-heading>p,.section p,
+.estimate-note,.pricing-footnote,.legal-disclosure,.cap-card p,
+.managed-pillars p,.managed-intro p,.faq-layout>div:first-child>p,
+.onboard-copy>p,.onboard-points small,.privacy-note{
+ color:#b8c6c9;
+}
+.price-card,.calculator,.form-panel,.dashboard-shell{box-shadow:0 14px 38px rgba(0,0,0,.16)}
+.price-card:hover,.step-card:hover,.industry-grid article:hover{box-shadow:0 18px 42px rgba(0,0,0,.24)}
+.back-to-top{background:#293b43;color:#a8c9be;border-color:#52666d}
+.back-to-top:hover{background:#344a52}
+.calculator-section:before,.managed-section:before,.dashboard-showcase:before,
+.faq-section:before,.onboard-section:before{
+ background:linear-gradient(90deg,transparent,rgba(168,201,190,.13),transparent);
+}
+@media(max-width:650px){
+ .calculator-section,.capabilities,.pricing-section,.managed-section,
+ .dashboard-showcase,.faq-section,.onboard-section{background:#182831!important}
+}
