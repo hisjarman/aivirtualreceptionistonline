@@ -119,7 +119,7 @@
     }
     const payload = {
       kind,
-      title: form.elements.title.value.trim(),
+      title: form.elements.title.value.trim() || form.elements.body.value.trim().slice(0, 80),
       body: form.elements.body.value.trim(),
       displayName: form.elements.displayName.value.trim(),
       industry: form.elements.industry.value.trim(),
