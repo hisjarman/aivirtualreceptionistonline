@@ -1,6 +1,7 @@
 (() => {
-  // Public API is hosted by the existing Render backend; never put secrets in this file.
-  const API_BASE = "https://aivirtualreceptionist-clean1.onrender.com";
+  // The API base is intentionally unset until the new backend is deployed.
+  // Never put Clerk Secret Keys or HubSpot tokens in this public file.
+  const API_BASE = window.AVR_CONFIG?.apiBase || "";
   const form = document.querySelector("#tl-form");
   const message = document.querySelector("#tl-message");
   const submit = document.querySelector("#tl-submit");
@@ -8,12 +9,51 @@
   const score = document.querySelector("#tl-score");
   const scoreValue = document.querySelector("#tl-score-value");
   const scoreWrap = document.querySelector("#tl-score-wrap");
+  const authTitle = document.querySelector("#tl-auth-title");
+  const authStatus = document.querySelector("#tl-auth-status");
+  const authActions = document.querySelector("#tl-auth-actions");
+  const userButton = document.querySelector("#tl-user-button");
   let kind = "challenge";
+  let clerk = null;
+  let userButtonMounted = false;
 
   const labels = { challenge: "Challenge", question: "Question", stress_test: "Stress test" };
   const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[ch]);
+
+  function isVerified() {
+    const email = clerk?.user?.primaryEmailAddress;
+    return Boolean(clerk?.isSignedIn && email?.verification?.status === "verified");
+  }
+
+  function updateAuthState() {
+    const signedIn = Boolean(clerk?.isSignedIn);
+    const verified = isVerified();
+    submit.disabled = !verified;
+    authActions.hidden = signedIn;
+    userButton.hidden = !signedIn;
+    if (signedIn) {
+      authTitle.textContent = verified ? "You're signed in" : "Verify your email to submit";
+      authStatus.textContent = verified
+        ? "Your account is ready. Your submission will be linked to your verified account."
+        : "Complete the email verification step in Clerk before submitting a test.";
+      if (!userButtonMounted) {
+        clerk.mountUserButton(userButton);
+        userButtonMounted = true;
+      }
+    } else {
+      authTitle.textContent = "Sign in to submit a test";
+      authStatus.textContent = "Create a free account or sign in. Your email must be verified before submitting.";
+      if (userButtonMounted) {
+        clerk.unmountUserButton(userButton);
+        userButtonMounted = false;
+      }
+    }
+  }
+
+  document.querySelector("#tl-sign-up").addEventListener("click", () => clerk?.openSignUp());
+  document.querySelector("#tl-sign-in").addEventListener("click", () => clerk?.openSignIn());
 
   document.querySelectorAll("[data-kind]").forEach(button => {
     button.addEventListener("click", () => {
@@ -43,6 +83,10 @@
   }
 
   async function loadWall() {
+    if (!API_BASE) {
+      wall.innerHTML = '<div class="tl-empty">The new Trust Lab service is being connected. Please check back soon.</div>';
+      return;
+    }
     try {
       const response = await fetch(API_BASE + "/api/trust-lab/wall", { headers: { "Accept": "application/json" } });
       if (!response.ok) throw new Error("wall unavailable");
@@ -65,6 +109,14 @@
     event.preventDefault();
     if (!form.reportValidity()) return;
     if (!document.querySelector("#tl-confirm").checked) return;
+    if (!isVerified()) {
+      showMessage("Please sign in and verify your email before submitting.", true);
+      return;
+    }
+    if (!API_BASE) {
+      showMessage("The new submission service is not connected yet. Your test has not been sent.", true);
+      return;
+    }
     const payload = {
       kind,
       title: form.elements.title.value.trim(),
@@ -78,15 +130,21 @@
     submit.textContent = "Sending for review…";
     message.hidden = true;
     try {
+      const token = await clerk.session?.getToken();
+      if (!token) throw new Error("Your sign-in session expired. Please sign in again.");
       const response = await fetch(API_BASE + "/api/trust-lab/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer " + token
+        },
         body: JSON.stringify(payload)
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || result.created !== true) {
         if (result.error === "database_unavailable") throw new Error("The submission database is temporarily unavailable. Please try again later.");
-        throw new Error("We couldn't submit this test. Please try again in a moment.");
+        throw new Error(result.error || "We couldn't submit this test. Please try again in a moment.");
       }
       form.reset();
       score.value = "50";
@@ -96,10 +154,26 @@
     } catch (error) {
       showMessage(error.message || "Submission failed. Please try again.", true);
     } finally {
-      submit.disabled = false;
+      submit.disabled = !isVerified();
       submit.innerHTML = 'Submit for human review <span>→</span>';
     }
   });
 
+  async function initClerk() {
+    try {
+      if (!window.Clerk) throw new Error("ClerkJS did not load. Check the Clerk Frontend API domain and script access.");
+      await window.Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+      clerk = window.Clerk;
+      updateAuthState();
+      clerk.addListener(updateAuthState);
+    } catch (error) {
+      authTitle.textContent = "Account sign-in is temporarily unavailable";
+      authStatus.textContent = error.message || "Please try again later.";
+      authActions.hidden = true;
+      submit.disabled = true;
+    }
+  }
+
   loadWall();
+  initClerk();
 })();
