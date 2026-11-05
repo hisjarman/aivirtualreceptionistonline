@@ -68,3 +68,15 @@
 .tl-footer a{color:#bce9df;text-decoration:none;font-weight:700}
 @media(max-width:800px){.tl-grid{grid-template-columns:1fr}.tl-wall{grid-template-columns:repeat(2,minmax(0,1fr))}.tl-hero{padding:55px 0 48px}}
 @media(max-width:560px){.tl-wrap{width:min(100% - 28px,1120px)}.tl-two{grid-template-columns:1fr;gap:0}.tl-wall{grid-template-columns:1fr}.tl-wall-head{align-items:flex-start;flex-direction:column}.tl-pills span{font-size:9px}.tl-tabs button{min-width:90px;font-size:11px}.tl-panel{border-radius:15px}}
+
+.tl-auth{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 18px;margin:20px 0 4px;border:1px solid rgba(112,225,203,.24);border-radius:13px;background:rgba(15,31,39,.55)}
+.tl-auth-copy{display:grid;gap:5px;min-width:0}
+.tl-auth-copy strong{color:#eaf5f0;font-size:13px}
+.tl-auth-copy span{color:#9fb8b9;font-size:11px;line-height:1.5}
+.tl-auth-actions{display:flex;gap:8px;flex-wrap:wrap;flex:none}
+.tl-auth-actions button{border-radius:9px;padding:10px 13px;font:600 11px 'DM Sans',sans-serif;cursor:pointer}
+.tl-auth-primary{border:1px solid #70e1cb;background:#70e1cb;color:#142b32}
+.tl-auth-secondary{border:1px solid #527078;background:transparent;color:#dceae5}
+.tl-user-button{flex:none}
+.tl-admin-link{color:#8fa7aa;font-size:11px;line-height:1.6}
+@media(max-width:560px){.tl-auth{align-items:flex-start;flex-direction:column}.tl-auth-actions{width:100%}.tl-auth-actions button{flex:1}}
