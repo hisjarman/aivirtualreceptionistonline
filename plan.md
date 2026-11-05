@@ -1,18 +1,18 @@
-# CallPilot AI — implementation plan
+# AI Virtual Receptionist — implementation plan
 
 ## Product scope
-CallPilot AI is a managed AI receptionist service for small and medium-sized service businesses. The first shipped slice combines the public conversion website with a credible, navigable preview of the customer portal, onboarding flow, and administrator back office. The UI must be clear that CallPilot configures and manages the underlying reseller agent; customer edits become proposed change requests until an administrator reviews and deploys them.
+AI Virtual Receptionist is a managed AI receptionist service for small and medium-sized service businesses. The first shipped slice combines the public conversion website with a credible, navigable preview of the customer portal, onboarding flow, and administrator back office. The UI must be clear that AI Virtual Receptionist configures and manages the underlying reseller agent; customer edits become proposed change requests until an administrator reviews and deploys them.
 
 ## Architecture
 - Frontend: React 19 + TypeScript + Vite, with Wouter for route-level navigation, Tailwind CSS v4, Radix primitives where useful, lucide-react icons, and Framer Motion for restrained transitions.
-- Backend: existing Express + tRPC starter, preserving Manus OAuth session conventions and `/api/health`.
+- Backend: existing Express + tRPC starter, preserving the existing OAuth session conventions and `/api/health`.
 - Data: Drizzle ORM over the managed MySQL-compatible database. Extend the schema with organizations, memberships, onboarding submissions, configurations, change requests, agents, deployment tasks, support tickets, content, pricing, and audit records. Use additive migrations and keep provider credentials out of application tables.
 - Provider boundary: a `providerAdapter` interface documents manual fulfillment today and leaves room for verified provider API calls later; no fake synchronization or live call metrics.
 - Configuration: marketing copy, plan prices, allowances, onboarding fees, contact settings, and legal drafts are content/config records so an administrator can edit them later without code changes.
 
 ## Delivery slices
 1. Brand shell, responsive navigation/footer, home, features, how-it-works, pricing, industries, about, contact, blog/help/legal routes, SEO route manifest, and public demo.
-2. Manus OAuth-aware application shell, database schema, tenant model, and tRPC procedures for profile, onboarding, change requests, tickets, and admin fulfillment.
+2. OAuth-aware application shell, database schema, tenant model, and tRPC procedures for profile, onboarding, change requests, tickets, and admin fulfillment.
 3. Customer workspace with setup progress, approved vs pending configuration, test/approval area, call/report empty states, billing status, and support ticket UI.
 4. Admin workspace with submissions queue, fulfillment checklist, change-request inbox, support queue, content/pricing controls, margin calculator, and audit log.
 5. Payment/email/storage integrations remain explicitly configuration-gated. Provide env documentation, safe fallbacks, and operational-vs-unconfigured status badges.
@@ -42,7 +42,7 @@ Three considered directions: “Quiet enterprise” 0.07 — restrained navy/tea
 - `server/routers.ts`: tRPC surface for auth, onboarding, customer requests, tickets, and admin workflows.
 - `server/db.ts`: typed persistence helpers and tenant-safe query boundaries.
 - `drizzle/schema.ts` and `drizzle/`: relational schema and migrations.
-- `public/manus-routes.json`: complete page route manifest for Preview and SEO tooling.
+- Route metadata is maintained with the application and deployment configuration.
 - `README.md` / `.env.example`: operating, deployment, email, payment, and provider setup notes.
 
 ## Material constraints and safeguards
