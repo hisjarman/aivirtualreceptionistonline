@@ -62,3 +62,117 @@
 .dashboard-demo-note{font-size:9px;color:#87949b;margin-top:13px;line-height:1.6}
 @media(max-width:850px){.dashboard-demo-body{grid-template-columns:145px 1fr}.dashboard-demo-kpis{grid-template-columns:repeat(2,1fr)}.dashboard-demo-grid{grid-template-columns:1fr}.dashboard-demo-main{padding:18px}.demo-agent-list,.demo-lead-list{grid-template-columns:1fr}}
 @media(max-width:600px){.dashboard-showcase{padding:65px 0}.dashboard-demo-body{grid-template-columns:1fr}.dashboard-demo-side{display:flex;gap:4px;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid #e8edef}.dashboard-demo-side .side-label{display:none}.dashboard-demo-tab{width:auto;white-space:nowrap;padding:9px;font-size:8px}.dashboard-demo-tab span{font-size:12px}.dashboard-demo-main{padding:14px 10px}.dashboard-demo-heading h3{font-size:16px}.dashboard-demo-date{font-size:7px;padding:7px}.dashboard-demo-kpis{gap:6px}.dashboard-demo-kpi{padding:10px}.dashboard-demo-kpi strong{font-size:18px}.dashboard-demo-panel{padding:12px}.demo-table{font-size:7px}.demo-table th{font-size:6px}.demo-table td{padding:8px 4px}.dashboard-demo-top{padding:12px}.dashboard-demo-disclaimer{font-size:8px}}
+
+
+/* Accessibility and dark retro dashboard refresh — overrides the original compact light preview */
+.dashboard-showcase{
+  background:radial-gradient(ellipse at 12% 8%,#234c50 0%,#192f39 38%,#142630 78%) !important;
+  color:#edf7f4 !important;
+  padding:88px 0 !important;
+}
+.dashboard-showcase .section-kicker{color:#83e4d0 !important}
+.dashboard-showcase .section-heading h2,
+.dashboard-showcase .section-heading p{color:#edf7f4 !important}
+.dashboard-showcase .section-heading h2 em{color:#7de2ce !important}
+.dashboard-showcase .estimate-note{color:#d0e1dd !important;background:#203a43 !important;border:1px solid #42616a !important}
+.dashboard-shell{
+  background:#172a33 !important;
+  border:1px solid #42616a !important;
+  border-radius:18px !important;
+  box-shadow:0 26px 75px #07171dcc, inset 0 1px #ffffff12 !important;
+}
+.dashboard-demo-top{
+  background:linear-gradient(180deg,#263f49,#1d333d) !important;
+  border-bottom:1px solid #405963 !important;
+  padding:19px 24px !important;
+}
+.dashboard-demo-brand{color:#f2faf7 !important;font-size:14px !important}
+.dashboard-demo-brand i{width:36px !important;height:36px !important;background:#174e4b !important;color:#82ead4 !important;font-size:19px !important}
+.dashboard-demo-top small{font-size:10px !important;color:#b4cbc6 !important}
+.dashboard-demo-pill{font-size:10px !important;color:#8ff0d9 !important;background:#174b46 !important;padding:9px 12px !important}
+.dashboard-demo-body{grid-template-columns:205px minmax(0,1fr) !important;min-height:590px !important}
+.dashboard-demo-side{background:#1b3039 !important;border-right:1px solid #405963 !important;padding:24px 14px !important}
+.dashboard-demo-side .side-label{font-size:10px !important;color:#a9c1bc !important}
+.dashboard-demo-tab{font-size:14px !important;color:#d1e1dd !important;padding:13px 12px !important;border-radius:9px !important}
+.dashboard-demo-tab span{font-size:18px !important}
+.dashboard-demo-tab:hover{background:#29474b !important;color:#9bf1dc !important}
+.dashboard-demo-tab.active{background:#174c48 !important;color:#9bf1dc !important;box-shadow:inset 3px 0 #70e1c8 !important}
+.dashboard-demo-main{padding:28px !important;background:#142831 !important}
+.dashboard-demo-heading h3{font-size:24px !important;color:#f2faf7 !important}
+.dashboard-demo-heading p{font-size:14px !important;color:#bfd0cc !important}
+.dashboard-demo-date{font-size:10px !important;color:#c7d9d4 !important;border-color:#49636a !important;background:#203943 !important}
+.dashboard-demo-kpis{gap:13px !important;margin-bottom:16px !important}
+.dashboard-demo-kpi,.dashboard-demo-panel,.demo-agent,.demo-lead{
+  background:linear-gradient(145deg,#223b45,#1b323c) !important;
+  border:1px solid #405b64 !important;
+  border-radius:12px !important;
+  box-shadow:0 7px 18px #07171d40,inset 0 1px #ffffff0a !important;
+}
+.dashboard-demo-kpi{padding:17px !important}
+.dashboard-demo-kpi small{font-size:10px !important;color:#b6cbc6 !important;letter-spacing:.07em !important}
+.dashboard-demo-kpi strong{font-size:30px !important;color:#f4fbf8 !important;margin:11px 0 5px !important}
+.dashboard-demo-kpi em{font-size:12px !important;color:#8fe5d1 !important}
+.dashboard-demo-grid{gap:14px !important;margin-bottom:14px !important}
+.dashboard-demo-panel{padding:19px !important}
+.dashboard-demo-panel h4{font-size:15px !important;color:#f0f8f5 !important;margin-bottom:7px !important}
+.dashboard-demo-panel>p{font-size:12px !important;color:#b8cbc6 !important}
+.demo-bars{border-color:#49616a !important}
+.demo-bar{background:#77cdbb !important;width:11px !important}
+.demo-bar.alt{background:#26a58e !important}
+.demo-bar-labels{font-size:10px !important;color:#b6c9c4 !important}
+.demo-donut{background:conic-gradient(#2ab397 0 58%,#79d8c4 58% 82%,#496c70 82% 100%) !important}
+.demo-donut:after{background:#203943 !important}
+.demo-donut b{font-size:20px !important;color:#f3fbf8 !important}
+.demo-legend{font-size:12px !important;color:#d1e0dc !important}
+.demo-legend span:before{width:9px !important;height:9px !important}
+.demo-table{font-size:12px !important;margin-top:16px !important}
+.demo-table th{font-size:10px !important;color:#b3c8c2 !important;border-color:#405963 !important;padding:11px 9px !important}
+.demo-table td{font-size:12px !important;color:#d4e2de !important;border-color:#354e58 !important;padding:13px 9px !important}
+.demo-table td:first-child{color:#f1f8f5 !important}
+.demo-status{font-size:10px !important;background:#174e47 !important;color:#9cf0d9 !important;padding:6px 8px !important}
+.demo-status.pending{background:#59452a !important;color:#ffdc9c !important}
+.demo-agent h4,.demo-lead h4{font-size:16px !important;color:#f1f8f5 !important}
+.demo-agent p,.demo-lead p{font-size:13px !important;color:#bfd0cb !important;line-height:1.65 !important}
+.demo-agent-icon{width:42px !important;height:42px !important;background:#174b46 !important;color:#91efda !important}
+.demo-agent-meta{font-size:11px !important;color:#c2d5cf !important}
+.demo-lead-row b{font-size:13px !important;color:#f0f8f5 !important}
+.dashboard-demo-disclaimer{background:#3a3425 !important;border-top:1px solid #665638 !important;color:#f1d9a7 !important;font-size:12px !important;padding:16px 20px !important}
+.dashboard-demo-disclaimer strong{color:#ffe5ad !important}
+.dashboard-demo-note{font-size:12px !important;color:#b9cbc6 !important}
+.dashboard-demo-view[hidden]{display:none !important}
+@media(max-width:850px){
+ .dashboard-demo-body{grid-template-columns:155px minmax(0,1fr) !important}
+ .dashboard-demo-main{padding:20px !important}
+ .dashboard-demo-kpis{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+ .dashboard-demo-grid{grid-template-columns:1fr !important}
+}
+@media(max-width:600px){
+ .dashboard-showcase{padding:62px 0 !important}
+ .dashboard-demo-body{grid-template-columns:minmax(0,1fr) !important}
+ .dashboard-demo-side{background:#1b3039 !important;display:flex !important;gap:5px !important;overflow-x:auto !important;padding:10px !important;border:0 !important;border-bottom:1px solid #405963 !important}
+ .dashboard-demo-side .side-label{display:none !important}
+ .dashboard-demo-tab{font-size:12px !important;padding:11px 10px !important;flex:0 0 auto !important}
+ .dashboard-demo-tab span{font-size:15px !important}
+ .dashboard-demo-main{padding:16px 12px !important}
+ .dashboard-demo-heading{align-items:flex-start !important;flex-wrap:wrap !important}
+ .dashboard-demo-heading h3{font-size:19px !important}
+ .dashboard-demo-heading p{font-size:12px !important}
+ .dashboard-demo-date{font-size:9px !important}
+ .dashboard-demo-kpis{gap:8px !important}
+ .dashboard-demo-kpi{padding:12px !important}
+ .dashboard-demo-kpi small{font-size:9px !important}
+ .dashboard-demo-kpi strong{font-size:24px !important}
+ .dashboard-demo-kpi em{font-size:10px !important}
+ .dashboard-demo-panel{padding:13px !important}
+ .dashboard-demo-panel h4{font-size:14px !important}
+ .dashboard-demo-panel>p{font-size:11px !important}
+ .demo-table{display:block !important;overflow-x:auto !important;white-space:nowrap !important}
+ .demo-table th{font-size:9px !important}
+ .demo-table td{font-size:10px !important;padding:10px 7px !important}
+ .dashboard-demo-top{padding:13px !important}
+ .dashboard-demo-brand{font-size:11px !important}
+ .dashboard-demo-top small{font-size:8px !important}
+ .dashboard-demo-pill{font-size:8px !important}
+ .demo-agent-list,.demo-lead-list{grid-template-columns:1fr !important}
+ .dashboard-demo-disclaimer{font-size:10px !important;padding:13px !important}
+}
