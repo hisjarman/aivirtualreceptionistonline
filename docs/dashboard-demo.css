@@ -176,3 +176,16 @@
  .demo-agent-list,.demo-lead-list{grid-template-columns:1fr !important}
  .dashboard-demo-disclaimer{font-size:10px !important;padding:13px !important}
 }
+
+
+/* User-requested readability override: make all dashboard preview text white */
+#dashboard-showcase .dashboard-shell,
+#dashboard-showcase .dashboard-shell * {
+  color: #ffffff !important;
+}
+#dashboard-showcase .dashboard-shell .demo-bar,
+#dashboard-showcase .dashboard-shell .demo-bar.alt,
+#dashboard-showcase .dashboard-shell .demo-donut,
+#dashboard-showcase .dashboard-shell .demo-donut:after {
+  color: #ffffff !important;
+}
