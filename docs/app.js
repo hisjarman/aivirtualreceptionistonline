@@ -30,7 +30,7 @@ if (menuToggle && nav) {
 
 
 const form = document.querySelector("#intake-form");
-const fields = [...form.querySelectorAll("fieldset")];
+const fields = [...form.children].filter(element => element.tagName === "FIELDSET");
 const back = document.querySelector("#back-button");
 const next = document.querySelector("#next-button");
 const submit = document.querySelector("#submit-button");
