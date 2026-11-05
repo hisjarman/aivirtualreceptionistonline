@@ -126,7 +126,6 @@ form.addEventListener("submit", async event => {
     }
 
     let confirmationSent = false;
-    let confirmationError = "";
     if (payload.contactConsent === "yes") {
       try {
         const confirmationResponse = await fetch(API_BASE + "/api/contact", {
@@ -146,7 +145,6 @@ form.addEventListener("submit", async event => {
         if (!confirmationResponse.ok) throw new Error(confirmationResult.error || "Confirmation service unavailable");
         confirmationSent = confirmationResult.confirmationSent === true;
       } catch (confirmationFailure) {
-        confirmationError = confirmationFailure.message || "Confirmation email unavailable";
       }
     }
 
