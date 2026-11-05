@@ -81,25 +81,58 @@ form.addEventListener("submit", async event => {
   submit.disabled = true;
   submit.textContent = "Sending…";
   errorBox.hidden = true;
+
   const payload = Object.fromEntries(new FormData(form).entries());
-  payload.submittedAt = new Date().toISOString();
-  payload.source = "AIVirtualReceptionist.online GitHub Pages onboarding";
+  const submittedAt = new Date().toISOString();
   const brief = [
-    ["Business", payload.business], ["Industry", payload.industry], ["Website", payload.website],
-    ["Service area", payload.serviceArea], ["Services", payload.services], ["Monthly call volume", payload.callVolume],
-    ["Business hours", payload.hours], ["Caller tasks", payload.callTasks], ["Common questions", payload.faqs],
-    ["Phone setup", payload.phoneSetup], ["Plan interest", payload.planInterest], ["Additional notes", payload.notes]
+    ["Contact name", payload.name],
+    ["Email", payload.email],
+    ["Phone", payload.phone],
+    ["Business", payload.business],
+    ["Industry", payload.industry],
+    ["Website", payload.website],
+    ["Service area", payload.serviceArea],
+    ["Services", payload.services],
+    ["Monthly call volume", payload.callVolume],
+    ["Business hours", payload.hours],
+    ["Caller tasks", payload.callTasks],
+    ["Common questions", payload.faqs],
+    ["Phone setup", payload.phoneSetup],
+    ["Plan interest", payload.planInterest],
+    ["Additional notes", payload.notes],
+    ["Contact permission", payload.contactConsent === "yes" ? "Yes, contact me about this inquiry" : "No follow-up requested"],
+    ["Privacy acknowledgement", payload.privacyConsent ? "Confirmed" : "Not confirmed"],
+    ["Submitted at", submittedAt],
+    ["Source", "AIVirtualReceptionist.online business discovery form"]
   ].map(([label, value]) => label + ": " + (String(value || "").trim() || "Not provided")).join("\n");
+
   try {
-    const response = await fetch(API_BASE + "/api/contact", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ ...payload, type: "onboarding", subject: "New custom receptionist onboarding request", message: brief, contactConsent: payload.contactConsent === "yes" }) });
+    const formData = new FormData(form);
+    formData.append("_subject", "New business discovery request — AI Virtual Receptionist");
+    if (payload.email) formData.append("_replyto", payload.email);
+    formData.append("message", brief);
+    formData.append("submittedAt", submittedAt);
+    formData.append("source", "AIVirtualReceptionist.online business discovery form");
+
+    const response = await fetch("https://formspree.io/f/mrppjqdb", {
+      method: "POST",
+      headers: { "Accept": "application/json" },
+      body: formData
+    });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.message || "Submission failed");
+    if (!response.ok || result.ok === false) {
+      const detail = Array.isArray(result.errors) ? result.errors.map(item => item.message).filter(Boolean).join(" ") : "";
+      throw new Error(detail || result.error || "Formspree could not accept your request. Please try again.");
+    }
+
     form.hidden = true;
     const success = document.querySelector("#form-success");
-    success.querySelector("p").textContent = payload.contactConsent !== "yes" ? "Your brief has been received. You selected not to be contacted, so we will not send a follow-up email." : result.confirmationSent ? "Your brief has been received. Check your inbox for a confirmation; we will follow up about your custom demo." : "Your brief has been received, but the confirmation email could not be sent. Please email admin@aivirtualreceptionist.online if you need confirmation.";
+    success.querySelector("p").textContent = payload.contactConsent !== "yes"
+      ? "Your business brief has been received. You selected not to be contacted, so we will not follow up."
+      : "Your business brief has been received through our secure form provider. We will review it and contact you about this request.";
     success.hidden = false;
-  } catch {
-    errorBox.textContent = "We couldn't send your brief. Please try again in a moment or contact the business owner directly.";
+  } catch (error) {
+    errorBox.textContent = error.message || "We couldn't send your brief. Please try again in a moment or contact admin@aivirtualreceptionist.online.";
     errorBox.hidden = false;
   } finally {
     submit.disabled = false;
