@@ -11,7 +11,7 @@
    const response=await fetch(API+"/api/partners/apply",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});
    const result=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(result.error==="application_rate_limit"?"Too many attempts. Please try again later.":result.error==="application_unavailable"?"The application service is temporarily unavailable. Please try again shortly.":"Please check your details and try again.");
-   form.hidden=true;const note=success.querySelector('p');if(note)note.textContent='Your application has been received and is awaiting manual review. A confirmation email will be sent to the address you provided.';success.hidden=false;
+   form.hidden=true;const note=success.querySelector('p');if(note)note.textContent=result.confirmationSent?'Your application has been received and is awaiting manual review. Check your inbox for a confirmation email.':'Your application has been received and is awaiting manual review, but the confirmation email could not be sent.';success.hidden=false;
   }catch(error){status.textContent=error.message||"We couldn't submit your application. Please try again.";status.classList.add("error");button.disabled=false;button.textContent="Submit partner application ↗";}
  });
 })();
