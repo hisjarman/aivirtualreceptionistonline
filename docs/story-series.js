@@ -37,7 +37,7 @@
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || "We couldn't save your subscription. Please try again.");
         form.reset();
-        status.textContent = "You're on the list! Email delivery will begin once the newsletter sender is connected.";
+        status.textContent = result.confirmationSent ? "You're subscribed! Check your inbox for a confirmation email." : "You're subscribed, but the confirmation email could not be sent just now.";
       } catch (error) {
         status.textContent = error.message || "Something went wrong. Please try again.";
         status.classList.add("error");
