@@ -20,15 +20,23 @@
   $("#minutes-used").textContent=used.toLocaleString();
   $("#minutes-included").textContent=allowance.toLocaleString()+" included minutes";
  }
- function renderCalls(calls){
+ function renderCalls(calls,defaultEmail=""){
   const root=$("#calls-table");
   if(!calls.length){root.innerHTML='<div class="empty">No calls have been recorded for your account yet.</div>';return}
   root.innerHTML='<table><thead><tr><th>DATE</th><th>CALLER</th><th>STATUS</th><th>DURATION</th><th>SUMMARY</th><th></th></tr></thead><tbody>'+calls.map((c,i)=>{
    const summary=c.call_summary||"No summary available",transcript=c.transcript||"",recording=safeHttps(c.recording_url);
-   const detail='<div class="call-detail-grid"><div><b>Call summary</b><p>'+safe(summary)+'</p><p class="small">Direction: '+safe(c.direction||"—")+' · Sentiment: '+safe(c.user_sentiment||"—")+' · Disconnection: '+safe(c.disconnection_reason||"—")+'</p></div><div><b>Transcript</b><pre class="transcript">'+safe(transcript||"No transcript available for this call.")+'</pre>'+(recording?'<a class="btn secondary recording-link" href="'+safe(recording)+'" target="_blank" rel="noopener noreferrer">Open call recording ↗</a>':'<span class="small">No recording available</span>')+'</div></div>';
+   const callId=String(c.call_id||"");
+   const detail='<div class="call-detail-grid"><div><b>Call summary</b><p>'+safe(summary)+'</p><p class="small">Direction: '+safe(c.direction||"—")+' · Sentiment: '+safe(c.user_sentiment||"—")+' · Disconnection: '+safe(c.disconnection_reason||"—")+'</p><form class="call-email-form" data-call-id="'+safe(callId)+'"><label class="small" for="call-email-'+i+'">Send call details to email</label><div class="row"><input id="call-email-'+i+'" name="email" type="email" value="'+safe(defaultEmail)+'" placeholder="name@business.com" required><button class="btn secondary" type="submit">Email details</button></div><label class="small"><input type="checkbox" name="authorized" required> I confirm this recipient is authorized to receive this call information.</label><span class="small email-status" role="status"></span></form></div><div><b>Transcript</b><pre class="transcript">'+safe(transcript||"No transcript available for this call.")+'</pre>'+(recording?'<audio class="call-audio" controls preload="none" src="'+safe(recording)+'">Your browser does not support audio playback.</audio><a class="small recording-link" href="'+safe(recording)+'" target="_blank" rel="noopener noreferrer">Open recording in new tab ↗</a>':'<span class="small">No recording available</span>')+'</div></div>';
    return '<tr><td>'+safe(fmtDate(c.start_timestamp))+'</td><td>'+safe(c.from_number||"Unknown")+'</td><td><span class="status">'+safe(c.call_status||"—")+'</span></td><td>'+Math.ceil((c.duration_ms||0)/60000)+' min</td><td><div class="call-summary">'+safe(summary)+'</div></td><td><button class="btn secondary call-toggle" type="button" data-call-index="'+i+'" aria-expanded="false">Details</button></td></tr><tr class="call-detail-row hidden" data-detail-index="'+i+'"><td colspan="6">'+detail+'</td></tr>';
   }).join("")+'</tbody></table>';
   root.querySelectorAll(".call-toggle").forEach(b=>b.addEventListener("click",()=>{const row=root.querySelector('[data-detail-index="'+b.dataset.callIndex+'"]');const open=row.classList.toggle("hidden")===false;b.setAttribute("aria-expanded",String(open));b.textContent=open?"Hide":"Details"}));
+  root.querySelectorAll(".call-email-form").forEach(form=>form.addEventListener("submit",async e=>{
+   e.preventDefault();const button=form.querySelector('button[type="submit"]'),status=form.querySelector(".email-status"),email=form.elements.email.value.trim();
+   if(!form.elements.authorized.checked){status.textContent="Please confirm the recipient is authorized.";return}
+   button.disabled=true;status.textContent="Sending…";
+   try{await api("/api/client/calls/"+encodeURIComponent(form.dataset.callId)+"/email",{method:"POST",body:JSON.stringify({email})});status.textContent="Call details emailed successfully."}
+   catch(err){status.textContent=err.message;button.disabled=false}
+  }));
  }
  async function load(){
   if(loading)return;loading=true;$("#refresh-dashboard").disabled=true;
@@ -55,7 +63,7 @@
    $("#contact-email").value=customer.email||"";
    $("#agent-list").innerHTML=d.agents.length?d.agents.map(a=>'<div class="resource"><b>'+safe(a.agent_name||a.agent_id)+'</b><span class="small">Your assigned AI receptionist</span></div>').join(""):'<div class="empty">Your receptionist is being prepared or has not yet been assigned.</div>';
    $("#number-list").innerHTML=d.numbers.length?d.numbers.map(n=>'<div class="resource"><b>'+safe(n.phone_number)+'</b><span class="small">'+safe(n.nickname||"Business line")+'</span></div>').join(""):'<div class="empty">Your business phone number has not been assigned yet.</div>';
-   renderCalls(d.calls||[]);
+   renderCalls(d.calls||[],customer.email||"");
   }catch(e){note(e.message,true)}
   finally{loading=false;$("#refresh-dashboard").disabled=false}
  }
