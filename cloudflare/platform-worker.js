@@ -48,9 +48,26 @@ async function stripeWebhook(req,env){const raw=await req.text(),sig=req.headers
 }
 async function retellVerify(raw,signature,key){if(!key||!signature)return false;const m=signature.match(/v=(\d+),d=([a-f0-9]+)/i);if(!m)return false;const ts=m[1],stamp=Number(ts);if(Math.abs(Date.now()-stamp)>5*60*1000)return false;const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(key),{name:"HMAC",hash:"SHA-256"},false,["sign"]);const out=new Uint8Array(await crypto.subtle.sign("HMAC",k,new TextEncoder().encode(raw+ts)));const hex=Array.from(out,x=>x.toString(16).padStart(2,"0")).join("");return hex===m[2].toLowerCase()}
 async function retellApi(env,path,method="GET",data){if(!env.RETELL_API_KEY)throw Error("retell_not_configured");const r=await fetch("https://api.retellai.com"+path,{method,headers:{Authorization:"Bearer "+env.RETELL_API_KEY,"Content-Type":"application/json"},body:data?JSON.stringify(data):undefined});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||d.error||"retell_request_failed");return d}
-async function syncRetell(env){const [agents,numbers]=await Promise.all([retellApi(env,"/list-agents"),retellApi(env,"/list-phone-numbers")]);for(const a of (Array.isArray(agents)?agents:agents.agents||[])){await env.DB.prepare("INSERT INTO avr_agents(agent_id,agent_name,voice_id,language,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(agent_id) DO UPDATE SET agent_name=excluded.agent_name,voice_id=excluded.voice_id,language=excluded.language,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(a.agent_id,a.agent_name||a.agent_name||a.agent_id,a.voice_id||null,a.language||null,JSON.stringify(a),new Date().toISOString()).run()}
- for(const n of (Array.isArray(numbers)?numbers:numbers.phone_numbers||[])){const phone=n.phone_number;const inbound=n.inbound_agents?.[0]?.agent_id||n.inbound_agent_id||null;await env.DB.prepare("INSERT INTO avr_numbers(phone_number,nickname,agent_id,phone_number_type,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(phone_number) DO UPDATE SET nickname=excluded.nickname,agent_id=COALESCE(avr_numbers.agent_id,excluded.agent_id),phone_number_type=excluded.phone_number_type,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(phone,n.nickname||null,inbound,n.phone_number_type||null,JSON.stringify(n),new Date().toISOString()).run()}
- return {agents:Array.isArray(agents)?agents.length:(agents.agents||[]).length,numbers:Array.isArray(numbers)?numbers.length:(numbers.phone_numbers||[]).length}}
+async function retellList(env,path,method="GET",data){
+ const all=[];let cursor=null,guard=0;
+ do{
+  if(++guard>100)throw Error("retell_pagination_limit_exceeded");
+  let url=path,body=data?{...data}:{};
+  if(cursor){if(method==="GET"){url+=(url.includes("?")?"&":"?")+"pagination_key="+encodeURIComponent(cursor)}else body.pagination_key=cursor}
+  const page=await retellApi(env,url,method,method==="GET"?undefined:body);
+  const items=Array.isArray(page)?page:(page.items||page.agents||page.phone_numbers||[]);
+  all.push(...items);
+  cursor=page.pagination_key||null;
+  if(!page.has_more)break;
+ }while(cursor);
+ return all;
+}
+async function syncRetell(env){
+ const [agents,numbers]=await Promise.all([retellList(env,"/v2/list-agents","POST",{}),retellList(env,"/v2/list-phone-numbers","GET")]);
+ for(const a of agents){await env.DB.prepare("INSERT INTO avr_agents(agent_id,agent_name,voice_id,language,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(agent_id) DO UPDATE SET agent_name=excluded.agent_name,voice_id=excluded.voice_id,language=excluded.language,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(a.agent_id,a.agent_name||a.agent_id,a.voice_id||null,a.language||null,JSON.stringify(a),new Date().toISOString()).run()}
+ for(const n of numbers){const phone=n.phone_number;const inbound=n.inbound_agents?.[0]?.agent_id||n.inbound_agent_id||null;await env.DB.prepare("INSERT INTO avr_numbers(phone_number,nickname,agent_id,phone_number_type,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(phone_number) DO UPDATE SET nickname=excluded.nickname,agent_id=COALESCE(avr_numbers.agent_id,excluded.agent_id),phone_number_type=excluded.phone_number_type,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(phone,n.nickname||null,inbound,n.phone_number_type||null,JSON.stringify(n),new Date().toISOString()).run()}
+ return {agents:agents.length,numbers:numbers.length}
+}
 async function retellWebhook(req,env){const raw=await req.text();if(!await retellVerify(raw,req.headers.get("x-retell-signature"),env.RETELL_API_KEY))throw Error("invalid_retell_signature");const p=JSON.parse(raw),call=p.call||{},id=call.call_id;if(!id)return {received:true,ignored:true};const seen=await env.DB.prepare("SELECT event_id FROM avr_webhook_events WHERE provider='retell' AND event_id=?").bind(id+":"+p.event).first();if(seen)return {received:true,duplicate:true};
  const agent=call.agent_id||null,direction=call.direction||null,to=call.to_number||null,line=direction==="outbound"?(call.from_number||null):(call.to_number||null),phone=line?await env.DB.prepare("SELECT customer_id FROM avr_numbers WHERE phone_number=?").bind(line).first():null,agentRow=agent?await env.DB.prepare("SELECT customer_id FROM avr_agents WHERE agent_id=?").bind(agent).first():null,cid=phone?.customer_id||agentRow?.customer_id||null;
  const start=call.start_timestamp||null,end=call.end_timestamp||null,duration=call.duration_ms||((start&&end)?end-start:null),callStatus=call.call_status||(p.event==="call_ended"?"ended":p.event==="call_analyzed"?"analyzed":p.event||"unknown");
