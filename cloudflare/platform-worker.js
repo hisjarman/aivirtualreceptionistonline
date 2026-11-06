@@ -81,6 +81,8 @@ async function retellWebhook(req,env){
  const phone=line?await env.DB.prepare("SELECT customer_id FROM avr_numbers WHERE phone_number=?").bind(line).first():null;
  const agentRow=agent?await env.DB.prepare("SELECT customer_id FROM avr_agents WHERE agent_id=?").bind(agent).first():null;
  const cid=phone?.customer_id||agentRow?.customer_id||null;
+ await env.DB.prepare("INSERT OR IGNORE INTO avr_retell_events(event_id,event_type,call_id,agent_id,customer_id,payload_json) VALUES(?,?,?,?,?,?)")
+ .bind(eventKey,event, id,agent,cid,JSON.stringify(p).slice(0,100000)).run();
  const start=call.start_timestamp||null,end=call.end_timestamp||null;
  const duration=call.duration_ms||((start&&end)?end-start:null);
  const callStatus=call.call_status||(event==="call_ended"?"ended":event==="call_analyzed"?"analyzed":event);
@@ -113,6 +115,7 @@ async function route(req,env){
    if(path==="/api/admin/assignments"&&req.method==="POST"){const p=await body(req),customerId=String(p.customerId||""),agentId=String(p.agentId||""),phone=String(p.phoneNumber||"");const c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(customerId).first();if(!c)throw Error("customer_not_found");if(agentId){const a=await env.DB.prepare("SELECT agent_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();if(!a)throw Error("agent_not_found")}if(phone){const n=await env.DB.prepare("SELECT phone_number FROM avr_numbers WHERE phone_number=?").bind(phone).first();if(!n)throw Error("phone_number_not_found");if(!agentId)throw Error("select_agent_for_phone_number");await retellApi(env,"/update-phone-number/"+encodeURIComponent(phone),"PATCH",{inbound_agents:[{agent_id:agentId,weight:1}],outbound_agents:[{agent_id:agentId,weight:1}]})}
     if(agentId)await env.DB.prepare("UPDATE avr_agents SET customer_id=? WHERE agent_id=?").bind(customerId,agentId).run();if(phone)await env.DB.prepare("UPDATE avr_numbers SET customer_id=?,agent_id=? WHERE phone_number=?").bind(customerId,agentId||null,phone).run();await audit(env,u,"resources_assigned",customerId,{agentId,phone});return json({saved:true},200,origin,env)}
    if(path==="/api/admin/calls"&&req.method==="GET"){const r=await env.DB.prepare("SELECT x.*,c.business_name FROM avr_calls x LEFT JOIN avr_customers c ON c.id=x.customer_id ORDER BY x.start_timestamp DESC LIMIT 200").all();return json({calls:r.results||[]},200,origin,env)}
+   if(path==="/api/admin/retell/events"&&req.method==="GET"){const limit=Math.min(500,Math.max(1,Number(url.searchParams.get("limit")||200)));const r=await env.DB.prepare("SELECT e.event_id,e.event_type,e.call_id,e.agent_id,e.customer_id,c.business_name,e.received_at,e.payload_json FROM avr_retell_events e LEFT JOIN avr_customers c ON c.id=e.customer_id ORDER BY e.received_at DESC LIMIT ?").bind(limit).all();return json({events:r.results||[]},200,origin,env)}
    if(path==="/api/admin/billing-events"&&req.method==="GET"){const r=await env.DB.prepare("SELECT e.*,c.business_name,c.email FROM avr_billing_events e LEFT JOIN avr_customers c ON c.id=e.customer_id ORDER BY e.event_created DESC LIMIT 100").all();return json({events:r.results||[]},200,origin,env)}
    return json({error:"admin_route_not_found"},404,origin,env)
   }
