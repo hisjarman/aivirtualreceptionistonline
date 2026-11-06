@@ -47,4 +47,25 @@
   window.addEventListener("scroll",update,{passive:true});
   window.addEventListener("resize",update);
   update();
+
+  // Accessible responsive navigation toggle.
+  const menuButton=document.querySelector(".menu-toggle");
+  const primaryNav=document.querySelector("#primary-navigation");
+  if(menuButton && primaryNav){
+    const closeMenu=()=>{
+      menuButton.setAttribute("aria-expanded","false");
+      menuButton.setAttribute("aria-label","Open navigation menu");
+      primaryNav.classList.remove("open");
+    };
+    menuButton.addEventListener("click",()=>{
+      const opening=menuButton.getAttribute("aria-expanded")!=="true";
+      menuButton.setAttribute("aria-expanded",String(opening));
+      menuButton.setAttribute("aria-label",opening?"Close navigation menu":"Open navigation menu");
+      primaryNav.classList.toggle("open",opening);
+    });
+    primaryNav.querySelectorAll("a").forEach(link=>link.addEventListener("click",closeMenu));
+    document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeMenu();const more=primaryNav.querySelector(".nav-more");if(more)more.open=false;}});
+    document.addEventListener("click",event=>{if(!primaryNav.contains(event.target)&&!menuButton.contains(event.target)){closeMenu();}});
+    window.addEventListener("resize",()=>{if(window.innerWidth>650)closeMenu();});
+  }
 })();
