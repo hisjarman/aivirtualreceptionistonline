@@ -68,12 +68,27 @@ async function syncRetell(env){
  for(const n of numbers){const phone=n.phone_number;const inbound=n.inbound_agents?.[0]?.agent_id||n.inbound_agent_id||null;await env.DB.prepare("INSERT INTO avr_numbers(phone_number,nickname,agent_id,phone_number_type,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(phone_number) DO UPDATE SET nickname=excluded.nickname,agent_id=COALESCE(avr_numbers.agent_id,excluded.agent_id),phone_number_type=excluded.phone_number_type,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(phone,n.nickname||null,inbound,n.phone_number_type||null,JSON.stringify(n),new Date().toISOString()).run()}
  return {agents:agents.length,numbers:numbers.length}
 }
-async function retellWebhook(req,env){const raw=await req.text();if(!await retellVerify(raw,req.headers.get("x-retell-signature"),env.RETELL_API_KEY))throw Error("invalid_retell_signature");const p=JSON.parse(raw),call=p.call||{},id=call.call_id;if(!id)return {received:true,ignored:true};const seen=await env.DB.prepare("SELECT event_id FROM avr_webhook_events WHERE provider='retell' AND event_id=?").bind(id+":"+p.event).first();if(seen)return {received:true,duplicate:true};
- const agent=call.agent_id||null,direction=call.direction||null,to=call.to_number||null,line=direction==="outbound"?(call.from_number||null):(call.to_number||null),phone=line?await env.DB.prepare("SELECT customer_id FROM avr_numbers WHERE phone_number=?").bind(line).first():null,agentRow=agent?await env.DB.prepare("SELECT customer_id FROM avr_agents WHERE agent_id=?").bind(agent).first():null,cid=phone?.customer_id||agentRow?.customer_id||null;
- const start=call.start_timestamp||null,end=call.end_timestamp||null,duration=call.duration_ms||((start&&end)?end-start:null),callStatus=call.call_status||(p.event==="call_ended"?"ended":p.event==="call_analyzed"?"analyzed":p.event||"unknown");
- await env.DB.prepare("INSERT INTO avr_calls(call_id,customer_id,agent_id,phone_number,from_number,to_number,direction,call_status,duration_ms,start_timestamp,end_timestamp,transcript,recording_url,call_summary,user_sentiment,disconnection_reason,raw_json) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(call_id) DO UPDATE SET customer_id=COALESCE(excluded.customer_id,avr_calls.customer_id),agent_id=excluded.agent_id,call_status=excluded.call_status,duration_ms=excluded.duration_ms,start_timestamp=excluded.start_timestamp,end_timestamp=excluded.end_timestamp,transcript=COALESCE(excluded.transcript,avr_calls.transcript),recording_url=COALESCE(excluded.recording_url,avr_calls.recording_url),call_summary=COALESCE(excluded.call_summary,avr_calls.call_summary),user_sentiment=excluded.user_sentiment,disconnection_reason=excluded.disconnection_reason,raw_json=excluded.raw_json").bind(id,cid,agent,line,call.from_number||null,to,direction,callStatus,duration,start,end,call.transcript||null,call.recording_url||null,call.call_analysis?.call_summary||null,call.call_analysis?.user_sentiment||null,call.disconnection_reason||null,JSON.stringify(call).slice(0,100000)).run();
- await env.DB.prepare("INSERT OR IGNORE INTO avr_webhook_events(provider,event_id) VALUES('retell',?)").bind(id+":"+p.event).run();
- return {received:true};
+async function retellWebhook(req,env){
+ const raw=await req.text();
+ if(!await retellVerify(raw,req.headers.get("x-retell-signature"),env.RETELL_API_KEY))throw Error("invalid_retell_signature");
+ const p=JSON.parse(raw),event=String(p.event||"unknown"),call=p.call||{},id=call.call_id||p.call_id;
+ if(!id)return {received:true,ignored:true,event};
+ const eventKey=id+":"+event;
+ const seen=await env.DB.prepare("SELECT event_id FROM avr_webhook_events WHERE provider='retell' AND event_id=?").bind(eventKey).first();
+ if(seen)return {received:true,duplicate:true,event};
+ const agent=call.agent_id||null,direction=call.direction||null,to=call.to_number||null;
+ const line=direction==="outbound"?(call.from_number||null):(call.to_number||null);
+ const phone=line?await env.DB.prepare("SELECT customer_id FROM avr_numbers WHERE phone_number=?").bind(line).first():null;
+ const agentRow=agent?await env.DB.prepare("SELECT customer_id FROM avr_agents WHERE agent_id=?").bind(agent).first():null;
+ const cid=phone?.customer_id||agentRow?.customer_id||null;
+ const start=call.start_timestamp||null,end=call.end_timestamp||null;
+ const duration=call.duration_ms||((start&&end)?end-start:null);
+ const callStatus=call.call_status||(event==="call_ended"?"ended":event==="call_analyzed"?"analyzed":event);
+ const analysis=call.call_analysis||{};
+ await env.DB.prepare("INSERT INTO avr_calls(call_id,customer_id,agent_id,phone_number,from_number,to_number,direction,call_status,duration_ms,start_timestamp,end_timestamp,transcript,recording_url,call_summary,user_sentiment,disconnection_reason,raw_json) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(call_id) DO UPDATE SET customer_id=COALESCE(excluded.customer_id,avr_calls.customer_id),agent_id=COALESCE(excluded.agent_id,avr_calls.agent_id),phone_number=COALESCE(excluded.phone_number,avr_calls.phone_number),from_number=COALESCE(excluded.from_number,avr_calls.from_number),to_number=COALESCE(excluded.to_number,avr_calls.to_number),direction=COALESCE(excluded.direction,avr_calls.direction),call_status=excluded.call_status,duration_ms=COALESCE(excluded.duration_ms,avr_calls.duration_ms),start_timestamp=COALESCE(excluded.start_timestamp,avr_calls.start_timestamp),end_timestamp=COALESCE(excluded.end_timestamp,avr_calls.end_timestamp),transcript=COALESCE(excluded.transcript,avr_calls.transcript),recording_url=COALESCE(excluded.recording_url,avr_calls.recording_url),call_summary=COALESCE(excluded.call_summary,avr_calls.call_summary),user_sentiment=COALESCE(excluded.user_sentiment,avr_calls.user_sentiment),disconnection_reason=COALESCE(excluded.disconnection_reason,avr_calls.disconnection_reason),raw_json=excluded.raw_json")
+ .bind(id,cid,agent,line,call.from_number||null,to,direction,callStatus,duration,start,end,call.transcript||null,call.recording_url||null,analysis.call_summary||null,analysis.user_sentiment||null,call.disconnection_reason||null,JSON.stringify(p).slice(0,100000)).run();
+ await env.DB.prepare("INSERT OR IGNORE INTO avr_webhook_events(provider,event_id) VALUES('retell',?)").bind(eventKey).run();
+ return {received:true,event,call_id:id,customer_matched:!!cid};
 }
 async function route(req,env){
  const url=new URL(req.url),path=url.pathname,origin=req.headers.get("Origin");
