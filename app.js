@@ -76,7 +76,7 @@ form.addEventListener("submit", async event => {
     ["Phone setup", payload.phoneSetup],
     ["Plan interest", payload.planInterest],
     ["Additional notes", payload.notes],
-    ["Contact permission", payload.contactConsent === "yes" ? "Yes, contact me about this inquiry" : "No follow-up requested"],
+    ["Contact request", "Customer submitted the discovery brief and requested a response about this inquiry"],
     ["Privacy acknowledgement", payload.privacyConsent ? "Confirmed" : "Not confirmed"],
     ["Submitted at", submittedAt],
     ["Source", "AIVirtualReceptionist.online business discovery form"]
@@ -102,7 +102,7 @@ form.addEventListener("submit", async event => {
     }
 
     let confirmationSent = false;
-    if (payload.contactConsent === "yes") {
+    {
       try {
         const confirmationResponse = await fetch(API_BASE + "/api/contact", {
           method: "POST",
@@ -126,11 +126,9 @@ form.addEventListener("submit", async event => {
 
     form.hidden = true;
     const success = document.querySelector("#form-success");
-    success.querySelector("p").textContent = payload.contactConsent !== "yes"
-      ? "Your business brief has been received. You selected not to be contacted, so we will not follow up."
-      : confirmationSent
-        ? "Your business brief has been received. A confirmation email is on its way, and we will review your details and contact you about this request."
-        : "Your business brief has been received. We could not send the confirmation email automatically, but your request was submitted successfully.";
+    success.querySelector("p").textContent = confirmationSent
+      ? "Your business brief has been received. A confirmation email is on its way, and we will review your details and contact you about this request."
+      : "Your business brief has been received. We could not send the confirmation email automatically, but your request was submitted successfully.";
     success.hidden = false;
   } catch (error) {
     errorBox.textContent = error.message || "We couldn't send your brief. Please try again in a moment or contact admin@aivirtualreceptionist.online.";
