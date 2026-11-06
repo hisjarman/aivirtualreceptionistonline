@@ -164,3 +164,19 @@
 
 /* Dedicated industry landing-page link */
 .industry-page-link{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:#70e1cb;font-size:12px;font-weight:800;border-bottom:1px solid #70e1cb;padding-bottom:4px}.industry-page-link:hover{color:#a0f1e2;border-color:#a0f1e2}
+
+
+/* Clear done-for-you value proposition */
+.hero-service-promise{margin:22px 0 20px;padding:17px 19px;border:1px solid rgba(112,225,203,.34);border-radius:15px;background:linear-gradient(135deg,rgba(112,225,203,.12),rgba(91,139,190,.10));box-shadow:0 14px 34px rgba(0,0,0,.14)}
+.hero-service-promise>strong{display:block;color:#8cebd9;font-size:.76rem;letter-spacing:.11em;font-weight:800}
+.hero-service-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 16px;margin:13px 0}
+.hero-service-items span{font-size:.88rem;font-weight:700;color:#f1f7f5}
+.hero-service-promise>small{display:block;color:#c2d3d2;font-size:.82rem}
+.competitor-value-banner{margin:22px 0 20px;padding:22px 24px;border:1px solid rgba(112,225,203,.35);border-radius:16px;background:linear-gradient(120deg,rgba(112,225,203,.12),rgba(91,139,190,.12));color:inherit}
+.competitor-value-heading{font-size:.76rem;letter-spacing:.12em;font-weight:900;color:#70e1cb}
+.competitor-value-banner>p{margin:10px 0 15px;max-width:950px;line-height:1.65}
+.competitor-value-banner>p strong{color:inherit}
+.competitor-value-points{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+.competitor-value-points span{padding:11px 12px;border:1px solid rgba(112,225,203,.22);border-radius:10px;background:rgba(8,20,27,.28);font-size:.85rem;font-weight:800}
+.competitor-value-footer{padding-top:14px;border-top:1px solid rgba(112,225,203,.2);font-size:.9rem;line-height:1.6;color:inherit}
+@media(max-width:700px){.hero-service-promise{padding:15px}.hero-service-items{grid-template-columns:1fr;gap:7px}.competitor-value-banner{padding:18px}.competitor-value-points{grid-template-columns:repeat(2,minmax(0,1fr))}}
