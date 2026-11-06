@@ -2,111 +2,157 @@
 
 Managed AI receptionist service for service businesses. The agency handles each client's receptionist setup, configuration, phone routing, monitoring, and ongoing support.
 
-## Product model
+## Live repository structure
 
-- **Managed service:** the agency configures and maintains each client's AI receptionist.
-- **Separate client workspaces:** client data, calls, usage, and support activity must be isolated by account.
-- **Client portal:** clients should be able to review their own calls, leads, usage, billing, and support activity. Clients do not directly edit production agent prompts or provider settings.
-- **Agency console:** agency administrators manage clients, Retell agents, phone numbers, assignments, configuration changes, and cross-client operations.
-- **Provider integration:** Retell is the intended voice-agent provider. Provider features must not be shown as active until the API and webhook integration is configured and verified.
+- Root-level HTML/CSS/JS — existing public marketing website (preserved).
+- \`client/\` — customer portal (GitHub Pages static frontend).
+- \`admin/\` — private agency admin console (GitHub Pages static frontend; API-enforced admin authorization).
+- \`cloudflare/platform-worker.js\` — Cloudflare Workers API for Clerk authentication, customer workspaces, Stripe billing, Retell sync, assignments, calls and webhooks.
+- \`cloudflare/schema.sql\` — platform D1 schema.
+- Existing \`avr-trust-lab-api\` Worker and its Trust Lab/contact/newsletter/partner features remain separate and unchanged.
 
-## Repository layout
+## Hosting architecture
 
-- `client/` — React application and customer/admin workspaces.
-- `server/` — Express API, authentication integration, and tRPC procedures.
-- `drizzle/` — database schema and migrations.
-- `cloudflare/` — Cloudflare Worker source, if present in the current checkout.
-- Root-level HTML, CSS, JavaScript, and asset folders — static marketing website.
+- **GitHub Pages:** marketing site, customer portal at \`https://aivirtualreceptionist.online/client/\`, admin console at \`https://aivirtualreceptionist.online/admin/\`.
+- **Cloudflare Workers:** API at \`https://avr-platform-api.hisjarman.workers.dev\`.
+- **Cloudflare D1:** uses the existing \`avr-trust-lab\` database; new platform tables are prefixed \`avr_\` to avoid collisions with existing tables.
+- **Clerk:** existing Clerk instance and verified-email login. The Worker verifies Clerk JWT signatures and performs a server-side user lookup. Admin access is separately restricted by \`ADMIN_EMAILS\`.
+- **Stripe:** subscription Checkout, customer billing portal and signed webhook processing.
+- **Retell:** agent/phone-number sync, phone assignment, signed call webhooks, call summaries/transcripts and usage records.
 
-## Local development
+No Render service is required.
 
-Requirements: Node.js 20+ and pnpm.
+## Existing marketing form
 
-```bash
-pnpm install
-pnpm dev
-```
+The website discovery form continues to use:
 
-Useful checks:
-
-```bash
-pnpm check
-pnpm test
-pnpm build
-```
-
-Apply database migrations only after confirming the target database and backup:
-
-```bash
-pnpm db:migrate
-```
-
-Use the repository's package scripts as the source of truth if a command is unavailable in a particular branch.
-
-## Static website / GitHub Pages
-
-The static marketing website lives at the repository root. To publish it with GitHub Pages:
-
-1. Open repository **Settings → Pages**.
-2. Under **Build and deployment**, choose **Deploy from a branch**.
-3. Choose branch **main** and folder **/ (root)**, then save.
-4. GitHub will show the published URL in Pages settings.
-
-The website's root `index.html` is the static-site entry point. GitHub Pages serves static files only; it does not run the Express/tRPC backend or database.
-
-### Discovery form (Formspree)
-
-The discovery form should submit to this Formspree endpoint:
-
-```text
+\`\`\`text
 https://formspree.io/f/mrppjqdb
-```
+\`\`\`
 
-The form integration is configured in the root-level `app.js`. Keep the endpoint in sync with the value above, then test the form from the published website and confirm that a submission reaches the Formspree inbox. Do not put passwords, payment details, private API keys, or provider credentials in the form or browser code.
+The form collects business information for follow-up; it does not itself activate a subscription.
 
-The discovery form collects business information for follow-up; it does not itself activate service or process payment.
+## Customer and admin portal
 
-## Retell integration and live-call data
+Customer portal:
+- View assigned agent and phone numbers.
+- View recent calls, summaries and call duration.
+- View monthly minutes used versus included allowance.
+- Edit business contact details.
+- Start a subscription or open the Stripe customer portal to update payment details, view invoices, change plans or cancel (subject to Stripe portal configuration).
 
-Retell credentials must remain server-side. Never expose a Retell API key in browser code, public environment variables, GitHub commits, or client-visible responses.
+Admin console:
+- Create customer workspaces and link them by verified Clerk email.
+- Manage customer service status and plan allowance.
+- Sync Retell voice agents and phone numbers.
+- Assign an agent and number to a customer; when a number is selected, the Worker updates its Retell inbound/outbound agent binding.
+- View cross-customer calls and Stripe billing events.
+- Admin authorization is enforced in the Worker, not merely hidden in the browser.
 
-The intended integration flow is:
+## Cloudflare Worker setup
 
-1. Store the Retell API key as a secret in the Cloudflare Worker (for example, `RETELL_API_KEY`).
-2. Receive Retell events through a Worker webhook endpoint.
-3. Verify webhook authenticity, reject invalid requests, and deduplicate events before processing.
-4. Forward verified events to the application backend over an authenticated server-to-server connection.
-5. Persist call events and transcripts, then associate each call with the correct client using the agency's agent/phone-number assignment records.
-6. Enforce authorization on the backend: agency administrators can access authorized cross-client views; each client can access only its own calls and records.
+Worker name: \`avr-platform-api\`
 
-The expected event lifecycle includes call start, transcript updates, call end, and post-call analysis. The application should treat provider webhooks as the source of event updates and reconcile completed calls with Retell's call-detail API when needed.
+Worker URL: \`https://avr-platform-api.hisjarman.workers.dev\`
 
-This section describes the intended integration contract; it is not proof that the Worker, webhook, API credentials, or live-call dashboard are already deployed. Mark provider-backed features as unavailable until an end-to-end test confirms them.
+The Worker is already deployed with:
+- D1 binding \`DB\` -> existing \`avr-trust-lab\` database.
+- \`CLERK_ISSUER\` -> current Clerk development issuer.
+- \`ADMIN_EMAILS\` -> current admin email.
+- \`ALLOWED_ORIGINS\` -> the marketing site origins.
 
-## Authentication and deployment
+### Add these Worker secrets
 
-The full-stack application requires a Node-compatible server, a configured database, and a working authentication provider. Preserve the authentication provider's existing production environment settings unless a replacement has been implemented and tested. Never commit authentication secrets.
+In Cloudflare Dashboard -> Workers & Pages -> \`avr-platform-api\` -> Settings -> Variables and Secrets, add the following as **Secret** values:
 
-GitHub Pages hosts only the static marketing site. The full-stack portal requires its own server deployment, database connection, environment variables, and secure authentication configuration.
+| Secret name | Value |
+|---|---|
+| \`CLERK_SECRET_KEY\` | Secret key from the existing Clerk instance |
+| \`STRIPE_SECRET_KEY\` | Stripe API secret key (start with test mode) |
+| \`STRIPE_WEBHOOK_SECRET\` | Signing secret from the Stripe webhook endpoint |
+| \`RETELL_API_KEY\` | Retell API key marked as the webhook key |
 
-## Trust Lab
+Never put these values in GitHub, HTML, browser JavaScript, a public Worker variable or a chat message.
 
-The public Trust Lab page is `trust-lab.html`. Public submissions should remain pending until moderated. Only authorized agency administrators should be able to approve or publish submissions.
+### Add these Worker variables
 
-## Pricing and service notes
+Add the following as plain-text variables. Use the recurring monthly Price IDs created in Stripe for the exact existing plans:
 
-Confirm setup fees, included minutes, overages, telephony charges, SMS charges, and third-party usage in the current written offer before accepting payment. Keep website pricing, checkout configuration, and service terms consistent.
+| Variable | Plan | Existing price |
+|---|---|---:|
+| \`STRIPE_PRICE_STARTER\` | Starter | $149/month, 300 included voice minutes |
+| \`STRIPE_PRICE_GROWTH\` | Growth | $249/month, 600 included voice minutes |
+| \`STRIPE_PRICE_PRO\` | Pro | $399/month, 1,000 included voice minutes |
 
-## Production readiness checklist
+Do not change the published plan prices. The $99 one-time setup fee remains separately invoiced and is not added to subscription Checkout.
 
-Before launch or enabling a provider-backed feature, verify:
+After adding or changing variables/secrets, redeploy or restart the Worker if the dashboard requests it.
 
-- Authentication, role permissions, and client-to-client data isolation.
-- Database connectivity, migrations, backups, and restore procedures.
-- CORS, server-side secrets, webhook signature verification, and event deduplication.
-- Retell agent and phone-number assignment, call lifecycle events, transcripts, recordings, and usage reconciliation.
-- Client dashboard visibility is limited to that client's records.
-- Agency-only controls are not exposed to client accounts.
-- Payment processing, transactional email, support workflows, and privacy disclosures.
-- Call recording consent, retention, deletion, and applicable legal requirements.
-- All public claims accurately distinguish live features from planned or unconfigured integrations.
+## Stripe configuration
+
+1. Start in Stripe test mode.
+2. Create three recurring monthly Products/Prices: $149, $249 and $399 USD.
+3. Copy each Stripe Price ID into the matching Worker variable above.
+4. Configure the Stripe customer portal to allow payment-method updates, invoice history, subscription cancellation and plan changes.
+5. Add a Stripe webhook endpoint:
+   \`https://avr-platform-api.hisjarman.workers.dev/webhooks/stripe\`
+6. Subscribe to at least:
+   - \`checkout.session.completed\`
+   - \`customer.subscription.created\`
+   - \`customer.subscription.updated\`
+   - \`customer.subscription.deleted\`
+   - \`invoice.payment_failed\`
+7. Copy the endpoint signing secret into \`STRIPE_WEBHOOK_SECRET\`.
+
+Stripe webhooks—not the browser success redirect—update the local subscription status. Checkout will not work until the API secret, webhook secret and three Price IDs are configured.
+
+## Retell configuration
+
+1. Add \`RETELL_API_KEY\` using the Retell API key that has the **Webhook** badge.
+2. Set the Retell account webhook URL to:
+   \`https://avr-platform-api.hisjarman.workers.dev/webhooks/retell\`
+3. Enable call events including \`call_started\`, \`call_ended\` and \`call_analyzed\`.
+4. Use **Sync Retell account** in the admin console to import agents and numbers.
+5. Assign a customer, agent and phone number in the admin console.
+6. Make a test call and confirm the call appears under the correct customer.
+
+The Worker verifies the Retell \`x-retell-signature\` using the designated Retell webhook API key. Calls are deduplicated by call ID/event.
+
+## API routes
+
+Public:
+- \`GET /health\`
+- \`POST /webhooks/stripe\`
+- \`POST /webhooks/retell\`
+
+Authenticated customer:
+- \`GET /api/me\`
+- \`GET /api/client/dashboard\`
+- \`PATCH /api/client/profile\`
+- \`POST /api/billing/checkout\`
+- \`POST /api/billing/portal\`
+
+Admin-only:
+- \`GET /api/admin/overview\`
+- \`GET|POST /api/admin/customers\`
+- \`PATCH /api/admin/customers/:id\`
+- \`POST /api/admin/retell/sync\`
+- \`GET /api/admin/retell/resources\`
+- \`POST /api/admin/assignments\`
+- \`GET /api/admin/calls\`
+- \`GET /api/admin/billing-events\`
+
+## Important launch checks
+
+- The Clerk publishable key in the static pages currently references the existing **development** Clerk instance. Replace it with the production Clerk publishable key when you switch Clerk to production, and update \`CLERK_ISSUER\` in the Worker to the matching production issuer. Keep the secret key server-side.
+- Add \`https://aivirtualreceptionist.online\` and any active www origin to Clerk's allowed origins.
+- Configure Stripe test mode first and complete a test purchase, portal update and cancellation before switching to live mode.
+- Confirm the Retell webhook is set to the API key with the Webhook badge.
+- Verify customer-to-customer data isolation and admin permissions with separate test accounts.
+- Confirm recording consent, retention, deletion and applicable privacy/legal requirements before exposing recordings or transcripts.
+- Usage is currently derived from Retell call duration events and rounded up to whole minutes for display. Confirm the exact billable-minute policy and any overage rates before charging overages.
+- Admin plan allowance edits do not silently alter Stripe subscriptions. Use the Stripe customer portal or Stripe Dashboard for actual subscription changes.
+
+## Local preview
+
+The portal pages are static and can be previewed with any static HTTP server. The Worker is deployed separately on Cloudflare. The existing root marketing site and Formspree form are preserved.
