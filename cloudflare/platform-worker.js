@@ -126,6 +126,24 @@ async function route(req,env){
    await env.DB.prepare("INSERT INTO avr_addon_orders(id,customer_id,addon_key,addon_name,billing_type,customer_note) VALUES(?,?,?,?,?,?)").bind(id,c.id,key,catalog[key][0],catalog[key][1],note).run();
    return json({created:true,id,status:"requested"},201,origin,env)
   }
+  if(path==="/api/client/support-tickets"&&req.method==="GET"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const r=await env.DB.prepare("SELECT id,category,subject,description,priority,status,admin_reply,created_at,updated_at FROM avr_support_tickets WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();
+   return json({tickets:r.results||[]},200,origin,env)
+  }
+  if(path==="/api/client/support-tickets"&&req.method==="POST"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const p=await body(req,8000),category=String(p.category||""),subject=String(p.subject||"").trim(),description=String(p.description||"").trim(),priority=String(p.priority||"normal");
+   if(!["change_request","technical_support","concern","billing","general"].includes(category))throw Error("invalid_ticket_category");
+   if(!["normal","high","urgent"].includes(priority))throw Error("invalid_ticket_priority");
+   if(subject.length<4||subject.length>140)throw Error("subject_must_be_4_to_140_characters");
+   if(description.length<10||description.length>5000)throw Error("details_must_be_10_to_5000_characters");
+   const recent=await env.DB.prepare("SELECT COUNT(*) AS n FROM avr_support_tickets WHERE customer_id=? AND created_at>=?").bind(c.id,new Date(Date.now()-3600000).toISOString()).first();
+   if(Number(recent?.n||0)>=10)throw Error("support_request_limit_reached_try_again_later");
+   const id=crypto.randomUUID();
+   await env.DB.prepare("INSERT INTO avr_support_tickets(id,customer_id,category,subject,description,priority,status) VALUES(?,?,?,?,?,?,?)").bind(id,c.id,category,subject,description,priority,"open").run();
+   return json({created:true,id,status:"open"},201,origin,env)
+  }
   const callEmailMatch=path.match(/^\/api\/client\/calls\/([^/]+)\/email$/);
   if(callEmailMatch&&req.method==="POST"){
    const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
@@ -162,6 +180,22 @@ async function route(req,env){
     const exists=await env.DB.prepare("SELECT id,customer_id FROM avr_addon_orders WHERE id=?").bind(id).first();if(!exists)throw Error("addon_order_not_found");
     await env.DB.prepare("UPDATE avr_addon_orders SET status=?,admin_note=?,updated_at=? WHERE id=?").bind(status,p.adminNote===undefined?null:String(p.adminNote).slice(0,1500),new Date().toISOString(),id).run();
     await audit(env,u,"addon_order_updated",exists.customer_id,{orderId:id,status});
+    return json({saved:true},200,origin,env)
+   }
+   if(path==="/api/admin/support-tickets"&&req.method==="GET"){
+    const status=url.searchParams.get("status"),filtered=status&&["open","in_progress","waiting_on_customer","resolved","closed"].includes(status);
+    const q="SELECT t.*,c.business_name,c.email FROM avr_support_tickets t LEFT JOIN avr_customers c ON c.id=t.customer_id"+(filtered?" WHERE t.status=?":"")+" ORDER BY CASE t.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 ELSE 2 END,CASE t.status WHEN 'open' THEN 0 WHEN 'in_progress' THEN 1 WHEN 'waiting_on_customer' THEN 2 ELSE 3 END,t.created_at DESC LIMIT 300";
+    const r=filtered?await env.DB.prepare(q).bind(status).all():await env.DB.prepare(q).all();
+    return json({tickets:r.results||[]},200,origin,env)
+   }
+   const supportAdminMatch=path.match(/^\/api\/admin\/support-tickets\/([a-f0-9-]{36})$/i);
+   if(supportAdminMatch&&req.method==="PATCH"){
+    const id=supportAdminMatch[1],p=await body(req,7000),status=String(p.status||"");
+    if(!["open","in_progress","waiting_on_customer","resolved","closed"].includes(status))throw Error("invalid_ticket_status");
+    const exists=await env.DB.prepare("SELECT id,customer_id FROM avr_support_tickets WHERE id=?").bind(id).first();if(!exists)throw Error("support_ticket_not_found");
+    const reply=p.adminReply===undefined?null:String(p.adminReply).trim().slice(0,5000);
+    await env.DB.prepare("UPDATE avr_support_tickets SET status=?,admin_reply=COALESCE(?,admin_reply),updated_at=? WHERE id=?").bind(status,reply,new Date().toISOString(),id).run();
+    await audit(env,u,"support_ticket_updated",exists.customer_id,{ticketId:id,status});
     return json({saved:true},200,origin,env)
    }
    if(path==="/api/admin/overview"&&req.method==="GET"){const [cc,active,subs,calls,mins]=await Promise.all([env.DB.prepare("SELECT COUNT(*) n FROM avr_customers").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_customers WHERE status='active'").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_customers WHERE subscription_status IN ('active','trialing')").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_calls").first(),env.DB.prepare("SELECT COALESCE(SUM(duration_ms),0) n FROM avr_calls WHERE start_timestamp>=?").bind(new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).first()]);return json({customers:cc.n,activeCustomers:active.n,activeSubscriptions:subs.n,totalCalls:calls.n,minutesThisMonth:Math.ceil(Number(mins.n||0)/60000)},200,origin,env)}
