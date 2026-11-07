@@ -46,6 +46,21 @@
   }));
  }
 
+
+ async function loadCallEmailSettings(){
+  const enabled=$("#call-email-enabled"),recipients=$("#call-email-recipients"),status=$("#call-email-settings-status");
+  if(!enabled||!recipients)return;
+  try{const d=await api("/api/client/call-email-settings");enabled.checked=!!d.enabled;recipients.value=(d.recipients||[]).join("\n");if(status)status.textContent=""}
+  catch(e){if(status)status.textContent=e.message}
+ }
+ async function saveCallEmailSettings(e){
+  e.preventDefault();const button=$("#save-call-email-settings"),status=$("#call-email-settings-status");
+  button.disabled=true;status.textContent="Saving…";
+  try{const recipients=$("#call-email-recipients").value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);await api("/api/client/call-email-settings",{method:"PUT",body:JSON.stringify({enabled:$("#call-email-enabled").checked,recipients})});status.textContent="Email preferences saved."}
+  catch(err){status.textContent=err.message}
+  finally{button.disabled=false}
+ }
+
  const ticketCategory={change_request:"Change request",technical_support:"Technical support",concern:"Concern or complaint",billing:"Billing question",general:"General question"};
  const ticketStatus={open:"Open",in_progress:"In progress",waiting_on_customer:"Waiting on you",resolved:"Resolved",closed:"Closed"};
  function renderTickets(items){const root=$("#support-ticket-list");if(!root)return;if(!items.length){root.innerHTML='<div class="support-empty"><span>✳</span><b>No support requests yet</b><p>When you submit a request, you can track its status and our replies here.</p></div>';return}root.innerHTML=items.map(t=>'<article class="support-ticket"><div class="support-ticket-top"><div><span class="support-ticket-category">'+safe(ticketCategory[t.category]||t.category)+'</span><h4>'+safe(t.subject)+'</h4></div><span class="ticket-status '+safe(t.status)+'">'+safe(ticketStatus[t.status]||t.status)+'</span></div><p class="support-ticket-description">'+safe(t.description)+'</p><div class="support-ticket-meta"><span>Ticket #'+safe(String(t.id).slice(0,8).toUpperCase())+'</span><span>'+safe(fmtDate(t.created_at))+'</span><span class="ticket-priority '+safe(t.priority)+'">'+safe(t.priority)+' priority</span></div>'+(t.admin_reply?'<div class="support-reply"><b>Reply from support</b><p>'+safe(t.admin_reply)+'</p><span>'+safe(fmtDate(t.updated_at))+'</span></div>':'')+'</article>').join("")}
@@ -91,7 +106,7 @@
    $("#agent-list").innerHTML=d.agents.length?d.agents.map(a=>'<div class="resource"><b>'+safe(a.agent_name||a.agent_id)+'</b><span class="small">Your assigned AI receptionist</span></div>').join(""):'<div class="empty">Your receptionist is being prepared or has not yet been assigned.</div>';
    $("#number-list").innerHTML=d.numbers.length?d.numbers.map(n=>'<div class="resource"><b>'+safe(n.phone_number)+'</b><span class="small">'+safe(n.nickname||"Business line")+'</span></div>').join(""):'<div class="empty">Your business phone number has not been assigned yet.</div>';
    renderCalls(d.calls||[],customer.email||"");
-   await Promise.all([loadAddons(),loadTickets()]);
+   await Promise.all([loadAddons(),loadTickets(),loadCallEmailSettings()]);
   }catch(e){note(e.message,true)}
   finally{loading=false;$("#refresh-dashboard").disabled=false}
  }
@@ -110,6 +125,7 @@
  $("#sign-up").onclick=()=>clerk?.openSignUp();
  $("#refresh-dashboard").onclick=()=>load();
  $("#support-ticket-form")?.addEventListener("submit",submitTicket);
+ $("#call-email-settings-form")?.addEventListener("submit",saveCallEmailSettings);
  $("#refresh-tickets")?.addEventListener("click",loadTickets);
  $("#profile-form").onsubmit=async e=>{e.preventDefault();try{await api("/api/client/profile",{method:"PATCH",body:JSON.stringify({businessName:$("#business-name").value,contactName:$("#contact-name").value,phone:$("#contact-phone").value})});note("Account details saved.");await load()}catch(e){note(e.message,true)}};
  const voiceModal=$("#voice-clone-modal");
