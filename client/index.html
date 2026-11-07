@@ -77,6 +77,23 @@
         </section>
       </div>
 
+      <section class="panel addons-panel" id="addons">
+        <div class="panel-head"><div><div class="eyebrow">GROW YOUR RECEPTIONIST</div><h2>Upgrades &amp; add-ons</h2><p class="small">Choose extra capabilities for your business. Submit a request and our team will confirm availability and pricing before any charge.</p></div><span class="pill">Optional services</span></div>
+        <div class="addon-grid">
+          <article class="addon-card"><div class="addon-icon">🎙️</div><h3>Custom Voice Cloning</h3><p>Request an authorized custom voice for your AI receptionist.</p><span class="addon-billing">One-time setup · provider usage may vary</span><button class="btn addon-request" data-addon="voice_cloning">Request voice cloning</button></article>
+          <article class="addon-card"><div class="addon-icon">💬</div><h3>SMS Messaging</h3><p>Text confirmations, missed-call follow-ups and customer updates.</p><span class="addon-billing">Usage-based · quote confirmed first</span><button class="btn addon-request" data-addon="sms_messaging">Request SMS</button></article>
+          <article class="addon-card"><div class="addon-icon">☎️</div><h3>Additional Phone Numbers</h3><p>Add more business lines and route them to your receptionist.</p><span class="addon-billing">Monthly · number costs vary</span><button class="btn addon-request" data-addon="extra_numbers">Request phone numbers</button></article>
+          <article class="addon-card"><div class="addon-icon">📊</div><h3>Advanced Analytics</h3><p>Get deeper call, lead and receptionist performance reporting.</p><span class="addon-billing">Monthly · custom quote</span><button class="btn addon-request" data-addon="advanced_analytics">Request analytics</button></article>
+          <article class="addon-card"><div class="addon-icon">📅</div><h3>Calendar &amp; Booking</h3><p>Connect your calendar and let the receptionist help schedule appointments.</p><span class="addon-billing">One-time configuration · quote confirmed</span><button class="btn addon-request" data-addon="calendar_booking">Request booking setup</button></article>
+          <article class="addon-card"><div class="addon-icon">🔗</div><h3>CRM Integration</h3><p>Connect your existing CRM and send captured lead details to your workflow.</p><span class="addon-billing">One-time configuration · quote confirmed</span><button class="btn addon-request" data-addon="crm_integration">Request CRM integration</button></article>
+          <article class="addon-card"><div class="addon-icon">🌐</div><h3>Language Configuration</h3><p>Request tailored language behavior and greetings for your markets.</p><span class="addon-billing">One-time configuration · quote confirmed</span><button class="btn addon-request" data-addon="extra_languages">Request language setup</button></article>
+          <article class="addon-card"><div class="addon-icon">⚡</div><h3>Priority Support</h3><p>Ask about a faster support response and priority configuration assistance.</p><span class="addon-billing">Monthly · custom quote</span><button class="btn addon-request" data-addon="priority_support">Request priority support</button></article>
+        </div>
+        <div class="addon-request-note"><label for="addon-note">Optional details for your request</label><textarea id="addon-note" rows="2" maxlength="1500" placeholder="Tell us what you need, preferred provider, number of lines, CRM name, etc."></textarea></div>
+        <div class="panel-head addon-orders-head"><h3>Your upgrade requests</h3><button id="refresh-addons" class="btn secondary" type="button">Refresh</button></div>
+        <div id="addon-orders" class="stack"><div class="empty">Loading your requests…</div></div>
+      </section>
+
       <section class="panel">
         <div class="panel-head"><div><h2>Recent calls</h2><p class="small">Open any call to review its summary, transcript or available recording.</p></div><span class="small">Latest 50 calls</span></div>
         <div id="calls-table" class="table-wrap"><div class="empty">No calls recorded yet.</div></div>
