@@ -86,3 +86,42 @@
 .support-empty p{margin:6px 0 0;font-size:10px}
 @media(max-width:760px){.support-layout{grid-template-columns:1fr;padding:15px}.support-side{display:grid;grid-template-columns:1fr 1fr}.support-side-foot{grid-column:1/-1}.support-hero{padding:22px 17px}.support-tickets-head{margin:0 15px}.support-ticket-list{padding:0 15px 16px}}
 @media(max-width:520px){.support-fields{grid-template-columns:1fr}.support-form{padding:14px}.support-form-heading{display:block}.support-secure{display:inline-block;margin-top:10px}.support-side{grid-template-columns:1fr}.support-hero-icon{width:45px;height:45px;flex-basis:45px;font-size:21px}.support-ticket-top{flex-direction:column}}
+
+/* Professional multi-page client workspace */
+.client-workspace-layout{display:grid;grid-template-columns:238px minmax(0,1fr);gap:22px;align-items:start;margin-top:20px}
+.client-sidebar{position:sticky;top:18px;min-height:calc(100vh - 38px);display:flex;flex-direction:column;padding:17px 13px;border:1px solid #2b4054;border-radius:16px;background:linear-gradient(180deg,#122238,#101b2c);box-shadow:0 18px 44px #06101e55}
+.sidebar-caption{padding:8px 11px 13px;color:#6f8ba8;font:700 9px "DM Mono",monospace;letter-spacing:.16em}
+.client-nav{display:grid;gap:5px}
+.client-nav-item{width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:#a9bdd1;text-align:left;font-size:12px;font-weight:600;transition:.18s}
+.client-nav-item:hover{background:#1a3048;color:#eaf5ff}
+.client-nav-item.active{border-color:#315b7d;background:linear-gradient(100deg,#173d5d,#1a3450);color:#9cddff;box-shadow:inset 3px 0 #52bdf3}
+.nav-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;background:#1b344d;color:#80cfff;font-size:15px;font-weight:700}
+.client-nav-item.active .nav-icon{background:#24567b;color:#d4f2ff}
+.sidebar-help{margin-top:auto;padding:15px 12px;border:1px solid #2d4c67;border-radius:12px;background:radial-gradient(ellipse at 100% 0%,#254d6a66,transparent 65%),#14283d}
+.sidebar-help-icon{display:grid;place-items:center;width:27px;height:27px;margin-bottom:10px;border-radius:8px;background:#1e4564;color:#8bd9ff}
+.sidebar-help b{display:block;color:#eaf5ff;font-size:11px}
+.sidebar-help p{margin:6px 0 12px;color:#8ea8c1;font-size:10px;line-height:1.55}
+.sidebar-help button{padding:0;border:0;background:none;color:#83d5ff;font-size:10px;font-weight:700}
+.sidebar-help button span{padding-left:5px}
+.sidebar-footer{display:flex;align-items:center;gap:8px;padding:14px 6px 2px;color:#66819b;font-size:9px}
+.sidebar-status-dot{width:7px;height:7px;border-radius:50%;background:#5ed5b2;box-shadow:0 0 10px #5ed5b288}
+.client-page-content{min-width:0}
+.client-page-heading{display:flex;align-items:end;justify-content:space-between;gap:14px;padding:4px 2px 15px}
+.client-page-heading h2{margin:5px 0;color:#f1f7ff;font-size:25px;letter-spacing:-.04em}
+.client-page-heading p{margin:0;color:#91a9c2;font-size:11px}
+.client-page-label{padding:6px 9px;border:1px solid #2d4964;border-radius:20px;color:#80b9dc;font:8px "DM Mono",monospace;letter-spacing:.12em}
+.client-page{display:none;min-width:0}
+.client-page.active{display:block;animation:clientPageIn .2s ease}
+.client-page .panel{margin:0 0 15px}
+.client-page .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.billing-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.overview-shortcuts{margin-top:15px!important}
+.shortcut-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.shortcut-grid button{display:grid;grid-template-columns:35px 1fr;column-gap:10px;align-items:center;padding:13px;border:1px solid #304962;border-radius:11px;background:#12243a;text-align:left;color:#e7f2fc}
+.shortcut-grid button>span{grid-row:span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#1b3b59;color:#83d7ff;font-size:16px}
+.shortcut-grid b{font-size:11px}
+.shortcut-grid small{margin-top:3px;color:#8fa8c1;font-size:9px}
+@keyframes clientPageIn{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){.client-workspace-layout{grid-template-columns:190px minmax(0,1fr);gap:14px}.client-sidebar{padding:12px 9px}.client-page .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.client-workspace-layout{grid-template-columns:1fr}.client-sidebar{position:static;min-height:0;padding:9px;overflow-x:auto}.sidebar-caption,.sidebar-help,.sidebar-footer{display:none}.client-nav{display:flex;gap:5px;min-width:max-content}.client-nav-item{width:auto;white-space:nowrap;padding:8px 10px;font-size:10px}.nav-icon{width:22px;height:22px}.client-page-heading{padding-top:15px}.client-page-heading h2{font-size:22px}}
+@media(max-width:480px){.client-page .grid,.billing-summary-grid,.shortcut-grid{grid-template-columns:1fr}.client-page-label{display:none}}
