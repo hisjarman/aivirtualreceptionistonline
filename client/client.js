@@ -112,7 +112,12 @@
  $("#support-ticket-form")?.addEventListener("submit",submitTicket);
  $("#refresh-tickets")?.addEventListener("click",loadTickets);
  $("#profile-form").onsubmit=async e=>{e.preventDefault();try{await api("/api/client/profile",{method:"PATCH",body:JSON.stringify({businessName:$("#business-name").value,contactName:$("#contact-name").value,phone:$("#contact-phone").value})});note("Account details saved.");await load()}catch(e){note(e.message,true)}};
- document.querySelectorAll(".addon-request").forEach(b=>b.onclick=()=>requestAddon(b.dataset.addon,b));
+ const voiceModal=$("#voice-clone-modal");
+ function closeVoiceModal(){voiceModal?.classList.remove("open");voiceModal?.setAttribute("aria-hidden","true");document.body.classList.remove("voice-modal-open")}
+ $("#open-voice-clone")?.addEventListener("click",()=>{voiceModal?.classList.add("open");voiceModal?.setAttribute("aria-hidden","false");document.body.classList.add("voice-modal-open");voiceModal.querySelector(".voice-modal-panel")?.focus()});
+ voiceModal?.querySelectorAll("[data-close-voice-modal]").forEach(b=>b.addEventListener("click",closeVoiceModal));
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&voiceModal?.classList.contains("open"))closeVoiceModal()});
+ document.querySelectorAll(".addon-request").forEach(b=>b.onclick=()=>{closeVoiceModal();requestAddon(b.dataset.addon,b)});
  $("#refresh-addons")?.addEventListener("click",loadAddons);
  $("#billing-portal").onclick=async()=>{try{const d=await api("/api/billing/portal",{method:"POST",body:"{}"});location.href=d.url}catch(e){note(e.message,true)}};
  document.querySelectorAll(".plan-btn").forEach(b=>b.onclick=async()=>{try{const d=await api("/api/billing/checkout",{method:"POST",body:JSON.stringify({plan:b.dataset.plan})});location.href=d.url}catch(e){note(e.message,true)}});
