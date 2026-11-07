@@ -1,9 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#55e6ff"/><stop offset="1" stop-color="#397cff"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-<rect x="5" y="5" width="54" height="54" rx="17" fill="#06152b" stroke="#1d75b8" stroke-width="1.5"/>
-<path d="M15 31v-3a17 17 0 0 1 34 0v3" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
-<rect x="12" y="29" width="9" height="15" rx="4.5" fill="#18c8f5"/><rect x="43" y="29" width="9" height="15" rx="4.5" fill="#18c8f5"/>
-<rect x="22" y="22" width="20" height="25" rx="8" fill="#0b2b4d" stroke="url(#g)" stroke-width="1.8"/>
-<path d="m27 31 3-4 3 4m-6 0h6m-6 7h8" fill="none" stroke="#d8f8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="32" cy="15" r="2" fill="#8bf4ff"/><path d="M32 10v-2m-5 7-2-2m12 2 2-2" stroke="#5edfff" stroke-width="1.5" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI receptionist">
+  <defs>
+    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#63f4ff"/>
+      <stop offset=".55" stop-color="#19bfff"/>
+      <stop offset="1" stop-color="#3975ff"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="#031326" stroke="#146da9" stroke-width="1.5"/>
+  <path d="M13 31v-5a19 19 0 0 1 38 0v5" fill="none" stroke="url(#ai)" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
+  <rect x="9" y="29" width="9" height="16" rx="4.5" fill="#19caff"/>
+  <rect x="46" y="29" width="9" height="16" rx="4.5" fill="#19caff"/>
+  <path d="M17 29c0-9 6-15 15-15s15 6 15 15v13c0 8-6 13-15 13s-15-5-15-13z" fill="#08294a" stroke="url(#ai)" stroke-width="2" filter="url(#glow)"/>
+  <path d="M23 34a4 4 0 1 1 8 0m2 0a4 4 0 1 1 8 0" fill="none" stroke="#7cf4ff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M26 44c3 3 9 3 12 0" fill="none" stroke="#d8fbff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 7v5m-7-3 2 4m12-4-2 4" stroke="#65eaff" stroke-width="1.7" stroke-linecap="round"/>
+  <circle cx="32" cy="6" r="2" fill="#b4fbff"/>
+  <path d="M48 48l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#5deaff" opacity=".95"/>
 </svg>
