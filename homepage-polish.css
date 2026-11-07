@@ -54,3 +54,48 @@ body#top .footer{background:#010611}
 @media(prefers-reduced-motion:reduce){
  body#top .reference-hero .hero-art img,body#top .home-path-card{animation:none;transition:none}
 }
+
+
+/* 2026-11 homepage background refinement: calmer, cleaner deep-space treatment */
+body#top .reference-hero{
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 78% 44%, rgba(18,91,155,.22) 0%, rgba(8,39,76,.13) 30%, transparent 58%),
+    radial-gradient(ellipse at 18% 12%, rgba(18,65,111,.12) 0%, transparent 42%),
+    linear-gradient(118deg,#030916 0%,#061327 52%,#030b1a 100%);
+}
+body#top .reference-hero:after{
+  background:
+    radial-gradient(ellipse at 76% 50%,rgba(34,145,220,.10),transparent 43%),
+    linear-gradient(90deg,rgba(3,9,22,.16),rgba(3,9,22,0) 68%);
+}
+body#top .reference-hero .hero-art img{
+  width:min(74vw,1040px);
+  right:-2%;
+  bottom:-3%;
+  opacity:.42;
+  filter:saturate(.82) contrast(1.02) drop-shadow(0 0 34px rgba(22,115,190,.16));
+  animation:none;
+}
+body#top .reference-hero .hero-blue-haze{
+  background:linear-gradient(90deg,#030916 0%,rgba(3,9,22,.97) 30%,rgba(3,9,22,.78) 48%,rgba(3,9,22,.16) 76%,transparent 100%);
+}
+body#top .reference-hero .hero-grid{position:relative}
+body#top .reference-language{
+  background:linear-gradient(180deg,#07162a 0%,#061326 100%);
+  border-top:1px solid rgba(67,142,204,.18);
+  border-bottom:1px solid rgba(67,142,204,.14);
+}
+@media(max-width:900px){
+  body#top .reference-hero .hero-art img{width:min(100vw,820px);right:-13%;bottom:-2%;opacity:.28}
+  body#top .reference-hero .hero-blue-haze{
+    background:linear-gradient(180deg,#030916 0%,rgba(3,9,22,.97) 48%,rgba(3,9,22,.70) 74%,rgba(3,9,22,.26) 100%);
+  }
+}
+@media(max-width:700px){
+  body#top .reference-hero .hero-art img{width:125vw;right:-28%;bottom:-1%;opacity:.20}
+  body#top .reference-hero .hero-blue-haze{
+    background:linear-gradient(180deg,#030916 0%,rgba(3,9,22,.97) 55%,rgba(3,9,22,.72) 78%,rgba(3,9,22,.30) 100%);
+  }
+}
