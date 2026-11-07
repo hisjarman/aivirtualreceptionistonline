@@ -101,6 +101,31 @@ async function route(req,env){
  try{
   if(path==="/api/me"&&req.method==="GET"){const u=await clerkUser(req,env);return json({user:u},200,origin,env)}
   if(path==="/api/client/dashboard"&&req.method==="GET"){const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({customer:null,needsSetup:true},200,origin,env);const calls=await env.DB.prepare("SELECT call_id,agent_id,from_number,to_number,direction,call_status,duration_ms,start_timestamp,transcript,recording_url,call_summary,user_sentiment,disconnection_reason FROM avr_calls WHERE customer_id=? ORDER BY start_timestamp DESC LIMIT 50").bind(c.id).all();const usage=await env.DB.prepare("SELECT COALESCE(SUM(duration_ms),0) AS ms,COUNT(*) AS calls FROM avr_calls WHERE customer_id=? AND start_timestamp>=?").bind(c.id,new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).first();const agent=await env.DB.prepare("SELECT agent_id,agent_name,status FROM avr_agents WHERE customer_id=?").bind(c.id).all();const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=?").bind(c.id).all();return json({customer:{id:c.id,businessName:c.business_name,contactName:c.contact_name,email:c.email,phone:c.phone,status:c.status,plan:c.plan_key,subscriptionStatus:c.subscription_status,periodEnd:c.current_period_end,includedMinutes:c.included_minutes,hasBillingAccount:!!c.stripe_customer_id},calls:calls.results||[],agents:agent.results||[],numbers:nums.results||[],usage:{minutes:Math.ceil(Number(usage?.ms||0)/60000),calls:Number(usage?.calls||0)}},200,origin,env)}
+  if(path==="/api/client/addons"&&req.method==="GET"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const r=await env.DB.prepare("SELECT id,addon_key,addon_name,billing_type,status,customer_note,created_at,updated_at FROM avr_addon_orders WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();
+   return json({orders:r.results||[]},200,origin,env)
+  }
+  if(path==="/api/client/addons"&&req.method==="POST"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const p=await body(req,3000),key=String(p.addonKey||"");
+   const catalog={
+    voice_cloning:["Custom Voice Cloning","one_time"],
+    sms_messaging:["SMS Messaging","usage"],
+    extra_numbers:["Additional Phone Numbers","monthly"],
+    advanced_analytics:["Advanced Analytics","monthly"],
+    calendar_booking:["Calendar & Appointment Booking","one_time"],
+    crm_integration:["CRM Integration","one_time"],
+    extra_languages:["Additional Language Configuration","one_time"],
+    priority_support:["Priority Support","monthly"]
+   };
+   if(!catalog[key])throw Error("invalid_addon");
+   const duplicate=await env.DB.prepare("SELECT id FROM avr_addon_orders WHERE customer_id=? AND addon_key=? AND status IN ('requested','approved','in_progress','active') LIMIT 1").bind(c.id,key).first();
+   if(duplicate)throw Error("this_addon_already_has_an_open_order");
+   const id=crypto.randomUUID(),note=String(p.note||"").trim().slice(0,1500);
+   await env.DB.prepare("INSERT INTO avr_addon_orders(id,customer_id,addon_key,addon_name,billing_type,customer_note) VALUES(?,?,?,?,?,?)").bind(id,c.id,key,catalog[key][0],catalog[key][1],note).run();
+   return json({created:true,id,status:"requested"},201,origin,env)
+  }
   const callEmailMatch=path.match(/^\/api\/client\/calls\/([^/]+)\/email$/);
   if(callEmailMatch&&req.method==="POST"){
    const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
@@ -126,6 +151,19 @@ async function route(req,env){
   if(path==="/api/billing/portal"&&req.method==="POST"){const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c?.stripe_customer_id)throw Error("stripe_customer_not_found");const s=await stripeRequest(env,"billing_portal/sessions",{customer:c.stripe_customer_id,return_url:"https://aivirtualreceptionist.online/client/" });return json({url:s.url},200,origin,env)}
   if(path.startsWith("/api/admin/")){
    const u=await requireAdmin(req,env);
+   if(path==="/api/admin/addon-orders"&&req.method==="GET"){
+    const r=await env.DB.prepare("SELECT o.*,c.business_name,c.email FROM avr_addon_orders o LEFT JOIN avr_customers c ON c.id=o.customer_id ORDER BY CASE o.status WHEN 'requested' THEN 0 WHEN 'approved' THEN 1 WHEN 'in_progress' THEN 2 ELSE 3 END,o.created_at DESC LIMIT 300").all();
+    return json({orders:r.results||[]},200,origin,env)
+   }
+   const addonMatch=path.match(/^\/api\/admin\/addon-orders\/([a-f0-9-]{36})$/i);
+   if(addonMatch&&req.method==="PATCH"){
+    const p=await body(req,3000),id=addonMatch[1],status=String(p.status||"");
+    if(!["approved","in_progress","active","declined","cancelled"].includes(status))throw Error("invalid_addon_order_status");
+    const exists=await env.DB.prepare("SELECT id,customer_id FROM avr_addon_orders WHERE id=?").bind(id).first();if(!exists)throw Error("addon_order_not_found");
+    await env.DB.prepare("UPDATE avr_addon_orders SET status=?,admin_note=?,updated_at=? WHERE id=?").bind(status,p.adminNote===undefined?null:String(p.adminNote).slice(0,1500),new Date().toISOString(),id).run();
+    await audit(env,u,"addon_order_updated",exists.customer_id,{orderId:id,status});
+    return json({saved:true},200,origin,env)
+   }
    if(path==="/api/admin/overview"&&req.method==="GET"){const [cc,active,subs,calls,mins]=await Promise.all([env.DB.prepare("SELECT COUNT(*) n FROM avr_customers").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_customers WHERE status='active'").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_customers WHERE subscription_status IN ('active','trialing')").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_calls").first(),env.DB.prepare("SELECT COALESCE(SUM(duration_ms),0) n FROM avr_calls WHERE start_timestamp>=?").bind(new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).first()]);return json({customers:cc.n,activeCustomers:active.n,activeSubscriptions:subs.n,totalCalls:calls.n,minutesThisMonth:Math.ceil(Number(mins.n||0)/60000)},200,origin,env)}
    if(path==="/api/admin/customers"&&req.method==="GET"){const r=await env.DB.prepare("SELECT c.*, (SELECT COUNT(*) FROM avr_calls x WHERE x.customer_id=c.id) AS total_calls,(SELECT COALESCE(SUM(duration_ms),0) FROM avr_calls x WHERE x.customer_id=c.id AND x.start_timestamp>=?) AS usage_ms FROM avr_customers c ORDER BY c.created_at DESC LIMIT 500").bind(new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).all();return json({customers:(r.results||[]).map(c=>({...c,usage_minutes:Math.ceil(Number(c.usage_ms||0)/60000),usage_ms:undefined}))},200,origin,env)}
    if(path==="/api/admin/customers"&&req.method==="POST"){const p=await body(req),business=String(p.businessName||"").trim(),email=String(p.email||"").trim().toLowerCase();if(business.length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))throw Error("valid_business_and_email_required");const exists=await env.DB.prepare("SELECT id FROM avr_customers WHERE lower(email)=?").bind(email).first();if(exists)throw Error("customer_email_already_exists");const id=crypto.randomUUID();await env.DB.prepare("INSERT INTO avr_customers(id,business_name,contact_name,email,phone,clerk_user_id,status,admin_notes) VALUES(?,?,?,?,?,?,?,?)").bind(id,business,String(p.contactName||"").slice(0,120),email,String(p.phone||"").slice(0,40),String(p.clerkUserId||"").trim()||null,"pending",String(p.notes||"").slice(0,2000)).run();await audit(env,u,"customer_created",id,{email});return json({created:true,id},201,origin,env)}
