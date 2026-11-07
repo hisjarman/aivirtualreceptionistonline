@@ -94,6 +94,22 @@
         <div id="addon-orders" class="stack"><div class="empty">Loading your requests…</div></div>
       </section>
 
+      <section class="panel support-center" id="support-center">
+        <div class="support-hero"><div><div class="eyebrow">WE'RE HERE TO HELP</div><h2>Support center</h2><p>Request a change, raise a concern or get help with your AI receptionist. Every request stays attached to your business account.</p></div><div class="support-hero-icon" aria-hidden="true">✳</div></div>
+        <div class="support-layout"><form id="support-ticket-form" class="support-form">
+          <div class="support-form-heading"><div><h3>Submit a request</h3><p>Tell us what you need and our team will follow up.</p></div><span class="support-secure">PRIVATE ACCOUNT REQUEST</span></div>
+          <div class="support-fields">
+            <div class="field"><label for="ticket-category">What can we help with?</label><select id="ticket-category" name="category" required><option value="change_request">Change request</option><option value="technical_support">Technical support</option><option value="concern">Concern or complaint</option><option value="billing">Billing question</option><option value="general">General question</option></select></div>
+            <div class="field"><label for="ticket-priority">Priority</label><select id="ticket-priority" name="priority"><option value="normal">Normal</option><option value="high">High — service affected</option><option value="urgent">Urgent — receptionist unavailable</option></select></div>
+            <div class="field full"><label for="ticket-subject">Subject</label><input id="ticket-subject" name="subject" required minlength="4" maxlength="140" placeholder="e.g. Update our business hours"></div>
+            <div class="field full"><label for="ticket-description">Details</label><textarea id="ticket-description" name="description" required minlength="10" maxlength="5000" rows="5" placeholder="Describe the change, issue, or question. Include relevant examples and the best way to reach you."></textarea><span class="support-field-note">Please do not include passwords, payment card details or sensitive caller information.</span></div>
+            <div class="field full"><button class="btn support-submit" id="support-submit" type="submit">Submit support request <span>→</span></button><span id="support-form-status" class="small" role="status"></span></div>
+          </div>
+        </form><aside class="support-side"><div class="support-side-card"><span class="support-side-icon">↗</span><h3>Need a receptionist change?</h3><p>Use Change request for new greetings, call flows, routing, business hours, FAQs or agent behavior.</p></div><div class="support-side-card"><span class="support-side-icon">◉</span><h3>Service interruption?</h3><p>Choose Urgent if your receptionist is unavailable or calls are not reaching your business.</p></div><div class="support-side-foot">Your requests are visible to your signed-in account and authorized support administrators.</div></aside></div>
+        <div class="support-tickets-head"><div><h3>Your support requests</h3><p>Track progress and read replies from our team.</p></div><button id="refresh-tickets" class="btn secondary" type="button">↻ Refresh</button></div>
+        <div id="support-ticket-list" class="support-ticket-list"><div class="empty">Loading your support history…</div></div>
+      </section>
+
       <section class="panel">
         <div class="panel-head"><div><h2>Recent calls</h2><p class="small">Open any call to review its summary, transcript or available recording.</p></div><span class="small">Latest 50 calls</span></div>
         <div id="calls-table" class="table-wrap"><div class="empty">No calls recorded yet.</div></div>
