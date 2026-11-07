@@ -99,3 +99,34 @@ body#top .reference-language{
     background:linear-gradient(180deg,#030916 0%,rgba(3,9,22,.97) 55%,rgba(3,9,22,.72) 78%,rgba(3,9,22,.30) 100%);
   }
 }
+
+/* Earth + receptionist composition: use the supplied source assets as separate layers */
+body#top .reference-hero .hero-art{
+  left:40%; width:60%; height:100%; overflow:visible;
+}
+body#top .reference-hero .hero-art .hero-earth-art{
+  position:absolute; width:min(66vw,930px); max-width:none; height:auto;
+  right:-7%; bottom:7%; object-fit:contain; opacity:.82;
+  filter:saturate(1.08) contrast(1.04) drop-shadow(0 0 32px rgba(20,137,255,.2));
+}
+body#top .reference-hero .hero-art .hero-assistant-art{
+  position:absolute; width:clamp(270px,29vw,430px); max-width:none; height:auto;
+  right:13%; bottom:3%; object-fit:contain; opacity:1;
+  filter:drop-shadow(0 14px 42px rgba(0,0,0,.45)) drop-shadow(0 0 25px rgba(35,165,255,.22));
+}
+body#top .reference-hero .hero-blue-haze{
+  background:linear-gradient(90deg,#030916 0%,rgba(3,9,22,.98) 25%,rgba(3,9,22,.82) 43%,rgba(3,9,22,.24) 62%,transparent 100%);
+}
+.reference-brand-mark{overflow:hidden;display:grid;place-items:center}
+.reference-brand-mark img{display:block;width:100%;height:100%;object-fit:contain;padding:2px}
+@media(max-width:900px){
+ body#top .reference-hero .hero-art{left:15%;width:85%}
+ body#top .reference-hero .hero-art .hero-earth-art{width:min(94vw,760px);right:-13%;bottom:4%;opacity:.75}
+ body#top .reference-hero .hero-art .hero-assistant-art{width:clamp(235px,42vw,340px);right:12%;bottom:1%}
+}
+@media(max-width:700px){
+ body#top .reference-hero .hero-art{left:0;width:100%;height:390px;top:auto;bottom:0}
+ body#top .reference-hero .hero-art .hero-earth-art{width:145vw;right:-32%;bottom:3%;opacity:.68}
+ body#top .reference-hero .hero-art .hero-assistant-art{width:min(72vw,300px);right:11%;bottom:0}
+ body#top .reference-hero .hero-blue-haze{background:linear-gradient(180deg,#030916 0%,rgba(3,9,22,.98) 49%,rgba(3,9,22,.74) 75%,rgba(3,9,22,.18) 100%)}
+}
