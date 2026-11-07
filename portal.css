@@ -16,3 +16,22 @@
 .recording-link{display:inline-block;text-decoration:none;margin-top:10px}
 .call-toggle{white-space:nowrap;padding:7px 10px;font-size:12px}
 @media(max-width:680px){.call-detail-grid{grid-template-columns:1fr}.usage-meta,.overage-line{display:grid;gap:5px}}
+
+/* Client portal add-on marketplace */
+.addons-panel{margin:22px 0}
+.addon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}
+.addon-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:18px;border:1px solid var(--darkline,#263746);border-radius:12px;background:linear-gradient(145deg,#14283a,#0e1b2a);min-height:235px}
+.addon-icon{font-size:25px;width:42px;height:42px;display:grid;place-items:center;border-radius:11px;background:#173954}
+.addon-card h3{font-size:15px;margin:3px 0 0;color:#f5f8fa}
+.addon-card p{font-size:12px;line-height:1.6;color:#b4c5d4;margin:0;flex:1}
+.addon-billing{font-size:10px;color:#71c9ee;line-height:1.5;min-height:30px}
+.addon-card .btn{width:100%;font-size:11px}
+.addon-request-note{display:grid;gap:8px;margin-top:18px}
+.addon-request-note label{font-size:11px;font-weight:700}
+.addon-request-note textarea{width:100%;resize:vertical;border:1px solid #354e63;border-radius:9px;background:#0b1725;color:#f5f8fa;padding:12px;font:12px/1.5 'DM Sans',sans-serif}
+.addon-orders-head{margin-top:26px}
+.addon-order{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.addon-order>div{display:grid;gap:5px}
+.addon-order .small{display:block}
+@media(max-width:1000px){.addon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.addon-grid{grid-template-columns:1fr}.addon-card{min-height:0}.addon-order{align-items:flex-start;flex-direction:column}}
