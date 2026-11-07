@@ -38,6 +38,19 @@
    catch(err){status.textContent=err.message;button.disabled=false}
   }));
  }
+ const addonNames={voice_cloning:"Custom Voice Cloning",sms_messaging:"SMS Messaging",extra_numbers:"Additional Phone Numbers",advanced_analytics:"Advanced Analytics",calendar_booking:"Calendar & Appointment Booking",crm_integration:"CRM Integration",extra_languages:"Additional Language Configuration",priority_support:"Priority Support"};
+ function addonStatus(v){return ({requested:"Request received",approved:"Approved",in_progress:"In progress",active:"Active",declined:"Not approved",cancelled:"Cancelled"})[v]||v}
+ async function loadAddons(){
+  const root=$("#addon-orders");if(!root)return;
+  try{const d=await api("/api/client/addons");root.innerHTML=d.orders.length?d.orders.map(o=>'<div class="resource addon-order"><div><b>'+safe(o.addon_name||addonNames[o.addon_key]||o.addon_key)+'</b><span class="small">Requested '+safe(fmtDate(o.created_at))+'</span>'+(o.customer_note?'<p class="small">'+safe(o.customer_note)+'</p>':'')+'</div><span class="status '+safe(o.status)+'">'+safe(addonStatus(o.status))+'</span></div>').join(""):'<div class="empty">You have not requested any upgrades yet.</div>'}
+  catch(e){root.innerHTML='<div class="empty">'+safe(e.message)+'</div>'}
+ }
+ async function requestAddon(key,button){
+  if(button.disabled)return;
+  const original=button.textContent;button.disabled=true;button.textContent="Submitting…";
+  try{await api("/api/client/addons",{method:"POST",body:JSON.stringify({addonKey:key,note:$("#addon-note")?.value||""})});note("Upgrade request submitted. Our team will confirm pricing and availability before any charge.");if($("#addon-note"))$("#addon-note").value="";await loadAddons();button.textContent="Request received"}
+  catch(e){note(e.message,true);button.disabled=false;button.textContent=original}
+ }
  async function load(){
   if(loading)return;loading=true;$("#refresh-dashboard").disabled=true;
   try{
@@ -63,7 +76,7 @@
    $("#contact-email").value=customer.email||"";
    $("#agent-list").innerHTML=d.agents.length?d.agents.map(a=>'<div class="resource"><b>'+safe(a.agent_name||a.agent_id)+'</b><span class="small">Your assigned AI receptionist</span></div>').join(""):'<div class="empty">Your receptionist is being prepared or has not yet been assigned.</div>';
    $("#number-list").innerHTML=d.numbers.length?d.numbers.map(n=>'<div class="resource"><b>'+safe(n.phone_number)+'</b><span class="small">'+safe(n.nickname||"Business line")+'</span></div>').join(""):'<div class="empty">Your business phone number has not been assigned yet.</div>';
-   renderCalls(d.calls||[],customer.email||"");
+   renderCalls(d.calls||[],customer.email||"");\n   await loadAddons();
   }catch(e){note(e.message,true)}
   finally{loading=false;$("#refresh-dashboard").disabled=false}
  }
@@ -80,7 +93,7 @@
  $("#sign-up").onclick=()=>clerk?.openSignUp();
  $("#refresh-dashboard").onclick=()=>load();
  $("#profile-form").onsubmit=async e=>{e.preventDefault();try{await api("/api/client/profile",{method:"PATCH",body:JSON.stringify({businessName:$("#business-name").value,contactName:$("#contact-name").value,phone:$("#contact-phone").value})});note("Account details saved.");await load()}catch(e){note(e.message,true)}};
- $("#billing-portal").onclick=async()=>{try{const d=await api("/api/billing/portal",{method:"POST",body:"{}"});location.href=d.url}catch(e){note(e.message,true)}};
+ document.querySelectorAll(".addon-request").forEach(b=>b.onclick=()=>requestAddon(b.dataset.addon,b));\n $("#refresh-addons")?.addEventListener("click",loadAddons);\n $("#billing-portal").onclick=async()=>{try{const d=await api("/api/billing/portal",{method:"POST",body:"{}"});location.href=d.url}catch(e){note(e.message,true)}};
  document.querySelectorAll(".plan-btn").forEach(b=>b.onclick=async()=>{try{const d=await api("/api/billing/checkout",{method:"POST",body:JSON.stringify({plan:b.dataset.plan})});location.href=d.url}catch(e){note(e.message,true)}});
  const params=new URLSearchParams(location.search);
  if(params.has("billing"))note(params.get("billing")==="success"?"Checkout completed. Your subscription will appear after Stripe confirms the webhook.":"Checkout was cancelled.");
