@@ -130,3 +130,50 @@ body#top .reference-hero .hero-blue-haze{
  body#top .reference-hero .hero-art .hero-assistant-art{width:min(72vw,300px);right:11%;bottom:0}
  body#top .reference-hero .hero-blue-haze{background:linear-gradient(180deg,#030916 0%,rgba(3,9,22,.98) 49%,rgba(3,9,22,.74) 75%,rgba(3,9,22,.18) 100%)}
 }
+
+
+/* Global AI receptionist hero composition — aligned to the supplied space reference */
+body#top .reference-hero{
+  min-height:clamp(720px,calc(100svh - 78px),900px);
+  background:
+    radial-gradient(ellipse at 76% 48%,rgba(0,116,220,.19),transparent 46%),
+    radial-gradient(ellipse at 22% 10%,rgba(0,54,105,.16),transparent 44%),
+    linear-gradient(112deg,#000817 0%,#020d20 54%,#010713 100%);
+}
+body#top .reference-hero .hero-art{
+  left:34%;width:66%;height:100%;overflow:visible;z-index:0;
+}
+body#top .reference-hero .hero-art .hero-earth-art{
+  position:absolute;width:min(78vw,1120px);max-width:none;height:auto;
+  right:-10%;bottom:1%;object-fit:contain;opacity:.96;
+  filter:saturate(1.12) contrast(1.06) drop-shadow(0 0 42px rgba(0,132,255,.24));
+}
+body#top .reference-hero .hero-art .hero-assistant-art{
+  position:absolute;width:clamp(350px,34vw,510px);max-width:none;height:auto;
+  right:22%;bottom:4%;object-fit:contain;opacity:1;
+  filter:drop-shadow(0 12px 36px rgba(0,0,0,.52)) drop-shadow(0 0 28px rgba(0,156,255,.25));
+}
+body#top .reference-hero .hero-blue-haze{
+  z-index:2;
+  background:linear-gradient(90deg,#000817 0%,rgba(0,8,23,.98) 24%,rgba(0,8,23,.84) 42%,rgba(0,8,23,.22) 61%,transparent 78%),linear-gradient(0deg,rgba(0,8,23,.12),transparent 30%);
+}
+body#top .reference-hero .hero-grid{z-index:3}
+body#top .reference-hero .hero-copy{width:min(50%,620px);max-width:620px}
+body#top .reference-hero .hero-feature-icon{color:#28caff;text-shadow:0 0 16px rgba(0,170,255,.7)}
+body#top .reference-hero .eyebrow{display:flex;align-items:center;gap:10px}
+body#top .reference-hero .eyebrow:before{content:"";width:28px;height:2px;background:linear-gradient(90deg,#15d8ff,#277dff);box-shadow:0 0 12px #13bfff}
+@media(max-width:900px){
+  body#top .reference-hero{min-height:850px}
+  body#top .reference-hero .hero-art{left:12%;width:88%}
+  body#top .reference-hero .hero-art .hero-earth-art{width:min(110vw,900px);right:-15%;bottom:0;opacity:.88}
+  body#top .reference-hero .hero-art .hero-assistant-art{width:clamp(300px,48vw,420px);right:18%;bottom:2%}
+  body#top .reference-hero .hero-blue-haze{background:linear-gradient(180deg,#000817 0%,rgba(0,8,23,.98) 42%,rgba(0,8,23,.68) 67%,rgba(0,8,23,.12) 100%)}
+}
+@media(max-width:700px){
+  body#top .reference-hero .hero-grid{min-height:unset;padding-top:48px;padding-bottom:300px}
+  body#top .reference-hero .hero-copy{width:100%}
+  body#top .reference-hero .hero-art{left:0;width:100%;height:390px;top:auto;bottom:0}
+  body#top .reference-hero .hero-art .hero-earth-art{width:155vw;right:-36%;bottom:0;opacity:.82}
+  body#top .reference-hero .hero-art .hero-assistant-art{width:min(78vw,330px);right:10%;bottom:0}
+  body#top .reference-hero .hero-blue-haze{background:linear-gradient(180deg,#000817 0%,rgba(0,8,23,.98) 48%,rgba(0,8,23,.72) 75%,rgba(0,8,23,.12) 100%)}
+}
