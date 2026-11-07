@@ -7,3 +7,10 @@ CREATE INDEX IF NOT EXISTS avr_calls_customer_date_idx ON avr_calls(customer_id,
 CREATE TABLE IF NOT EXISTS avr_billing_events (event_id TEXT PRIMARY KEY, customer_id TEXT, event_type TEXT NOT NULL, event_created INTEGER, payload_json TEXT, processed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
 CREATE TABLE IF NOT EXISTS avr_webhook_events (provider TEXT NOT NULL, event_id TEXT NOT NULL, received_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')), PRIMARY KEY(provider,event_id));
 CREATE TABLE IF NOT EXISTS avr_admin_audit (id TEXT PRIMARY KEY, admin_user_id TEXT NOT NULL, action TEXT NOT NULL, customer_id TEXT, detail_json TEXT, created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
+-- Run once against the existing avr-trust-lab D1 database before deploying the updated Worker.
+CREATE TABLE IF NOT EXISTS avr_call_email_settings (
+  customer_id TEXT PRIMARY KEY REFERENCES avr_customers(id) ON DELETE CASCADE,
+  enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN (0,1)),
+  recipients_json TEXT NOT NULL DEFAULT '[]',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
