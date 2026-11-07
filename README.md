@@ -35,6 +35,8 @@ The form collects business information for follow-up; it does not itself activat
 ## Customer and admin portal
 
 Customer portal:
+- Play available Retell call recordings, read transcripts and review AI-generated call summaries.
+- Configure automatic call-summary emails to the business mailbox or up to 10 authorized team recipients (including a team distribution list).
 - View assigned agent and phone numbers.
 - View recent calls, summaries and call duration.
 - View monthly minutes used versus included allowance.
@@ -112,9 +114,10 @@ Stripe webhooks—not the browser success redirect—update the local subscripti
 2. Set the Retell account webhook URL to:
    \`https://avr-platform-api.hisjarman.workers.dev/webhooks/retell\`
 3. Enable call events including \`call_started\`, \`call_ended\` and \`call_analyzed\`.
-4. Use **Sync Retell account** in the admin console to import agents and numbers.
+4. Run `cloudflare/migrations/2026-11-07-call-email-settings.sql` once against the existing D1 database before deploying the updated Worker.
+5. Use **Sync Retell account** in the admin console to import agents and numbers.
 5. Assign a customer, agent and phone number in the admin console.
-6. Make a test call and confirm the call appears under the correct customer.
+6. Make a test call and confirm the call appears under the correct customer. Enable automatic call-summary emails in the client portal and verify delivery to configured recipients.
 
 The Worker verifies the Retell \`x-retell-signature\` using the designated Retell webhook API key. Calls are deduplicated by call ID/event.
 
@@ -126,6 +129,7 @@ Public:
 - \`POST /webhooks/retell\`
 
 Authenticated customer:
+- `GET|PUT /api/client/call-email-settings`
 - \`GET /api/me\`
 - \`GET /api/client/dashboard\`
 - \`PATCH /api/client/profile\`
@@ -149,7 +153,7 @@ Admin-only:
 - Configure Stripe test mode first and complete a test purchase, portal update and cancellation before switching to live mode.
 - Confirm the Retell webhook is set to the API key with the Webhook badge.
 - Verify customer-to-customer data isolation and admin permissions with separate test accounts.
-- Confirm recording consent, retention, deletion and applicable privacy/legal requirements before exposing recordings or transcripts.
+- Confirm recording consent, retention, deletion and applicable privacy/legal requirements before exposing recordings or transcripts or emailing call summaries. Customers must add only authorized recipients. Automatic emails are sent on Retell `call_analyzed` events and include call summary metadata, not the full transcript or audio.
 - Usage is currently derived from Retell call duration events and rounded up to whole minutes for display. Confirm the exact billable-minute policy and any overage rates before charging overages.
 - Admin plan allowance edits do not silently alter Stripe subscriptions. Use the Stripe customer portal or Stripe Dashboard for actual subscription changes.
 
