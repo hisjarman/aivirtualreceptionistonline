@@ -404,24 +404,5 @@ body#top .footer{background:#010611;border-top:1px solid #12345b}
 @media(max-width:420px){.reference-topbar .client-login-global{padding:8px 7px!important;font-size:7px!important}.reference-topbar .reference-start{padding:8px 7px;font-size:7px}}
 
 
-/* Subtle live-style onboarding availability indicator */
-.onboarding-status{
-  display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
-  margin:0 10px 0 auto;padding:7px 0;
-  color:#39d98a;font-family:"DM Mono",monospace;font-size:9px;
-  font-weight:500;letter-spacing:.075em;line-height:1;white-space:nowrap;
-}
-.onboarding-status-dot{
-  position:relative;display:inline-block;width:7px;height:7px;flex:0 0 7px;
-  border-radius:50%;background:#22c55e;
-  box-shadow:0 0 0 3px rgba(34,197,94,.10),0 0 9px rgba(34,197,94,.55);
-}
-.reference-topbar .onboarding-status{margin-left:auto;margin-right:12px}
-.reference-topbar .reference-start{margin-left:0}
-@media(max-width:700px){
-  .onboarding-status{gap:5px;margin-right:7px;font-size:8px;letter-spacing:.035em}
-  .reference-topbar .onboarding-status{margin-right:6px}
-}
-@media(max-width:420px){
-  .onboarding-status{font-size:7px;gap:4px}
+
 }
