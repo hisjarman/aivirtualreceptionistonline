@@ -45,9 +45,11 @@ Customer portal:
 
 Admin console:
 - Create customer workspaces and link them by verified Clerk email.
-- Manage customer service status and plan allowance.
-- Sync Retell voice agents and phone numbers.
-- Assign an agent and number to a customer; when a number is selected, the Worker updates its Retell inbound/outbound agent binding.
+- View support inbox and client upgrade requests, with open/pending counts on the command-center overview.
+- Open a per-client supervision workspace showing profile, service status, plan, assigned Retell agents and phone numbers, call-summary email settings, recent calls, support requests and upgrade requests.
+- Edit client contact/profile details, service status, plan allowance, internal admin notes and automatic call-summary email recipients from the supervision workspace.
+- Reply to support tickets and update ticket and upgrade fulfillment statuses; clients see support replies in their portal.
+- Sync Retell voice agents and phone numbers and assign them to customer workspaces.
 - View cross-customer calls and Stripe billing events.
 - Admin authorization is enforced in the Worker, not merely hidden in the browser.
 

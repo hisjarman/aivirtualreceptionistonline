@@ -152,3 +152,13 @@
 .voice-modal-note{padding:14px 16px;border:1px solid #705e3e;border-radius:11px;background:#3b3325;color:#f2dcae;font-size:11px;line-height:1.65}.voice-modal-note b{color:#ffe7b7}
 .voice-modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}body.voice-modal-open{overflow:hidden}
 @media(max-width:600px){.voice-modal{padding:10px}.voice-modal-panel{padding:22px 17px;border-radius:15px}.voice-modal-panel h2{font-size:23px}.voice-steps li{padding:12px}}
+
+
+/* Admin client supervision workspace */
+.tab-count{display:inline-grid;place-items:center;min-width:19px;height:19px;margin-left:5px;padding:0 5px;border-radius:20px;background:#294b54;color:#a9f0df;font:700 10px "DM Mono",monospace}
+.request-metric{cursor:pointer;transition:border-color .18s,transform .18s}.request-metric:hover{border-color:#70e1cb;transform:translateY(-2px)}
+.admin-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:22px}.admin-modal.hidden{display:none!important}
+.admin-modal-backdrop{position:absolute;inset:0;background:rgba(2,10,15,.78);backdrop-filter:blur(8px)}
+.admin-modal-panel{position:relative;z-index:1;width:min(1080px,100%);max-height:92vh;overflow:auto;padding:22px;border:1px solid #3b5962;border-radius:16px;background:#10232c;box-shadow:0 25px 90px rgba(0,0,0,.5)}
+.admin-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.admin-modal-head h2{margin:6px 0}.workspace-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.workspace-columns .panel{margin:0}.admin-modal-panel h3{margin:0 0 12px}.admin-modal-panel .panel{padding:16px}
+@media(max-width:720px){.admin-modal{padding:8px}.admin-modal-panel{padding:14px;max-height:96vh}.workspace-columns{grid-template-columns:1fr}.admin-modal-head{align-items:flex-start}}

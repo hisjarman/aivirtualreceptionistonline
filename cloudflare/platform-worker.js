@@ -240,6 +240,44 @@ async function route(req,env){
    if(path==="/api/admin/overview"&&req.method==="GET"){const [cc,active,subs,calls,mins]=await Promise.all([env.DB.prepare("SELECT COUNT(*) n FROM avr_customers").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_customers WHERE status='active'").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_customers WHERE subscription_status IN ('active','trialing')").first(),env.DB.prepare("SELECT COUNT(*) n FROM avr_calls").first(),env.DB.prepare("SELECT COALESCE(SUM(duration_ms),0) n FROM avr_calls WHERE start_timestamp>=?").bind(new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).first()]);return json({customers:cc.n,activeCustomers:active.n,activeSubscriptions:subs.n,totalCalls:calls.n,minutesThisMonth:Math.ceil(Number(mins.n||0)/60000)},200,origin,env)}
    if(path==="/api/admin/customers"&&req.method==="GET"){const r=await env.DB.prepare("SELECT c.*, (SELECT COUNT(*) FROM avr_calls x WHERE x.customer_id=c.id) AS total_calls,(SELECT COALESCE(SUM(duration_ms),0) FROM avr_calls x WHERE x.customer_id=c.id AND x.start_timestamp>=?) AS usage_ms FROM avr_customers c ORDER BY c.created_at DESC LIMIT 500").bind(new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).all();return json({customers:(r.results||[]).map(c=>({...c,usage_minutes:Math.ceil(Number(c.usage_ms||0)/60000),usage_ms:undefined}))},200,origin,env)}
    if(path==="/api/admin/customers"&&req.method==="POST"){const p=await body(req),business=String(p.businessName||"").trim(),email=String(p.email||"").trim().toLowerCase();if(business.length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))throw Error("valid_business_and_email_required");const exists=await env.DB.prepare("SELECT id FROM avr_customers WHERE lower(email)=?").bind(email).first();if(exists)throw Error("customer_email_already_exists");const id=crypto.randomUUID();await env.DB.prepare("INSERT INTO avr_customers(id,business_name,contact_name,email,phone,clerk_user_id,status,admin_notes) VALUES(?,?,?,?,?,?,?,?)").bind(id,business,String(p.contactName||"").slice(0,120),email,String(p.phone||"").slice(0,40),String(p.clerkUserId||"").trim()||null,"pending",String(p.notes||"").slice(0,2000)).run();await audit(env,u,"customer_created",id,{email});return json({created:true,id},201,origin,env)}
+   const workspaceMatch=path.match(/^\/api\/admin\/customers\/([a-f0-9-]{36})\/workspace$/i);
+   if(workspaceMatch&&req.method==="GET"){
+    const id=workspaceMatch[1],customer=await env.DB.prepare("SELECT id,business_name,contact_name,email,phone,status,plan_key,included_minutes,subscription_status,stripe_customer_id,admin_notes,created_at,updated_at FROM avr_customers WHERE id=?").bind(id).first();
+    if(!customer)throw Error("customer_not_found");
+    const [agents,nums,emailRow,tickets,orders,calls]=await Promise.all([
+     env.DB.prepare("SELECT agent_id,agent_name,status FROM avr_agents WHERE customer_id=? ORDER BY agent_name").bind(id).all(),
+     env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=? ORDER BY phone_number").bind(id).all(),
+     env.DB.prepare("SELECT enabled,recipients_json FROM avr_call_email_settings WHERE customer_id=?").bind(id).first(),
+     env.DB.prepare("SELECT id,category,subject,description,priority,status,admin_reply,created_at FROM avr_support_tickets WHERE customer_id=? ORDER BY created_at DESC LIMIT 8").bind(id).all(),
+     env.DB.prepare("SELECT id,addon_name,billing_type,status,customer_note,admin_note,created_at FROM avr_addon_orders WHERE customer_id=? ORDER BY created_at DESC LIMIT 8").bind(id).all(),
+     env.DB.prepare("SELECT call_id,from_number,to_number,direction,call_status,duration_ms,start_timestamp,call_summary FROM avr_calls WHERE customer_id=? ORDER BY start_timestamp DESC LIMIT 8").bind(id).all()
+    ]);
+    let recipients=[];try{recipients=JSON.parse(emailRow?.recipients_json||"[]")}catch{}
+    return json({customer,agents:agents.results||[],numbers:nums.results||[],callEmail:{enabled:Number(emailRow?.enabled||0)===1,recipients},tickets:tickets.results||[],orders:orders.results||[],calls:calls.results||[]},200,origin,env)
+   }
+   if(workspaceMatch&&req.method==="PUT"){
+    const id=workspaceMatch[1],p=await body(req,10000),customer=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(id).first();
+    if(!customer)throw Error("customer_not_found");
+    const status=p.status,plan=p.plan;
+    if(status!==undefined&& !["pending","active","suspended","closed"].includes(status))throw Error("invalid_status");
+    if(plan!==undefined&&!planInfo[plan])throw Error("invalid_plan");
+    const business=p.businessName===undefined?null:String(p.businessName).trim().slice(0,160);
+    if(business!==null&&business.length<2)throw Error("business_name_required");
+    const contact=p.contactName===undefined?null:String(p.contactName).trim().slice(0,120);
+    const phone=p.phone===undefined?null:String(p.phone).trim().slice(0,40);
+    const notes=p.adminNotes===undefined?null:String(p.adminNotes).slice(0,2000);
+    await env.DB.prepare("UPDATE avr_customers SET business_name=COALESCE(?,business_name),contact_name=COALESCE(?,contact_name),phone=COALESCE(?,phone),status=COALESCE(?,status),plan_key=COALESCE(?,plan_key),included_minutes=CASE WHEN ?='starter' THEN 300 WHEN ?='growth' THEN 600 WHEN ?='pro' THEN 1000 ELSE included_minutes END,admin_notes=COALESCE(?,admin_notes),updated_at=? WHERE id=?")
+     .bind(business,contact,phone,status||null,plan||null,plan||"",plan||"",plan||"",notes,new Date().toISOString(),id).run();
+    if(p.callEmail&&typeof p.callEmail==="object"){
+     const recipients=Array.isArray(p.callEmail.recipients)?[...new Set(p.callEmail.recipients.map(x=>String(x).trim().toLowerCase()).filter(Boolean))]:[];
+     if(recipients.length>10)throw Error("maximum_10_email_recipients");
+     if(recipients.some(x=>!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x)))throw Error("invalid_call_email_recipient");
+     await env.DB.prepare("INSERT INTO avr_call_email_settings(customer_id,enabled,recipients_json,updated_at) VALUES(?,?,?,?) ON CONFLICT(customer_id) DO UPDATE SET enabled=excluded.enabled,recipients_json=excluded.recipients_json,updated_at=excluded.updated_at")
+      .bind(id,p.callEmail.enabled?1:0,JSON.stringify(recipients),new Date().toISOString()).run();
+    }
+    await audit(env,u,"client_workspace_updated",id,{status:status||null,plan:plan||null,callEmailUpdated:!!p.callEmail});
+    return json({saved:true},200,origin,env)
+   }
    const cm=path.match(/^\/api\/admin\/customers\/([a-f0-9-]{36})$/i);if(cm&&req.method==="PATCH"){const p=await body(req),id=cm[1],c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(id).first();if(!c)throw Error("customer_not_found");const status=p.status,plan=p.plan;if(status&&!["pending","active","suspended","closed"].includes(status))throw Error("invalid_status");if(plan&&!planInfo[plan])throw Error("invalid_plan");await env.DB.prepare("UPDATE avr_customers SET status=COALESCE(?,status),plan_key=COALESCE(?,plan_key),included_minutes=CASE WHEN ?='starter' THEN 300 WHEN ?='growth' THEN 600 WHEN ?='pro' THEN 1000 ELSE included_minutes END,admin_notes=COALESCE(?,admin_notes),updated_at=? WHERE id=?").bind(status||null,plan||null,plan||"",plan||"",plan||"",p.notes===undefined?null:String(p.notes).slice(0,2000),new Date().toISOString(),id).run();await audit(env,u,"customer_updated",id,p);return json({saved:true},200,origin,env)}
    if(path==="/api/admin/retell/sync"&&req.method==="POST"){const result=await syncRetell(env);await audit(env,u,"retell_sync",null,result);return json(result,200,origin,env)}
    if(path==="/api/admin/retell/resources"&&req.method==="GET"){const [a,n]=await Promise.all([env.DB.prepare("SELECT a.*,c.business_name FROM avr_agents a LEFT JOIN avr_customers c ON c.id=a.customer_id ORDER BY a.agent_name").all(),env.DB.prepare("SELECT n.*,c.business_name FROM avr_numbers n LEFT JOIN avr_customers c ON c.id=n.customer_id ORDER BY n.phone_number").all()]);return json({agents:a.results||[],numbers:n.results||[]},200,origin,env)}
