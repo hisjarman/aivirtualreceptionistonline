@@ -340,3 +340,26 @@ body#top .onboarding-speech-text{display:block}
 body#top .onboarding-speech-tail{position:absolute;left:19px;bottom:-10px;width:18px;height:18px;background:#082332;border-left:1px solid rgba(112,225,203,.58);border-bottom:1px solid rgba(112,225,203,.58);transform:skewY(-35deg) rotate(-24deg);border-radius:0 0 0 3px}
 @media(max-width:900px){body#top .onboarding-speech{top:12%;right:2%;width:min(205px,42%);font-size:12px}}
 @media(max-width:700px){body#top .onboarding-speech{top:8%;right:0;width:175px;padding:10px 12px;font-size:11px;border-radius:14px 14px 14px 4px}}
+
+
+/* Compact upper-left receptionist with dialogue visually placed at her mouth. */
+body#top .hero-model-column{min-height:440px;align-items:flex-start;justify-content:flex-start;padding-top:8px}
+body#top .hero-model-glow{width:72%;height:58%;left:-2%;bottom:12%}
+body#top .hero-model-image{width:clamp(245px,27vw,365px);max-width:100%;max-height:445px;object-position:left top;margin:0}
+body#top .hero-model-caption{left:8px;bottom:10px;transform:none}
+body#top .onboarding-speech{top:17%;left:39%;right:auto;width:min(205px,57%);padding:11px 14px;border-radius:15px;text-align:left;font-size:12px;box-shadow:0 8px 26px rgba(0,0,0,.24),0 0 18px rgba(53,220,190,.10)}
+body#top .onboarding-speech-tail{display:none}
+@media(max-width:900px){
+ body#top .hero-model-column{min-height:390px;padding-top:0}
+ body#top .hero-model-image{width:clamp(225px,32vw,315px);max-height:390px}
+ body#top .onboarding-speech{top:15%;left:36%;width:min(190px,60%);font-size:11px}
+}
+@media(max-width:700px){
+ body#top .reference-hero .hero-grid{grid-template-columns:1fr;gap:8px;padding-top:24px}
+ body#top .hero-model-column{min-height:245px;max-height:260px;width:100%;justify-content:flex-start;align-items:flex-start;overflow:visible}
+ body#top .hero-model-image{width:205px;max-height:250px;object-position:left top}
+ body#top .hero-model-glow{width:210px;height:190px;left:-18px;bottom:0}
+ body#top .hero-model-caption{left:4px;bottom:0;padding:7px 10px;font-size:7px}
+ body#top .onboarding-speech{top:15%;left:155px;right:auto;width:min(175px,calc(100% - 165px));padding:9px 10px;font-size:10px}
+ body#top .reference-hero .hero-copy{order:1}
+}
