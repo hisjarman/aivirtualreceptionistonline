@@ -5,7 +5,7 @@
   const d=await api("/api/admin/customers/"+encodeURIComponent(id)+"/workspace"),c=d.customer;
   modal.dataset.customerId=id;$("#workspace-title").textContent=c.business_name||"Client workspace";$("#workspace-subtitle").textContent=(c.email||"")+" · "+(c.subscription_status||"No subscription");
   $("#ws-business-name").value=c.business_name||"";$("#ws-contact-name").value=c.contact_name||"";$("#ws-email").value=c.email||"";$("#ws-phone").value=c.phone||"";$("#ws-status").value=c.status||"pending";$("#ws-plan").value=c.plan_key||"starter";$("#ws-admin-notes").value=c.admin_notes||"";
-  $("#ws-email-enabled").checked=!!d.callEmail.enabled;$("#ws-email-recipients").value=(d.callEmail.recipients||[]).join("\\n");
+  $("#ws-email-enabled").checked=!!d.callEmail.enabled;$("#ws-email-recipients").value=(d.callEmail.recipients||[]).join("\n");
   const resourceItems=[...(d.agents||[]).map(x=>'<div class="resource"><b>AI agent · '+safe(x.agent_name||x.agent_id)+'</b><span class="small">'+safe(x.agent_id)+' · '+safe(x.status||"unknown")+'</span></div>'),...(d.numbers||[]).map(x=>'<div class="resource"><b>Phone · '+safe(x.phone_number)+'</b><span class="small">'+safe(x.nickname||"Business line")+' · '+safe(x.agent_id||"No agent")+'</span></div>')];
   $("#ws-resources").innerHTML=resourceItems.join("")||'<div class="empty">No agent or phone number assigned.</div>';
   const reqs=[...(d.tickets||[]).map(x=>'<div class="resource"><b>Support · '+safe(x.subject)+'</b><span class="small">'+safe(x.status)+' · '+safe(fmt(x.created_at))+'</span><p class="small">'+safe(x.description||"")+'</p></div>'),...(d.orders||[]).map(x=>'<div class="resource"><b>Upgrade · '+safe(x.addon_name)+'</b><span class="small">'+safe(x.status)+' · '+safe(fmt(x.created_at))+'</span><p class="small">'+safe(x.customer_note||"")+'</p></div>')];
@@ -17,7 +17,7 @@
 async function saveClientWorkspace(e){
  e.preventDefault();const id=$("#client-workspace-modal").dataset.customerId,button=e.submitter;button.disabled=true;$("#ws-save-status").textContent="Saving…";
  try{
-  const recipients=$("#ws-email-recipients").value.split(/[\\n,;]+/).map(x=>x.trim()).filter(Boolean);
+  const recipients=$("#ws-email-recipients").value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);
   await api("/api/admin/customers/"+encodeURIComponent(id)+"/workspace",{method:"PUT",body:JSON.stringify({businessName:$("#ws-business-name").value,contactName:$("#ws-contact-name").value,phone:$("#ws-phone").value,status:$("#ws-status").value,plan:$("#ws-plan").value,adminNotes:$("#ws-admin-notes").value,callEmail:{enabled:$("#ws-email-enabled").checked,recipients}})});
   $("#ws-save-status").textContent="Client settings saved.";note("Client workspace settings updated.");await refresh();await openClientWorkspace(id);
  }catch(err){$("#ws-save-status").textContent=err.message||"Could not save settings."}
