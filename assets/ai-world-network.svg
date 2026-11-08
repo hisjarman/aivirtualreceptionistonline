@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+<defs>
+ <linearGradient id="globe" x1="430" y1="120" x2="1300" y2="820" gradientUnits="userSpaceOnUse"><stop stop-color="#8FD51D" stop-opacity=".34"/><stop offset=".52" stop-color="#39B8EE" stop-opacity=".24"/><stop offset="1" stop-color="#1597D4" stop-opacity=".12"/></linearGradient>
+ <linearGradient id="line" x1="520" y1="180" x2="1430" y2="760" gradientUnits="userSpaceOnUse"><stop stop-color="#8BCF20" stop-opacity=".72"/><stop offset="1" stop-color="#28A9E8" stop-opacity=".7"/></linearGradient>
+ <radialGradient id="halo"><stop stop-color="#B7F36B" stop-opacity=".17"/><stop offset="1" stop-color="#B7F36B" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="1080" cy="450" r="420" fill="url(#halo)"/>
+<circle cx="1080" cy="450" r="325" stroke="url(#globe)" stroke-width="2"/>
+<ellipse cx="1080" cy="450" rx="160" ry="325" stroke="#28A9E8" stroke-opacity=".28" stroke-width="2"/>
+<ellipse cx="1080" cy="450" rx="270" ry="325" stroke="#8BCF20" stroke-opacity=".24" stroke-width="1.5"/>
+<path d="M755 450h650M790 315c190 86 390 86 580 0M790 585c190-86 390-86 580 0" stroke="#28A9E8" stroke-opacity=".26" stroke-width="2"/>
+<path d="M855 235c115 78 210 125 300 215 88 88 180 150 260 216M1300 210c-115 105-185 180-245 240-76 76-168 145-270 230" stroke="url(#line)" stroke-width="2.2" stroke-dasharray="5 10"/>
+<g fill="#8BCF20"><circle cx="855" cy="235" r="7"/><circle cx="1155" cy="450" r="8"/><circle cx="1415" cy="666" r="7"/><circle cx="785" cy="450" r="6"/></g>
+<g fill="#28A9E8"><circle cx="1300" cy="210" r="7"/><circle cx="1055" cy="690" r="7"/><circle cx="1415" cy="450" r="6"/><circle cx="1080" cy="125" r="6"/></g>
+<g stroke="#28A9E8" stroke-opacity=".48" stroke-width="2"><path d="M855 235L1080 125L1300 210L1415 450L1415 666L1155 450L1055 690L785 450Z"/><path d="M855 235L1155 450L1300 210M1080 125L1155 450L1055 690"/></g>
+<!-- Abstract AI mind: connected synapses form a calm brain silhouette -->
+<path d="M1070 300c-56-62-151-32-156 45-61 13-75 91-27 126-35 60 7 132 73 133 18 63 99 80 143 36 43 45 123 25 140-34 70 0 106-76 70-133 45-47 29-117-29-133-9-79-105-106-158-40-20-15-39-15-56 0Z" stroke="#1597D4" stroke-opacity=".56" stroke-width="3"/>
+<g stroke="url(#line)" stroke-width="2.5" stroke-linecap="round">
+<path d="M1000 360l80 55 80-50M950 470l95-5 80 65 90-50M985 570l60-105 35-50 90 115M1080 415l0 100 55 65M1160 365l-15 150 90-85"/>
+</g>
+<g fill="#8BCF20"><circle cx="1000" cy="360" r="8"/><circle cx="1080" cy="415" r="8"/><circle cx="1160" cy="365" r="8"/><circle cx="1045" cy="465" r="8"/><circle cx="1125" cy="530" r="8"/><circle cx="985" cy="570" r="7"/></g>
+<g fill="#28A9E8"><circle cx="950" cy="470" r="7"/><circle cx="1205" cy="445" r="7"/><circle cx="1220" cy="600" r="7"/><circle cx="1135" cy="580" r="7"/></g>
+</svg>
