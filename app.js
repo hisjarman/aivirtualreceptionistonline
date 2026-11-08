@@ -4,6 +4,21 @@
 // 3) Commit and publish this file. Do not put API keys or private credentials here.
 const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
 
+/* Keep the client portal entry point visible in every public-page header. */
+(() => {
+  const header = document.querySelector("header.topbar");
+  if (!header || header.querySelector(".client-login-global")) return;
+  const startLink = header.querySelector("a.nav-login, a.reference-start");
+  if (!startLink) return;
+  const loginLink = document.createElement("a");
+  loginLink.className = "button button-small client-login-global";
+  loginLink.href = "./client/";
+  loginLink.textContent = "Client Login";
+  loginLink.setAttribute("aria-label", "Client login portal");
+  header.insertBefore(loginLink, startLink);
+})();
+
+
 const form = document.querySelector("#intake-form");
 if (form) {
 const fields = [...form.children].filter(element => element.tagName === "FIELDSET");
