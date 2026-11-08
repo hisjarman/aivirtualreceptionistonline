@@ -332,3 +332,11 @@ body#top .dashboard-preview-disclaimer{display:flex;gap:8px;padding:10px 14px;ba
 body#top .hero-personal-service{max-width:510px;margin:12px 0 0;color:#d9e9fb;font-size:clamp(13px,1.05vw,14px);line-height:1.7}
 body#top .hero-personal-service:before{content:"";display:inline-block;width:18px;height:2px;margin:0 9px 4px 0;background:#35c8ff;box-shadow:0 0 10px rgba(53,200,255,.45)}
 @media(max-width:700px){body#top .hero-personal-service{font-size:13px;line-height:1.65}}
+
+
+/* Onboarding availability is spoken by the homepage AI receptionist, not placed in the navigation. */
+body#top .onboarding-speech{position:absolute;z-index:4;top:15%;right:1%;width:min(225px,43%);padding:13px 16px;border:1px solid rgba(112,225,203,.58);border-radius:18px 18px 18px 5px;background:linear-gradient(145deg,rgba(8,35,48,.96),rgba(4,19,34,.96));color:#dffff7;box-shadow:0 12px 34px rgba(0,0,0,.28),0 0 24px rgba(53,220,190,.13);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font:700 13px/1.4 'DM Sans',sans-serif;text-align:center}
+body#top .onboarding-speech-text{display:block}
+body#top .onboarding-speech-tail{position:absolute;left:19px;bottom:-10px;width:18px;height:18px;background:#082332;border-left:1px solid rgba(112,225,203,.58);border-bottom:1px solid rgba(112,225,203,.58);transform:skewY(-35deg) rotate(-24deg);border-radius:0 0 0 3px}
+@media(max-width:900px){body#top .onboarding-speech{top:12%;right:2%;width:min(205px,42%);font-size:12px}}
+@media(max-width:700px){body#top .onboarding-speech{top:8%;right:0;width:175px;padding:10px 12px;font-size:11px;border-radius:14px 14px 14px 4px}}
