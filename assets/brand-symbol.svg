@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="AIVirtualReceptionist.online">
+<circle cx="64" cy="64" r="54" fill="#fff" stroke="#8BCF20" stroke-width="5"/>
+<path d="M22 64h84M64 10c-17 15-26 34-26 54s9 39 26 54M64 10c17 15 26 34 26 54s-9 39-26 54M25 39c24 13 54 13 78 0M25 89c24-13 54-13 78 0" fill="none" stroke="#1A9FE3" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M42 71l15-18 14 14 17-21" fill="none" stroke="#8BCF20" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<g fill="#1A9FE3"><circle cx="42" cy="71" r="5"/><circle cx="57" cy="53" r="5"/><circle cx="71" cy="67" r="5"/><circle cx="88" cy="46" r="5"/></g>
+<path d="M64 4v9M64 115v9M4 64h9M115 64h9" stroke="#8BCF20" stroke-width="4" stroke-linecap="round"/>
+</svg>
