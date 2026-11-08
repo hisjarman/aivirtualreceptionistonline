@@ -271,7 +271,7 @@ async function route(req,env){
     if(p.callEmail&&typeof p.callEmail==="object"){
      const recipients=Array.isArray(p.callEmail.recipients)?[...new Set(p.callEmail.recipients.map(x=>String(x).trim().toLowerCase()).filter(Boolean))]:[];
      if(recipients.length>10)throw Error("maximum_10_email_recipients");
-     if(recipients.some(x=>!/^[^\s@]+@[^\s@]+\\.[^\s@]{2,}$/.test(x)))throw Error("invalid_call_email_recipient");
+     if(recipients.some(x=>!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x)))throw Error("invalid_call_email_recipient");
      await env.DB.prepare("INSERT INTO avr_call_email_settings(customer_id,enabled,recipients_json,updated_at) VALUES(?,?,?,?) ON CONFLICT(customer_id) DO UPDATE SET enabled=excluded.enabled,recipients_json=excluded.recipients_json,updated_at=excluded.updated_at")
       .bind(id,p.callEmail.enabled?1:0,JSON.stringify(recipients),new Date().toISOString()).run();
     }
