@@ -118,7 +118,7 @@ const challenges=[
 {stage:"LEAD QUALIFIER",tag:"CONVERSATION DESIGN",question:"A new customer wants a roof estimate. Which set of questions best captures a useful lead without turning the call into an interrogation?",scenario:"The receptionist should collect enough information for the team to follow up, while keeping the conversation natural.",answers:["Name, callback number, property address, type of roofing issue and preferred follow-up time.","Full date of birth, payment-card number, social-media password and home value.","Ask the caller to repeat the entire story three times before collecting contact details."],correct:0,why:"Correct. Capture relevant contact and job details only. Avoid unnecessary sensitive information and keep the caller experience conversational."},
 {stage:"CALL FLOW MASTER",tag:"WORKFLOW LOGIC",question:"Put the receptionist's priorities into the strongest order for a normal new-service inquiry.",scenario:"A good call flow should feel natural and move the caller toward a clear next step.",answers:["Ask for payment → transfer immediately → discover what the caller needs.","Understand the request → answer from approved information → collect relevant details → offer the approved next step or human handoff.","Read every FAQ → ask for every possible detail → end the call without confirming next steps."],correct:1,why:"Correct. Understand first, answer accurately, gather the details needed by the business, and close with a clear next step."}
 ];
-let current=0,score=0,answered=false;
+let current=0,score=0,answered=false,lastCorrect=false;
 const $=id=>document.getElementById(id);
 function render(){
 const item=challenges[current];answered=false;
@@ -149,16 +149,16 @@ function choose(index){
 if(answered)return;
 const item=challenges[current],buttons=[...$("answers").querySelectorAll("button")];
 answered=true;
+const good=index===item.correct;lastCorrect=good;
 buttons.forEach((button,i)=>{button.disabled=true;if(i===item.correct)button.classList.add("correct");else if(i===index)button.classList.add("incorrect");});
-const good=index===item.correct;
 if(good)score++;
 $("feedback").className="feedback "+(good?"good":"bad");
 const heading=document.createElement("strong");heading.textContent=good?"Strong decision. +1 point":"Not quite. Here's the principle:";
 $("feedback").replaceChildren(heading,document.createTextNode(item.why));
 $("next-button").disabled=false;
-$("game-hint").textContent=good?"Correct answer recorded.":"Review the explanation, then continue.";
-$("progress-fill").style.width=((current+1)/challenges.length*100)+"%";
-$("progress").setAttribute("aria-valuenow",String(current+1));
+$("next-button").textContent=good?(current===challenges.length-1?"Finish challenge →":"Next challenge →"):"Try again ↻";
+$("game-hint").textContent=good?"Correct answer recorded.":"You need the correct answer to unlock the next stage.";
+if(good){$("progress-fill").style.width=((current+1)/challenges.length*100)+"%";$("progress").setAttribute("aria-valuenow",String(current+1));}
 }
 function finish(){
 $("game-play").hidden=true;
@@ -167,6 +167,7 @@ $("promo-code").textContent="CALLSMART10";
 }
 $("next-button").addEventListener("click",()=>{
 if(!answered)return;
+if(!lastCorrect){render();return;}
 if(current<challenges.length-1){current++;render();}else finish();
 });
 $("copy-code").addEventListener("click",async()=>{
