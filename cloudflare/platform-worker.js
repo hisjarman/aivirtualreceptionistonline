@@ -46,6 +46,30 @@ async function stripeWebhook(req,env){const raw=await req.text(),sig=req.headers
  await env.DB.prepare("INSERT OR IGNORE INTO avr_webhook_events(provider,event_id) VALUES('stripe',?)").bind(ev.id).run();
  return {received:true};
 }
+
+async function sendAutomaticCallSummary(env,customerId,callId){
+ try{
+  if(!env.RESEND_API_KEY||!env.RESEND_FROM_EMAIL)return;
+  const settings=await env.DB.prepare("SELECT enabled,recipients_json FROM avr_call_email_settings WHERE customer_id=?").bind(customerId).first();
+  if(!settings||Number(settings.enabled)!==1)return;
+  let recipients=[];try{recipients=JSON.parse(settings.recipients_json||"[]")}catch{}
+  recipients=[...new Set(recipients.map(x=>String(x).trim().toLowerCase()).filter(x=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x)))].slice(0,10);
+  if(!recipients.length)return;
+  const call=await env.DB.prepare("SELECT call_id,from_number,to_number,direction,duration_ms,start_timestamp,call_summary,user_sentiment FROM avr_calls WHERE call_id=? AND customer_id=? LIMIT 1").bind(callId,customerId).first();
+  const customer=await env.DB.prepare("SELECT business_name FROM avr_customers WHERE id=?").bind(customerId).first();
+  if(!call)return;
+  const esc=v=>String(v??"—").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  const date=call.start_timestamp?new Date(Number(call.start_timestamp)>1e12?Number(call.start_timestamp):Number(call.start_timestamp)*1000).toISOString():"Unknown";
+  const duration=Math.ceil(Number(call.duration_ms||0)/60000)+" minute(s)";
+  const summary=call.call_summary||"No AI summary was provided for this call.";
+  const subject="New call summary — "+String(customer?.business_name||"Your business")+" — "+String(call.from_number||"Unknown caller");
+  const text=["AIVirtualReceptionist.online — Call summary","Business: "+(customer?.business_name||"Your business"),"Caller: "+(call.from_number||"Unknown"),"Business line: "+(call.to_number||"Unknown"),"Date/time: "+date,"Direction: "+(call.direction||"Unknown"),"Duration: "+duration,"Sentiment: "+(call.user_sentiment||"Unknown"),"","Call summary:",summary,"","Open your client portal to review the transcript and available recording: https://aivirtualreceptionist.online/client/#calls"].join("\n");
+  const html="<div style=\"font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#20343b\"><h2>New call summary</h2><p><b>Business:</b> "+esc(customer?.business_name)+"</p><p><b>Caller:</b> "+esc(call.from_number)+"<br><b>Business line:</b> "+esc(call.to_number)+"<br><b>Date/time:</b> "+esc(date)+"<br><b>Direction:</b> "+esc(call.direction)+"<br><b>Duration:</b> "+esc(duration)+"<br><b>Sentiment:</b> "+esc(call.user_sentiment)+"</p><h3>Call summary</h3><p>"+esc(summary)+"</p><p><a href=\"https://aivirtualreceptionist.online/client/#calls\">Open call history to listen to the recording and read the transcript</a></p><p style=\"font-size:12px;color:#68777c\">Sent because automatic call-summary emails are enabled in your client portal.</p></div>";
+  const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"avr-auto-call-summary/"+call.call_id},body:JSON.stringify({from:env.RESEND_FROM_EMAIL,to:recipients,subject,html,text})});
+  if(!sent.ok){const result=await sent.json().catch(()=>({}));console.error("automatic_call_summary_email_failed",sent.status,result)}
+ }catch(e){console.error("automatic_call_summary_email_error",e.message)}
+}
+
 async function retellVerify(raw,signature,key){if(!key||!signature)return false;const m=signature.match(/v=(\d+),d=([a-f0-9]+)/i);if(!m)return false;const ts=m[1],stamp=Number(ts);if(Math.abs(Date.now()-stamp)>5*60*1000)return false;const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(key),{name:"HMAC",hash:"SHA-256"},false,["sign"]);const out=new Uint8Array(await crypto.subtle.sign("HMAC",k,new TextEncoder().encode(raw+ts)));const hex=Array.from(out,x=>x.toString(16).padStart(2,"0")).join("");return hex===m[2].toLowerCase()}
 async function retellApi(env,path,method="GET",data){if(!env.RETELL_API_KEY)throw Error("retell_not_configured");const r=await fetch("https://api.retellai.com"+path,{method,headers:{Authorization:"Bearer "+env.RETELL_API_KEY,"Content-Type":"application/json"},body:data?JSON.stringify(data):undefined});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||d.error||"retell_request_failed");return d}
 async function retellList(env,path,method="GET",data){
@@ -89,6 +113,7 @@ async function retellWebhook(req,env){
  const analysis=call.call_analysis||{};
  await env.DB.prepare("INSERT INTO avr_calls(call_id,customer_id,agent_id,phone_number,from_number,to_number,direction,call_status,duration_ms,start_timestamp,end_timestamp,transcript,recording_url,call_summary,user_sentiment,disconnection_reason,raw_json) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(call_id) DO UPDATE SET customer_id=COALESCE(excluded.customer_id,avr_calls.customer_id),agent_id=COALESCE(excluded.agent_id,avr_calls.agent_id),phone_number=COALESCE(excluded.phone_number,avr_calls.phone_number),from_number=COALESCE(excluded.from_number,avr_calls.from_number),to_number=COALESCE(excluded.to_number,avr_calls.to_number),direction=COALESCE(excluded.direction,avr_calls.direction),call_status=excluded.call_status,duration_ms=COALESCE(excluded.duration_ms,avr_calls.duration_ms),start_timestamp=COALESCE(excluded.start_timestamp,avr_calls.start_timestamp),end_timestamp=COALESCE(excluded.end_timestamp,avr_calls.end_timestamp),transcript=COALESCE(excluded.transcript,avr_calls.transcript),recording_url=COALESCE(excluded.recording_url,avr_calls.recording_url),call_summary=COALESCE(excluded.call_summary,avr_calls.call_summary),user_sentiment=COALESCE(excluded.user_sentiment,avr_calls.user_sentiment),disconnection_reason=COALESCE(excluded.disconnection_reason,avr_calls.disconnection_reason),raw_json=excluded.raw_json")
  .bind(id,cid,agent,line,call.from_number||null,to,direction,callStatus,duration,start,end,call.transcript||null,call.recording_url||null,analysis.call_summary||null,analysis.user_sentiment||null,call.disconnection_reason||null,JSON.stringify(p).slice(0,100000)).run();
+ if(event==="call_analyzed"&&cid)await sendAutomaticCallSummary(env,cid,id);
  await env.DB.prepare("INSERT OR IGNORE INTO avr_webhook_events(provider,event_id) VALUES('retell',?)").bind(eventKey).run();
  return {received:true,event,call_id:id,customer_matched:!!cid};
 }
@@ -143,6 +168,20 @@ async function route(req,env){
    const id=crypto.randomUUID();
    await env.DB.prepare("INSERT INTO avr_support_tickets(id,customer_id,category,subject,description,priority,status) VALUES(?,?,?,?,?,?,?)").bind(id,c.id,category,subject,description,priority,"open").run();
    return json({created:true,id,status:"open"},201,origin,env)
+  }
+  if(path==="/api/client/call-email-settings"&&(req.method==="GET"||req.method==="PUT")){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   if(req.method==="GET"){
+    const row=await env.DB.prepare("SELECT enabled,recipients_json FROM avr_call_email_settings WHERE customer_id=?").bind(c.id).first();
+    let recipients=[];try{recipients=JSON.parse(row?.recipients_json||"[]")}catch{}
+    return json({enabled:Number(row?.enabled||0)===1,recipients},200,origin,env)
+   }
+   const p=await body(req,5000),raw=Array.isArray(p.recipients)?p.recipients:[],recipients=[...new Set(raw.map(x=>String(x).trim().toLowerCase()).filter(Boolean))];
+   if(recipients.length>10)throw Error("maximum_10_email_recipients");
+   if(recipients.some(x=>x.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x)))throw Error("enter_valid_recipient_email_addresses");
+   if(p.enabled&&recipients.length===0)throw Error("add_at_least_one_recipient_to_enable_emails");
+   await env.DB.prepare("INSERT INTO avr_call_email_settings(customer_id,enabled,recipients_json,updated_at) VALUES(?,?,?,?) ON CONFLICT(customer_id) DO UPDATE SET enabled=excluded.enabled,recipients_json=excluded.recipients_json,updated_at=excluded.updated_at").bind(c.id,p.enabled?1:0,JSON.stringify(recipients),new Date().toISOString()).run();
+   return json({saved:true,enabled:!!p.enabled,recipients},200,origin,env)
   }
   const callEmailMatch=path.match(/^\/api\/client\/calls\/([^/]+)\/email$/);
   if(callEmailMatch&&req.method==="POST"){
