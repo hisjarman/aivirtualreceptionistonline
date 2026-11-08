@@ -74,3 +74,36 @@
 .story-admin-auth button{padding:11px 15px;border-radius:8px;border:0;background:#70e1cb;color:#102a30;font-weight:800;cursor:pointer}
 @media(max-width:800px){.story-promo-inner,.story-hero-grid,.story-signup-grid{grid-template-columns:1fr}.story-hero{padding:65px 0 48px}.story-hero-art{min-height:260px}.story-benefits{grid-template-columns:1fr}.story-coming-card{grid-template-columns:1fr}.story-admin-table{display:block;overflow-x:auto}}
 @media(max-width:600px){.story-wrap{width:calc(100% - 32px)}.story-promo{padding:34px 0}.story-promo-inner{gap:24px}.story-subscribe-fields{flex-direction:column}.story-subscribe-fields button{padding:13px}.story-hero h1{font-size:46px}.story-hero-copy>p{font-size:14px}.story-section{padding:48px 0}.story-coming-card{padding:22px}.story-admin-auth{align-items:flex-start;flex-direction:column}}
+
+/* Published weekly episode layout */
+.story-episode-card{margin-top:30px;display:grid;grid-template-columns:.7fr 1.3fr;gap:0;overflow:hidden;border:1px solid rgba(112,225,203,.24);border-radius:18px;background:linear-gradient(145deg,#1d3942,#192f38)}
+.story-episode-card-art{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:radial-gradient(circle at 50% 42%,#416b68,#19343c 68%,#10242d);color:#8cf6df}
+.story-episode-card-art span{font-size:76px;line-height:1;transform:rotate(-12deg)}
+.story-episode-card-art b{font:800 10px 'DM Mono',monospace;letter-spacing:.16em;color:#f7ca75}
+.story-episode-card-copy{padding:30px}
+.story-episode-card-copy h3{font:800 clamp(22px,3vw,30px)/1.12 Manrope,sans-serif;letter-spacing:-.035em;color:#f2f7f3;margin:14px 0 10px}
+.story-episode-card-copy p{color:#aebfbe;line-height:1.75;font-size:13px;margin:0 0 18px}
+.story-release-note{margin-top:18px}
+.story-episode-hero{padding:66px 0 48px;background:radial-gradient(ellipse at 85% 0%,rgba(60,157,142,.2),transparent 38%),linear-gradient(180deg,#14252d,#172e36)}
+.story-back-link{display:inline-block;color:#70e1cb;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:34px}
+.story-episode-hero h1{font:800 clamp(38px,6vw,68px)/1.02 Manrope,sans-serif;letter-spacing:-.06em;color:#f2f7f3;margin:16px 0}
+.story-episode-hero h1 em{font-style:normal;color:#70e1cb}
+.story-episode-deck{max-width:720px;color:#b4c5c4;font-size:17px;line-height:1.75}
+.story-episode-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.story-episode-meta span{padding:7px 10px;border:1px solid rgba(190,220,220,.18);border-radius:6px;color:#aebfbe;font:500 9px 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.story-article{max-width:850px;padding-top:46px;padding-bottom:80px}
+.story-scene{padding:28px 0 32px;border-bottom:1px solid rgba(190,220,220,.12)}
+.story-scene-label{font:600 10px 'DM Mono',monospace;letter-spacing:.13em;color:#70e1cb}
+.story-scene h2,.story-takeaway h2,.story-next h2{font:800 clamp(25px,4vw,34px)/1.12 Manrope,sans-serif;letter-spacing:-.04em;color:#f2f7f3;margin:13px 0 18px}
+.story-scene p,.story-takeaway p,.story-next p{font-size:15px;line-height:1.9;color:#c0ceca;margin:0 0 15px}
+.story-scene strong{color:#f7ca75}
+.story-takeaway{margin:38px 0;padding:30px;border:1px solid rgba(112,225,203,.25);border-radius:16px;background:linear-gradient(145deg,#1d4146,#19323b)}
+.story-takeaway .button{display:inline-flex;margin-top:8px}
+.story-episode-faq{padding:20px 0}
+.story-episode-faq h2{font:800 23px Manrope;color:#f2f7f3}
+.story-episode-faq details{padding:17px 18px;border:1px solid rgba(190,220,220,.15);border-radius:10px;background:#192f38;color:#eaf2ee}
+.story-episode-faq summary{cursor:pointer;font-weight:700;font-size:13px}
+.story-episode-faq p{font-size:13px;line-height:1.75;color:#aebfbe;margin:12px 0 0}
+.story-next{margin-top:30px;padding:26px 0;border-top:1px solid rgba(190,220,220,.12);display:flex;justify-content:space-between;align-items:center;gap:25px}
+.story-next p{font-size:13px;margin:0}
+@media(max-width:700px){.story-episode-card{grid-template-columns:1fr}.story-episode-card-art{min-height:160px}.story-episode-card-copy{padding:22px}.story-episode-hero{padding:48px 0 35px}.story-episode-deck{font-size:14px}.story-scene{padding:23px 0}.story-scene p,.story-takeaway p{font-size:14px}.story-takeaway{padding:22px}.story-next{align-items:flex-start;flex-direction:column}}
