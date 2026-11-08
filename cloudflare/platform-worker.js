@@ -1,6 +1,6 @@
 const DEFAULT_ORIGINS=["https://aivirtualreceptionist.online","https://www.aivirtualreceptionist.online","https://hisjarman.github.io"];
 let jwksCache={expires:0,keys:[]};
-const json=(data,status=200,origin,env)=>new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer","Vary":"Origin",...(origin&&origins(env).includes(origin)?{"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"GET, POST, PATCH, DELETE, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type, Accept, Stripe-Signature, X-Retell-Signature","Access-Control-Max-Age":"86400"}:{})}});
+const json=(data,status=200,origin,env)=>new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer","Vary":"Origin",...(origin&&origins(env).includes(origin)?{"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"GET, POST, PUT, PATCH, DELETE, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type, Accept, Stripe-Signature, X-Retell-Signature","Access-Control-Max-Age":"86400"}:{})}});
 function origins(env){return (env.ALLOWED_ORIGINS||DEFAULT_ORIGINS.join(",")).split(",").map(x=>x.trim()).filter(Boolean)}
 function b64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
 function decode(s){return JSON.parse(new TextDecoder().decode(b64u(s)))}
@@ -119,7 +119,7 @@ async function retellWebhook(req,env){
 }
 async function route(req,env){
  const url=new URL(req.url),path=url.pathname,origin=req.headers.get("Origin");
- if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin&&origins(env).includes(origin)?origin:"null","Access-Control-Allow-Methods":"GET, POST, PATCH, DELETE, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type, Accept, Stripe-Signature, X-Retell-Signature","Access-Control-Max-Age":"86400","Vary":"Origin"}});
+ if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin&&origins(env).includes(origin)?origin:"null","Access-Control-Allow-Methods":"GET, POST, PUT, PATCH, DELETE, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type, Accept, Stripe-Signature, X-Retell-Signature","Access-Control-Max-Age":"86400","Vary":"Origin"}});
  if(path==="/health")return json({ok:true,service:"avr-platform-api",version:"1.0.0",stripe:!!env.STRIPE_SECRET_KEY,retell:!!env.RETELL_API_KEY},200,origin,env);
  if(path==="/webhooks/stripe"&&req.method==="POST"){try{return json(await stripeWebhook(req,env),200,origin,env)}catch(e){console.error("stripe_webhook",e.message);return json({error:e.message},400,origin,env)}}
  if(path==="/webhooks/retell"&&req.method==="POST"){try{return json(await retellWebhook(req,env),200,origin,env)}catch(e){console.error("retell_webhook",e.message);return json({error:e.message},400,origin,env)}}
