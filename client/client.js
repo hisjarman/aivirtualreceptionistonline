@@ -81,26 +81,16 @@
   catch(e){note(e.message,true);button.disabled=false;button.textContent=original}
  }
 
- const agentOptionCatalog=[
-  {key:"elevenlabs",title:"Premium ElevenLabs voice",description:"Use a compatible ElevenLabs voice for a different vocal style. Exact model and compatibility must be checked.",rate:0.025,unit:"per minute",note:"Retell currently lists ElevenLabs Flash at $0.040/min and several other ElevenLabs models at $0.060–$0.100/min, versus $0.015/min for standard listed voices. The estimate uses only the $0.025/min Flash difference; other models can cost more."},
-  {key:"knowledge_base",title:"Expanded business knowledge",description:"Add approved FAQs, service areas, pricing guidance and business documents to the receptionist’s knowledge.",rate:0.005,unit:"per minute",note:"Retell lists knowledge-base processing at +$0.005/min. The first 10 knowledge bases are listed as free; additional knowledge bases are $8/month each."},
-  {key:"denoising",title:"Advanced noise reduction",description:"Help the agent handle callers in noisy environments.",rate:0.005,unit:"per minute",note:"Retell lists advanced denoising at +$0.005/min."},
-  {key:"safety",title:"Safety guardrails",description:"Add an extra layer of response constraints for supported scenarios.",rate:0.005,unit:"per minute",note:"Retell lists safety guardrails at +$0.005/min."},
-  {key:"privacy",title:"Personal-information redaction",description:"Explore redaction of personal information in supported call processing.",rate:0.01,unit:"per minute",note:"Retell lists PII removal at +$0.010/min."},
-  {key:"sms",title:"SMS follow-up",description:"Send supported text updates or follow-ups after calls.",rate:0.01,unit:"per message",note:"Retell lists SMS at $0.01/message. Carrier, registration, phone-number and AVR configuration charges may also apply."},
-  {key:"phone",title:"Additional Retell phone number",description:"Add another Retell-provided phone number if available in your country.",rate:2,unit:"per month",note:"Retell lists its phone numbers at $2/month. Custom telephony numbers are billed by the carrier instead."},
-  {key:"verified_phone",title:"Verified caller ID number",description:"Explore verification for supported outbound caller ID use cases.",rate:10,unit:"per number/month",note:"Retell lists verified phone numbers at $10/number/month; eligibility and country rules apply."},
-  {key:"concurrency",title:"More simultaneous calls",description:"Increase the number of calls your receptionist can handle at once if your traffic needs it.",rate:8,unit:"per additional concurrency/month",note:"Retell lists the first 20 concurrent calls as included and additional concurrency at $8 each/month."},
-  {key:"model",title:"Different AI model",description:"Review a different language model for response quality, speed or cost.",rate:null,unit:"custom estimate",note:"LLM rates depend on the exact model and tier. We will calculate this from your actual agent configuration before quoting."},
-  {key:"workflow",title:"Calendar or CRM connection",description:"Connect supported booking, CRM or business systems to your call workflow.",rate:null,unit:"custom quote",note:"Integration providers may charge their own subscription or usage fees. We will identify these before asking you to approve."}
- ];
- function renderAgentOptions(minutes){
+ const agentOptionCatalog=[{"key":"voice","title":"A different voice","description":"Choose a voice style that better represents your business.","type":"voice"},{"key":"knowledge_base","title":"More business knowledge","description":"Add approved FAQs, service areas, services and business documents.","type":"knowledge_base"},{"key":"denoising","title":"Clearer calls in noisy places","description":"Improve how your receptionist handles background noise.","type":"denoising"},{"key":"safety","title":"Additional response safeguards","description":"Add extra rules for supported situations and sensitive call flows.","type":"safety"},{"key":"privacy","title":"Personal-information protection","description":"Explore additional redaction of personal information in supported call processing.","type":"privacy"},{"key":"sms","title":"Text message follow-ups","description":"Request appointment confirmations, follow-up messages or other approved business texts.","type":"sms"},{"key":"phone","title":"Additional phone number","description":"Add another business number or route calls differently.","type":"phone"},{"key":"other","title":"More simultaneous calls","description":"Increase simultaneous call capacity if your business regularly receives overlapping calls.","type":"other"},{"key":"other","title":"Different AI response engine","description":"Review a different balance of response quality, speed and operating cost.","type":"other"},{"key":"workflow","title":"Calendar, CRM or business workflow","description":"Connect supported scheduling, customer-management or business systems.","type":"workflow"}];
+ function renderAgentOptions(){
   const root=$("#agent-improvement-options");if(!root)return;
-  root.innerHTML=agentOptionCatalog.map(o=>{
-   const estimate=o.rate===null?"Quote required":o.unit==="per minute"?"~"+money(o.rate*minutes)+" at "+minutes.toLocaleString()+" minutes used this month":o.unit==="per message"?money(o.rate)+" per message":o.unit==="per month"?money(o.rate)+"/month":o.unit==="per number/month"?money(o.rate)+"/number/month":money(o.rate)+"/"+o.unit;
-   return '<article class="agent-option-card"><h4>'+safe(o.title)+'</h4><p>'+safe(o.description)+'</p><strong class="agent-option-cost">'+safe(estimate)+'</strong><p class="small">'+safe(o.note)+'</p><button type="button" class="btn secondary agent-option-request" data-request-type="'+safe(o.key==='elevenlabs'?'voice':o.key==='knowledge_base'?'knowledge_base':o.key==='denoising'?'denoising':o.key==='safety'?'safety':o.key==='privacy'?'privacy':o.key==='sms'?'sms':o.key==='phone'||o.key==='verified_phone'?'phone':o.key==='concurrency'||o.key==='model'?'other':'workflow')+'">Ask about this</button></article>'
-  }).join("");
-  root.querySelectorAll(".agent-option-request").forEach(b=>b.addEventListener("click",()=>{$("#agent-change-type").value=b.dataset.requestType;$("#agent-change-details").focus();$("#agent-change-details").scrollIntoView({behavior:"smooth",block:"center"})}));
+  root.innerHTML=agentOptionCatalog.map(o=>'<article class="agent-option-card"><h4>'+safe(o.title)+'</h4><p>'+safe(o.description)+'</p><p class="small">Pricing and any third-party pass-through costs are confirmed in a written quote before work begins.</p><button type="button" class="btn secondary agent-option-request" data-request-type="'+safe(o.type)+'">Request this improvement</button></article>').join("");
+  root.querySelectorAll(".agent-option-request").forEach(b=>b.addEventListener("click",()=>{$("#agent-change-type").value=b.dataset.requestType;toggleSmsFields();$("#agent-change-details").focus();$("#agent-change-details").scrollIntoView({behavior:"smooth",block:"center"})}));
+ }
+ function toggleSmsFields(){
+  const box=$("#sms-business-details"),sms=$("#agent-change-type")?.value==="sms";
+  if(box)box.hidden=!sms;
+  if(box)box.querySelectorAll("[data-sms-required]").forEach(x=>x.required=sms);
  }
  function renderAgentConfiguration(configurations){
   const root=$("#agent-configuration");if(!root)return;
@@ -122,7 +112,7 @@
  }
  async function submitAgentChange(e){
   e.preventDefault();const button=$("#agent-change-submit"),status=$("#agent-change-status");button.disabled=true;status.textContent="Submitting securely…";
-  try{const requestType=$("#agent-change-type").value,priority=$("#agent-change-priority").value,details=$("#agent-change-details").value.trim();if(details.length<10)throw Error("Please provide at least 10 characters of detail.");await api("/api/client/agent-change-requests",{method:"POST",body:JSON.stringify({requestType,priority,details})});$("#agent-change-form").reset();status.textContent="Request sent. We’ll review it and provide a quote if additional costs apply.";await loadAgentConfiguration()}
+  try{const requestType=$("#agent-change-type").value,priority=$("#agent-change-priority").value,details=$("#agent-change-details").value.trim();if(details.length<10)throw Error("Please provide at least 10 characters of detail.");const keys=["legalName","businessType","businessAddress","website","contactName","contactTitle","contactEmail","contactPhone","taxIdStatus","smsUseCase","optInMethod","optInDisclosure","optOutMethod","helpMethod","sampleMessage1","sampleMessage2","messageIncludesLinks","targetCountries","phoneNumberType"];const businessInfo=requestType==="sms"?Object.fromEntries(keys.map(k=>[k,$("#sms-"+k)?.value?.trim()||""])):null;if(requestType==="sms"&&Object.values(businessInfo).some(v=>!v))throw Error("Complete all required SMS business and messaging fields before submitting.");await api("/api/client/agent-change-requests",{method:"POST",body:JSON.stringify({requestType,priority,details,businessInfo})});$("#agent-change-form").reset();status.textContent="Request sent. We’ll review it and provide a quote if additional costs apply.";await loadAgentConfiguration()}
   catch(err){status.textContent=err.message}
   finally{button.disabled=false}
  }
@@ -153,7 +143,7 @@
    $("#number-list").innerHTML=d.numbers.length?d.numbers.map(n=>'<div class="resource"><b>'+safe(n.phone_number)+'</b><span class="small">'+safe(n.nickname||"Business line")+'</span></div>').join(""):'<div class="empty">Your business phone number has not been assigned yet.</div>';
    renderCalls(d.calls||[],customer.email||"");
    await Promise.all([loadAddons(),loadTickets(),loadCallEmailSettings(),loadAgentConfiguration()]);
-   renderAgentOptions(Number(d.usage?.minutes||0));
+   renderAgentOptions();
   }catch(e){note(e.message,true)}
   finally{loading=false;$("#refresh-dashboard").disabled=false}
  }
@@ -182,7 +172,7 @@
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&voiceModal?.classList.contains("open"))closeVoiceModal()});
  document.querySelectorAll(".addon-request").forEach(b=>b.onclick=()=>{closeVoiceModal();requestAddon(b.dataset.addon,b)});
  $("#refresh-addons")?.addEventListener("click",loadAddons);
- $("#agent-change-form")?.addEventListener("submit",submitAgentChange);
+ $("#agent-change-form")?.addEventListener("submit",submitAgentChange);$("#agent-change-type")?.addEventListener("change",toggleSmsFields);toggleSmsFields();
  $("#refresh-agent-requests")?.addEventListener("click",loadAgentConfiguration);
  $("#billing-portal").onclick=async()=>{try{const d=await api("/api/billing/portal",{method:"POST",body:"{}"});location.href=d.url}catch(e){note(e.message,true)}};
  document.querySelectorAll(".plan-btn").forEach(b=>b.onclick=async()=>{try{const d=await api("/api/billing/checkout",{method:"POST",body:JSON.stringify({plan:b.dataset.plan})});location.href=d.url}catch(e){note(e.message,true)}});
