@@ -152,14 +152,19 @@ async function route(req,env){
   if(path==="/api/client/agent-change-requests"&&(req.method==="GET"||req.method==="POST")){
    const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
    if(req.method==="GET"){const r=await env.DB.prepare("SELECT id,request_type,title,details,priority,status,admin_note,quote_summary,created_at,updated_at FROM avr_agent_change_requests WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();return json({requests:r.results||[]},200,origin,env)}
-   const p=await body(req,6000),requestType=String(p.requestType||""),priority=String(p.priority||"normal"),details=String(p.details||"").trim();
+   const p=await body(req,16000),requestType=String(p.requestType||""),priority=String(p.priority||"normal"),details=String(p.details||"").trim(),businessInfo=p.businessInfo&&typeof p.businessInfo==="object"?p.businessInfo:null;
+   if(requestType==="sms"){
+    const required=["legalName","businessType","businessAddress","website","contactName","contactTitle","contactEmail","contactPhone","taxIdStatus","smsUseCase","optInMethod","optInDisclosure","optOutMethod","helpMethod","sampleMessage1","sampleMessage2","messageIncludesLinks","targetCountries","phoneNumberType"];
+    if(!businessInfo||required.some(k=>!String(businessInfo[k]||"").trim()))throw Error("complete_all_required_sms_business_and_campaign_fields");
+    for(const k of required)if(String(businessInfo[k]).length>1500)throw Error("sms_field_too_long");
+   }
    if(!["voice","language","knowledge_base","denoising","safety","privacy","sms","phone","workflow","greeting","other"].includes(requestType))throw Error("invalid_request_type");
    if(!["normal","high","urgent"].includes(priority))throw Error("invalid_request_priority");
    if(details.length<10||details.length>4000)throw Error("request_details_must_be_10_to_4000_characters");
    const recent=await env.DB.prepare("SELECT COUNT(*) n FROM avr_agent_change_requests WHERE customer_id=? AND created_at>=?").bind(c.id,new Date(Date.now()-3600000).toISOString()).first();if(Number(recent?.n||0)>=10)throw Error("request_limit_reached_try_again_later");
    const assigned=await env.DB.prepare("SELECT agent_id FROM avr_agents WHERE customer_id=? ORDER BY agent_name LIMIT 1").bind(c.id).first();
    const id=crypto.randomUUID(),title=({voice:"Voice or voice provider",language:"Language configuration",knowledge_base:"Business knowledge and FAQs",denoising:"Background-noise handling",safety:"Safety guardrails",privacy:"Personal-information redaction",sms:"SMS messaging",phone:"Phone number or call routing",workflow:"Calendar, CRM or workflow",greeting:"Greeting, tone or call flow",other:"Other configuration change"})[requestType];
-   await env.DB.prepare("INSERT INTO avr_agent_change_requests(id,customer_id,agent_id,request_type,title,details,priority,status) VALUES(?,?,?,?,?,?,?,'submitted')").bind(id,c.id,assigned?.agent_id||null,requestType,title,details,priority).run();
+   await env.DB.prepare("INSERT INTO avr_agent_change_requests(id,customer_id,agent_id,request_type,title,details,request_data_json,priority,status) VALUES(?,?,?,?,?,?,?, ?,'submitted')").bind(id,c.id,assigned?.agent_id||null,requestType,title,details,businessInfo?JSON.stringify(businessInfo):null,priority).run();
    await env.DB.prepare("INSERT INTO avr_support_tickets(id,customer_id,category,subject,description,priority,status) VALUES(?,?,?,?,?,?,?)").bind(crypto.randomUUID(),c.id,"change_request","Agent configuration: "+title,details,priority,"open").run();
    return json({created:true,id,status:"submitted"},201,origin,env)
   }
