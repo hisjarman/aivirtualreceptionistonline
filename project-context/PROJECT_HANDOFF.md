@@ -175,3 +175,11 @@ A new visual direction is being introduced on branch `design/academic-lime-sky-r
 - Replays avoid the immediately previous five questions at the same difficulty when browser session storage is available; graceful fallback remains randomized if storage is unavailable.
 - Homepage challenge card now advertises the 45-scenario bank and three difficulty levels.
 - Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main`.
+
+
+## 2026-11-09 — corrected model placement per user's clarification
+- User's exact layout direction: `Asistente virtual con headset futurista` belongs in the upper-left of the homepage hero at the original hero scale; `AIVirtualReceptionist_Hero_Frame_LeftFacing` belongs elsewhere, specifically beside the intake/discovery form.
+- Corrected `index.html`: keep the new model as the hero image; remove the old model from the global-language section.
+- Corrected `get-started.html`: replace the small discovery-form companion with the old model asset. Preserve the existing Formspree endpoint and form structure.
+- Corrected `homepage-refresh.css`: restore the original hero image sizing (desktop max-width 540px / max-height 650px; original tablet/mobile sizing) while keeping the portrait aligned upper-left. Retain the speech bubble treatment beside the model.
+- This correction is on `design/hero-model-swap-readable-contrast`, not merged into `main`.
