@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS avr_agent_change_requests (
  priority TEXT NOT NULL DEFAULT 'normal' CHECK(priority IN ('normal','high','urgent')),
  status TEXT NOT NULL DEFAULT 'submitted' CHECK(status IN ('submitted','reviewing','quoted','approved','in_progress','completed','declined')),
  quote_summary TEXT,
+ client_approved_at TEXT,
  admin_note TEXT,
  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
