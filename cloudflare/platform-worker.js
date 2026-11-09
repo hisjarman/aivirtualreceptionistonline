@@ -154,7 +154,7 @@ async function route(req,env){
    if(req.method==="GET"){const r=await env.DB.prepare("SELECT id,request_type,title,details,priority,status,admin_note,quote_summary,created_at,updated_at FROM avr_agent_change_requests WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();return json({requests:r.results||[]},200,origin,env)}
    const p=await body(req,16000),requestType=String(p.requestType||""),priority=String(p.priority||"normal"),details=String(p.details||"").trim(),businessInfo=p.businessInfo&&typeof p.businessInfo==="object"?p.businessInfo:null;
    if(requestType==="sms"){
-    const required=["legalName","businessType","businessAddress","website","contactName","contactTitle","contactEmail","contactPhone","taxIdStatus","smsUseCase","optInMethod","optInDisclosure","optOutMethod","helpMethod","sampleMessage1","sampleMessage2","messageIncludesLinks","targetCountries","phoneNumberType"];
+    const required=["legalName","businessType","businessAddress","website","contactName","contactTitle","contactEmail","contactPhone","industry","taxIdStatus","smsUseCase","optInMethod","optInDisclosure","optOutMethod","helpMethod","sampleMessage1","sampleMessage2","messageIncludesLinks","messageIncludesPhone","targetCountries","monthlyVolume","phoneNumberType"];
     if(!businessInfo||required.some(k=>!String(businessInfo[k]||"").trim()))throw Error("complete_all_required_sms_business_and_campaign_fields");
     for(const k of required)if(String(businessInfo[k]).length>1500)throw Error("sms_field_too_long");
    }
