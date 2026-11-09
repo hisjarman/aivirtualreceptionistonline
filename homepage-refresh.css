@@ -104,10 +104,10 @@ body#top .reference-hero .hero-stats-note a{color:#91dcff!important;text-decorat
 body#top .reference-hero .hero-platform-stats>div{background:rgba(3,19,39,.86)!important;border:1px solid rgba(145,220,255,.25)!important}
 body#top .reference-hero .hero-platform-stats strong{color:#fff!important}
 body#top .reference-hero .hero-platform-stats span{color:#d3e5f2!important}
-body#top .language-model-portrait{display:flex;align-items:flex-end;justify-content:center;min-height:190px;max-height:225px;margin-top:14px;overflow:visible}
-body#top .language-model-portrait img{display:block;width:min(100%,205px);max-height:220px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 12px 24px rgba(0,0,0,.42)) drop-shadow(0 0 18px rgba(48,185,255,.16))}
-body#top .reference-language .language-layout{grid-template-columns:minmax(190px,.78fr) minmax(125px,.42fr) minmax(0,1.35fr);column-gap:24px}
-body#top .reference-language .language-disclaimer{grid-column:3}
+
+
+
+
 body#top .reference-language .language-intro h2{color:#f5fbff!important}
 body#top .reference-language .language-intro h2 em{color:#b8f34b!important}
 body#top .reference-language .language-intro p{color:#d5e6f3!important}
@@ -131,11 +131,11 @@ body#top .footer-column a:hover,body#top .footer-email:hover{color:#075b86!impor
   body#top .reference-hero .hero-model-column{min-height:390px!important}
   body#top .reference-hero .hero-model-image{width:clamp(220px,31vw,300px)!important;max-height:385px!important}
   body#top .reference-hero .onboarding-speech{left:clamp(160px,22vw,210px)!important;top:18%!important;width:min(190px,calc(100% - 165px))!important;font-size:11px!important}
-  body#top .reference-language .language-layout{grid-template-columns:minmax(0,1fr) minmax(110px,.45fr)!important;row-gap:16px}
+
   body#top .reference-language .language-intro{grid-column:1}
-  body#top .reference-language .language-model-portrait{grid-column:2;grid-row:1;align-self:center}
+
   body#top .reference-language .language-card-grid{grid-column:1/-1}
-  body#top .reference-language .language-disclaimer{grid-column:1/-1}
+
 }
 @media(max-width:700px){
   body#top .reference-topbar{height:66px;min-height:66px;padding:0 12px;gap:7px}
@@ -148,8 +148,39 @@ body#top .footer-column a:hover,body#top .footer-email:hover{color:#075b86!impor
   body#top .reference-hero .hero-model-column{min-height:260px!important;max-height:280px!important;padding-top:0!important}
   body#top .reference-hero .hero-model-image{width:205px!important;max-height:270px!important}
   body#top .reference-hero .onboarding-speech{top:14%!important;left:150px!important;width:min(175px,calc(100% - 155px))!important;padding:9px 10px!important;font-size:10px!important}
-  body#top .reference-language .language-layout{grid-template-columns:1fr!important;row-gap:15px}
-  body#top .reference-language .language-intro,body#top .reference-language .language-model-portrait,body#top .reference-language .language-card-grid,body#top .reference-language .language-disclaimer{grid-column:1!important;grid-row:auto!important}
-  body#top .reference-language .language-model-portrait{min-height:0;max-height:170px;margin:0 auto}
-  body#top .reference-language .language-model-portrait img{max-height:165px;width:auto;max-width:190px}
+
+
+
+
+}
+
+
+/* Corrected user-approved portrait placement: new model stays at its original hero scale. */
+body#top .reference-hero .hero-grid{grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr)!important;gap:clamp(28px,4vw,64px)!important}
+body#top .reference-hero .hero-model-column{
+  position:relative;min-width:0;min-height:570px!important;display:flex;
+  align-items:flex-start!important;justify-content:flex-start!important;padding-top:8px!important;
+}
+body#top .reference-hero .hero-model-image{
+  display:block;width:100%!important;max-width:540px!important;max-height:650px!important;
+  height:auto!important;object-fit:contain!important;object-position:left top!important;margin:0!important;
+}
+body#top .reference-hero .hero-model-glow{width:90%!important;height:70%!important;left:0!important;bottom:4%!important}
+body#top .reference-hero .hero-model-caption{left:8px!important;bottom:10px!important;transform:none!important}
+body#top .reference-hero .onboarding-speech{
+  top:17%!important;left:39%!important;right:auto!important;width:min(205px,57%)!important;
+}
+@media(max-width:900px){
+  body#top .reference-hero .hero-grid{grid-template-columns:minmax(240px,.8fr) minmax(0,1.2fr)!important;gap:24px!important;padding-top:42px!important;padding-bottom:48px!important}
+  body#top .reference-hero .hero-model-column{min-height:500px!important}
+  body#top .reference-hero .hero-model-image{width:100%!important;max-width:100%!important;max-height:560px!important}
+  body#top .reference-hero .onboarding-speech{top:15%!important;left:36%!important;width:min(190px,60%)!important}
+}
+@media(max-width:700px){
+  body#top .reference-hero .hero-grid{grid-template-columns:1fr!important;gap:12px!important;padding-top:35px!important;padding-bottom:42px!important}
+  body#top .reference-hero .hero-model-column{min-height:320px!important;max-height:380px!important;width:100%!important;overflow:visible!important}
+  body#top .reference-hero .hero-model-image{width:min(78vw,330px)!important;max-width:100%!important;max-height:360px!important}
+  body#top .reference-hero .hero-model-caption{bottom:5px!important}
+  body#top .reference-hero .onboarding-speech{top:15%!important;left:155px!important;right:auto!important;width:min(175px,calc(100% - 165px))!important}
+  body#top .reference-hero .hero-copy{order:1!important}
 }
