@@ -8,14 +8,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./trust-lab-public.css">
-</head>
+<link rel="stylesheet" href="./site-header.css"></head>
 <body class="tl-public-body">
-<header class="topbar">
-<a class="brand" href="./index.html#top"><span class="brand-mark" aria-hidden="true">✳</span><span>AI VIRTUAL<br><b>RECEPTIONIST</b></span></a>
-<nav class="nav"><a href="./index.html#product">How it works</a><a href="./trust-lab.html">Submit a test</a><a href="./trust-lab-dashboard.html" aria-current="page">Public dashboard</a></nav>
-<a class="button button-small nav-login" href="./client/">Client Login</a>
-<a class="button button-small" href="./trust-lab.html">Challenge our AI <span>↗</span></a><button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-</header>
+<header class="topbar reference-topbar">
+<a class="brand reference-brand" href="./index.html#top" aria-label="AI Virtual Receptionist home"><span class="brand-mark reference-brand-mark" aria-hidden="true"><img src="./assets/ai-receptionist-icon.svg" alt=""></span><span class="reference-brand-copy"><strong>AI Virtual<span>Receptionist.online</span></strong><small>Never Miss a Call. Never Lose a Customer.</small></span></a>
+<nav class="nav reference-nav" id="primary-navigation" aria-label="Main navigation"><a class="nav-primary-link" href="./index.html#top">Home</a><a class="nav-primary-link" href="./index.html#features">Features</a><a class="nav-primary-link" href="./pricing.html">Pricing</a><a class="nav-primary-link" href="./how-it-works.html">How It Works</a><details class="nav-more"><summary>More <span aria-hidden="true">⌄</span></summary><div class="nav-more-panel"><a href="./faq.html">FAQ</a><a href="./about.html">About</a><a href="./insights/">Insights &amp; Guides</a><a href="./challenge/">AI Challenge</a></div></details></nav>
+<details class="global-language-menu"><summary><span aria-hidden="true">◎</span> 55+ Languages <b>⌄</b></summary><div class="global-language-options"><strong>AI receptionist language support</strong><span>🇺🇸 English</span><span>🇪🇸 Español</span><span>🇫🇷 Français</span><span>🇩🇪 Deutsch</span><span>🇨🇳 中文</span><small>And 50+ more supported languages</small></div></details><a class="button button-small nav-login client-login-global" href="./client/" aria-label="Client login portal">Client Login</a><a class="button button-small nav-login reference-start" href="./get-started.html">Get Started <span>↗</span></a><button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button></header>
 <main>
 <section class="tp-hero"><div class="tp-wrap">
 <a class="tp-back" href="./trust-lab.html">← Back to AI Trust Lab</a>
@@ -57,4 +55,4 @@
 const menuButton=document.querySelector(".menu-toggle"),nav=document.querySelector(".nav");
 menuButton?.addEventListener("click",()=>{const open=nav.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open));});
 </script>
-</body></html>
+<script defer src="./site-header.js"></script></body></html>
