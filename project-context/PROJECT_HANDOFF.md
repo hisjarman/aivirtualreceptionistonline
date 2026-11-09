@@ -183,3 +183,10 @@ A new visual direction is being introduced on branch `design/academic-lime-sky-r
 - Corrected `get-started.html`: replace the small discovery-form companion with the old model asset. Preserve the existing Formspree endpoint and form structure.
 - Corrected `homepage-refresh.css`: restore the original hero image sizing (desktop max-width 540px / max-height 650px; original tablet/mobile sizing) while keeping the portrait aligned upper-left. Retain the speech bubble treatment beside the model.
 - This correction is on `design/hero-model-swap-readable-contrast`, not merged into `main`.
+
+
+## 2026-11-09 — AI globe brand identity refresh
+- Replaced the old flat white globe/network badge with a dark navy rounded-square connected-globe mark, bright sky-blue longitude/network lines, lime neural nodes and a headset/microphone silhouette.
+- Updated `assets/favicon.svg`, `assets/brand-symbol.svg` and `assets/ai-receptionist-icon.svg` to use the same scalable vector identity.
+- Updated root public-page headers to use the shared AI receptionist logo asset rather than the older inline phone/chat symbol. The homepage favicon now points directly to `assets/favicon.svg`; removed the portrait image as the Apple touch icon so the receptionist photo is no longer used as a browser/app icon.
+- Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main` and not deployed.
