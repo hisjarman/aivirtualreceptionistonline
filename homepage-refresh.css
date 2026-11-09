@@ -23,3 +23,30 @@ body#top .nav-login[href="./client/"]{background:#fff!important;color:#17618c!im
 @media(max-width:1100px){body#top .global-language-menu{display:none}body#top .reference-nav{gap:10px}body#top .reference-nav a{font-size:9px}}
 @media(max-width:900px){body#top .reference-nav a:nth-child(n+6){display:none}body#top .reference-topbar{gap:10px}body#top .reference-brand-copy small{display:none}}
 @media(max-width:700px){body#top .reference-topbar{height:66px;min-height:66px;padding:0 14px;gap:8px}body#top .reference-nav{display:none}body#top .reference-brand-mark{width:42px;height:42px}body#top .reference-brand-copy strong{font-size:14px}body#top .reference-topbar .nav-login{padding:9px 10px;font-size:9px;white-space:nowrap}body#top .reference-topbar .reference-start{padding:9px 10px;font-size:9px}body#top .reference-topbar .menu-toggle{display:inline-flex;margin-left:auto}}
+
+
+/* User-supplied Earth-at-night artwork and receptionist portrait. */
+body#top .reference-hero{background-color:#020817!important;background-image:linear-gradient(90deg,rgba(2,8,23,.97) 0%,rgba(2,8,23,.88) 36%,rgba(2,8,23,.44) 67%,rgba(2,8,23,.22) 100%),url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;background-position:center center!important;background-size:cover!important;background-repeat:no-repeat!important}
+body#top .reference-hero:before{background-image:radial-gradient(ellipse at 78% 40%,rgba(45,197,255,.16),transparent 42%)!important;opacity:1!important}
+body#top .reference-hero:after{background:linear-gradient(90deg,rgba(2,8,23,.28),rgba(2,8,23,.05) 60%,rgba(2,8,23,.12))!important;opacity:1!important}
+body#top .hero-model-column{min-height:460px!important;align-items:flex-start!important;justify-content:flex-start!important;padding-top:12px!important}
+body#top .hero-model-image{width:clamp(245px,25vw,330px)!important;max-width:100%!important;max-height:440px!important;object-fit:contain!important;object-position:left top!important;filter:drop-shadow(0 18px 34px rgba(0,0,0,.42)) drop-shadow(0 0 24px rgba(48,185,255,.22))!important}
+body#top .hero-model-glow{width:78%!important;height:62%!important;left:-4%!important;bottom:10%!important;background:radial-gradient(ellipse,rgba(80,192,255,.24),rgba(20,76,180,.08) 52%,transparent 75%)!important}
+body#top .hero-model-caption{left:8px!important;bottom:10px!important;transform:none!important;background:rgba(3,17,36,.78)!important;border-color:rgba(131,201,27,.42)!important;color:#e9f6ff!important}
+body#top .hero-live-dot{background:#83c91b!important;box-shadow:0 0 0 4px rgba(131,201,27,.16),0 0 14px #83c91b!important}
+body#top .onboarding-speech{top:21%!important;left:clamp(190px,19vw,250px)!important;right:auto!important;width:min(210px,calc(100% - 205px))!important;padding:12px 14px!important;border:1px solid rgba(131,201,27,.62)!important;border-radius:16px 16px 16px 5px!important;background:rgba(5,24,43,.94)!important;color:#f3fbff!important;text-align:left!important;font-size:12px!important;box-shadow:0 12px 30px rgba(0,0,0,.3),0 0 22px rgba(131,201,27,.10)!important}
+body#top .onboarding-speech:after{content:"";position:absolute;left:-8px;top:52%;width:14px;height:14px;background:rgba(5,24,43,.94);border-left:1px solid rgba(131,201,27,.62);border-bottom:1px solid rgba(131,201,27,.62);transform:translateY(-50%) rotate(45deg)}
+@media(max-width:900px){body#top .reference-hero{background-position:58% center!important}body#top .hero-model-column{min-height:390px!important}body#top .hero-model-image{width:clamp(220px,30vw,285px)!important;max-height:385px!important}body#top .onboarding-speech{left:clamp(170px,24vw,215px)!important;top:18%!important;width:min(185px,calc(100% - 175px))!important;font-size:11px!important}}
+@media(max-width:700px){body#top .reference-hero{background-image:linear-gradient(180deg,rgba(2,8,23,.86),rgba(2,8,23,.46)),url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;background-position:58% center!important}body#top .reference-hero .hero-grid{grid-template-columns:1fr!important;gap:8px!important;padding-top:24px!important;padding-bottom:38px!important}body#top .hero-model-column{min-height:250px!important;max-height:270px!important;overflow:visible!important}body#top .hero-model-image{width:190px!important;max-height:255px!important}body#top .hero-model-glow{width:200px!important;height:190px!important;left:-18px!important;bottom:0!important}body#top .hero-model-caption{left:4px!important;bottom:0!important;padding:7px 9px!important;font-size:7px!important}body#top .onboarding-speech{top:16%!important;left:145px!important;width:min(175px,calc(100% - 150px))!important;padding:9px 10px!important;font-size:10px!important}body#top .reference-hero .hero-copy{order:1!important}}
+
+
+/* Homepage: vivid accents on the dark Earth hero, readable tones on light panels. */
+body#top .reference-hero :where(.eyebrow,.hero-proof a,.hero-stats-note a){color:#91dcff!important}
+body#top .reference-hero h1 em{color:#b8f34b!important}
+body#top .reference-hero :where(.hero-lede,.hero-personal-service,.hero-proof,.hero-stats-note){color:#d2e5f1!important}
+body#top .reference-hero .hero-platform-stats strong{color:#f5fbff!important}
+body#top .reference-hero .hero-platform-stats span{color:#c5dbea!important}
+body#top :where(.section-heading h2 em,.story-promo h2 em,.home-paths h2 em){color:#477900!important}
+body#top :where(.section-heading p,.story-promo p,.home-path-card p){color:#40586d!important}
+body#top :where(.story-eyebrow,.home-path-card>span){color:#477900!important}
+body#top :where(.story-text-link,.home-path-card>b){color:#075b86!important}
