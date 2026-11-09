@@ -252,9 +252,11 @@ async function route(req,env){
    const agentRequestMatch=path.match(/^\/api\/admin\/agent-change-requests\/([a-f0-9-]{36})$/i);
    if(agentRequestMatch&&req.method==="PATCH"){
     const id=agentRequestMatch[1],p=await body(req,5000),status=String(p.status||"");
-    if(!["reviewing","quoted","approved","in_progress","completed","declined"].includes(status))throw Error("invalid_agent_request_status");
-    const exists=await env.DB.prepare("SELECT id,customer_id FROM avr_agent_change_requests WHERE id=?").bind(id).first();if(!exists)throw Error("agent_change_request_not_found");
+    if(!["reviewing","quoted","in_progress","completed","declined"].includes(status))throw Error("invalid_agent_request_status");
+    const exists=await env.DB.prepare("SELECT id,customer_id,client_approved_at FROM avr_agent_change_requests WHERE id=?").bind(id).first();if(!exists)throw Error("agent_change_request_not_found");
     const quote=p.quoteSummary===undefined?null:String(p.quoteSummary).trim().slice(0,2500),note=p.adminNote===undefined?null:String(p.adminNote).trim().slice(0,1500);
+    if(status==="quoted"&&!String(quote??"").trim()&&!String((await env.DB.prepare("SELECT quote_summary FROM avr_agent_change_requests WHERE id=?").bind(id).first())?.quote_summary||"").trim())throw Error("written_quote_required_before_marking_quoted");
+    if(["in_progress","completed"].includes(status)&&!exists.client_approved_at)throw Error("client_approval_required_before_work_can_start");
     await env.DB.prepare("UPDATE avr_agent_change_requests SET status=?,quote_summary=COALESCE(?,quote_summary),admin_note=COALESCE(?,admin_note),updated_at=? WHERE id=?").bind(status,quote,note,new Date().toISOString(),id).run();
     await audit(env,u,"agent_change_request_updated",exists.customer_id,{requestId:id,status});
     return json({saved:true},200,origin,env)
