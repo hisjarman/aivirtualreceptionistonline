@@ -1,1 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="AIVirtualReceptionist.online"><circle cx="64" cy="64" r="54" fill="#fff" stroke="#8BCF20" stroke-width="5"/><path d="M22 64h84M64 10c-17 15-26 34-26 54s9 39 26 54M64 10c17 15 26 34 26 54s-9 39-26 54M25 39c24 13 54 13 78 0M25 89c24-13 54-13 78 0" fill="none" stroke="#1A9FE3" stroke-width="3.5" stroke-linecap="round"/><path d="M42 71l15-18 14 14 17-21" fill="none" stroke="#8BCF20" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><g fill="#1A9FE3"><circle cx="42" cy="71" r="5"/><circle cx="57" cy="53" r="5"/><circle cx="71" cy="67" r="5"/><circle cx="88" cy="46" r="5"/></g><path d="M64 4v9M64 115v9M4 64h9M115 64h9" stroke="#8BCF20" stroke-width="4" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="AI Virtual Receptionist connected globe mark">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#142b3b"/><stop offset="1" stop-color="#07121d"/></linearGradient>
+ <linearGradient id="globe" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8cecff"/><stop offset="1" stop-color="#269fe4"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect x="5" y="5" width="118" height="118" rx="29" fill="url(#bg)" stroke="#31516a" stroke-width="2"/>
+<circle cx="64" cy="67" r="39" fill="#0b1c2a" stroke="url(#globe)" stroke-width="4"/>
+<path d="M25 67h78M64 28c-12 11-19 24-19 39s7 28 19 39M64 28c12 11 19 24 19 39s-7 28-19 39M34 47c18 10 42 10 60 0M34 87c18-10 42-10 60 0" fill="none" stroke="#45bce9" stroke-width="2.2" opacity=".9"/>
+<path d="M43 75l14-15 12 10 18-21" fill="none" stroke="#b8f34b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+<g fill="#d4ff6c" stroke="#102332" stroke-width="2"><circle cx="43" cy="75" r="5"/><circle cx="57" cy="60" r="5"/><circle cx="69" cy="70" r="5"/><circle cx="87" cy="49" r="5"/></g>
+<path d="M31 63V52a33 33 0 0 1 66 0v11" fill="none" stroke="#b8f34b" stroke-width="5" stroke-linecap="round"/>
+<rect x="25" y="58" width="13" height="25" rx="6.5" fill="#b8f34b" stroke="#0a1a27" stroke-width="2"/>
+<rect x="90" y="58" width="13" height="25" rx="6.5" fill="#b8f34b" stroke="#0a1a27" stroke-width="2"/>
+<path d="M96 83v5c0 6-5 10-11 10h-9" fill="none" stroke="#b8f34b" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="73" cy="98" r="4" fill="#70d8ff"/>
+<path d="M64 11v7M11 64h7M110 64h7" stroke="#b8f34b" stroke-width="2.5" stroke-linecap="round" opacity=".9"/>
+</svg>
