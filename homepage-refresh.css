@@ -484,3 +484,43 @@ body#top .reference-hero .hero-model-caption{
     white-space:nowrap!important;
   }
 }
+
+/* 2026-11-09 homepage hero stabilization: one final layout contract after legacy theme overrides. */
+body#top .reference-hero .hero-model-column{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+}
+body#top .reference-hero .hero-model-image{
+  display:block!important;
+  width:100%!important;
+  max-width:540px!important;
+  height:auto!important;
+  max-height:650px!important;
+  margin:0!important;
+  object-fit:contain!important;
+  object-position:left top!important;
+}
+body#top .reference-hero .hero-model-caption{
+  position:relative!important;
+  inset:auto!important;
+  align-self:center!important;
+  margin:10px auto 0!important;
+  transform:none!important;
+  white-space:nowrap!important;
+  z-index:6!important;
+}
+@media(max-width:900px){
+  body#top .reference-hero .hero-model-column{min-height:0!important;max-height:none!important}
+  body#top .reference-hero .hero-model-image{max-width:min(100%,440px)!important;max-height:540px!important}
+}
+@media(max-width:700px){
+  body#top .reference-hero .hero-model-column{min-height:0!important;max-height:none!important}
+  body#top .reference-hero .hero-model-image{width:min(92vw,390px)!important;max-height:440px!important}
+  body#top .reference-hero .hero-model-caption{
+    max-width:100%!important;
+    font-size:clamp(8px,2.5vw,11px)!important;
+    padding:7px 9px!important;
+  }
+}
