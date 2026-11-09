@@ -184,3 +184,169 @@ body#top .reference-hero .onboarding-speech{
   body#top .reference-hero .onboarding-speech{top:15%!important;left:155px!important;right:auto!important;width:min(175px,calc(100% - 165px))!important}
   body#top .reference-hero .hero-copy{order:1!important}
 }
+
+/* 2026-11-09: transparent, mouth-side hero speech + electric blue/lime typography. */
+body#top .reference-hero .onboarding-speech{
+  position:absolute!important;
+  top:15%!important;
+  left:42%!important;
+  right:auto!important;
+  width:min(245px,55%)!important;
+  max-width:245px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#9beaff!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  text-align:left!important;
+  font-size:clamp(13px,1.12vw,16px)!important;
+  font-weight:800!important;
+  line-height:1.42!important;
+  letter-spacing:.005em!important;
+  text-shadow:0 0 7px rgba(67,205,255,.72),0 0 19px rgba(25,165,255,.42),0 2px 5px rgba(0,5,18,.92)!important;
+  z-index:5!important;
+}
+body#top .reference-hero .onboarding-speech-text{
+  display:inline!important;
+  color:#9beaff!important;
+  background:transparent!important;
+}
+body#top .reference-hero .onboarding-speech:before{
+  content:"";
+  display:block;
+  width:42px;
+  height:2px;
+  margin:0 0 9px;
+  border-radius:2px;
+  background:linear-gradient(90deg,#8ceaff,#c4ff57);
+  box-shadow:0 0 12px rgba(108,226,255,.7);
+}
+body#top .reference-hero .onboarding-speech:after{
+  content:"";
+  position:absolute;
+  left:-11px;
+  top:52%;
+  width:10px;
+  height:10px;
+  background:transparent!important;
+  border:0!important;
+  border-left:2px solid rgba(137,231,255,.9)!important;
+  border-bottom:2px solid rgba(190,255,91,.9)!important;
+  border-radius:0 0 0 2px;
+  transform:translateY(-50%) rotate(45deg)!important;
+  box-shadow:-3px 3px 8px rgba(48,190,255,.2);
+}
+body#top .reference-hero .hero-model-caption{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:#c4ff62!important;
+  text-shadow:0 0 10px rgba(171,255,74,.34);
+}
+body#top .reference-hero :where(.eyebrow,.hero-preheadline){
+  color:#8fe8ff!important;
+  text-shadow:0 0 13px rgba(53,183,255,.22);
+}
+body#top .reference-hero h1{
+  color:#a9eaff!important;
+  text-shadow:0 0 18px rgba(48,175,255,.18),0 3px 22px rgba(0,0,0,.52)!important;
+}
+body#top .reference-hero h1 em{
+  color:#c5ff58!important;
+  text-shadow:0 0 18px rgba(176,255,66,.34);
+}
+body#top .reference-hero :where(.hero-lede,.hero-personal-service,.hero-proof,.hero-stats-note){
+  color:#c7eaff!important;
+}
+body#top .reference-hero .hero-lede strong,
+body#top .reference-hero .hero-personal-service strong{
+  color:#c5ff58!important;
+}
+body#top .reference-hero .hero-platform-stats strong{
+  color:#c5ff58!important;
+  text-shadow:0 0 12px rgba(181,255,74,.22);
+}
+body#top .reference-hero .hero-platform-stats span{
+  color:#a9e8ff!important;
+}
+body#top .reference-hero .hero-stats-note a,
+body#top .reference-hero .hero-proof a{
+  color:#8fe8ff!important;
+  text-decoration-color:rgba(143,232,255,.65);
+}
+body#top .reference-hero .hero-feature-icon{
+  color:#8fe8ff!important;
+  filter:drop-shadow(0 0 8px rgba(73,201,255,.5));
+}
+body#top .reference-topbar .reference-brand-copy strong span,
+body#top .reference-topbar .reference-nav a:hover,
+body#top .reference-topbar .reference-nav a.active{
+  color:#c5ff58!important;
+  text-shadow:0 0 12px rgba(181,255,74,.2);
+}
+body#top .reference-topbar .reference-nav a{
+  color:#a9e8ff!important;
+}
+body#top .reference-topbar .reference-brand-copy small{
+  color:#a9e8ff!important;
+}
+body#top .reference-topbar .reference-start{
+  background:#168fe0!important;
+  border-color:#168fe0!important;
+  color:#f3fcff!important;
+  box-shadow:0 0 18px rgba(22,143,224,.24)!important;
+}
+body#top .reference-topbar .nav-login[href="./client/"]{
+  background:#c5ff58!important;
+  border-color:#c5ff58!important;
+  color:#102235!important;
+}
+body#top :where(.section-heading h2 em,.story-promo h2 em,.home-paths h2 em){
+  color:#548d0b!important;
+}
+body#top :where(.story-eyebrow,.home-path-card>span){
+  color:#548d0b!important;
+}
+body#top :where(.story-text-link,.home-path-card>b){
+  color:#087fc8!important;
+}
+@media(max-width:900px){
+  body#top .reference-hero .onboarding-speech{
+    top:14%!important;
+    left:40%!important;
+    width:min(210px,57%)!important;
+    font-size:clamp(12px,1.5vw,14px)!important;
+  }
+}
+@media(max-width:700px){
+  body#top .reference-hero .hero-model-column{
+    min-height:320px!important;
+    max-height:380px!important;
+    overflow:visible!important;
+  }
+  body#top .reference-hero .hero-model-image{
+    width:min(78vw,330px)!important;
+    max-width:100%!important;
+    max-height:360px!important;
+  }
+  body#top .reference-hero .onboarding-speech{
+    top:13%!important;
+    left:clamp(150px,43vw,178px)!important;
+    width:min(165px,calc(100% - 155px))!important;
+    font-size:12px!important;
+    line-height:1.38!important;
+  }
+  body#top .reference-hero .onboarding-speech:before{
+    width:30px;
+    margin-bottom:6px;
+  }
+  body#top .reference-hero .onboarding-speech:after{
+    left:-8px;
+    width:8px;
+    height:8px;
+  }
+}
