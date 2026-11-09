@@ -524,3 +524,15 @@ body#top .reference-hero .hero-model-caption{
     padding:7px 9px!important;
   }
 }
+
+
+/* 2026-11-09: align the Retell infrastructure headline with the top of the hero portrait. */
+@media(min-width:701px){
+  body#top .reference-hero .hero-grid{
+    align-items:flex-start!important;
+  }
+  body#top .reference-hero .hero-copy{
+    align-self:flex-start!important;
+    margin-top:0!important;
+  }
+}
