@@ -145,3 +145,10 @@ A new visual direction is being introduced on branch `design/academic-lime-sky-r
 - Brand icon and favicon use a simple, scalable connected-globe/network symbol (`assets/brand-symbol.svg`); existing icon paths are updated to match.
 - The top “ONBOARDING OPEN” banner is removed from the main public pages; the Client Login link is exposed in the header. Onboarding messaging remains in the homepage receptionist speech bubble.
 - Main homepage and shared CSS were updated; validate every page and mobile navigation before merging. Changes are in a branch and have not been merged to `main`.
+
+
+## 2026-11-09 — user-supplied Earth and receptionist artwork
+- User confirmed the assets are in the root repository's `assets/` folder on `main`.
+- Exact files: `assets/Asistente virtual con headset futurista.png` (receptionist) and `assets/Conexión global_ Tierra e inteligencia artificial.png` (Earth/AI background).
+- A focused visual update is being prepared on branch `design/earth-receptionist-hero-onboarding`: use the new receptionist portrait in the homepage hero, Earth artwork as the hero background, preserve the existing dialogue and place it beside the avatar's face, and add a small receptionist companion beside the discovery form.
+- Preserve the Formspree action `https://formspree.io/f/mrppjqdb`, all form fields, existing Client Login/navigation, and responsive behavior. This branch must be reviewed before merge; main remains untouched.
