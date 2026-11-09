@@ -7,7 +7,7 @@ const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
 /* Keep the client portal entry point visible in every public-page header. */
 (() => {
   const header = document.querySelector("header.topbar");
-  if (!header || header.querySelector(".client-login-global")) return;
+  if (!header || header.querySelector('.client-login-global, a[href="./client/"], a[href$="/client/"]')) return;
   const startLink = header.querySelector("a.nav-login, a.reference-start");
   if (!startLink) return;
   const loginLink = document.createElement("a");
