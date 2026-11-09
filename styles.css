@@ -416,3 +416,19 @@ html{scroll-padding-top:88px}body{background:#fff;color:#14283d}.topbar{backgrou
 /* Reuse the new brand symbol wherever older pages still contain inline placeholder marks. */
 .brand-mark svg{display:none!important}.brand-mark:before{content:"";display:block;width:100%;height:100%;background:url("./assets/brand-symbol.svg") center/contain no-repeat}
 .nav-login[href="./client/"]{background:#fff!important;color:#17618c!important;border:1px solid #b8d9ec!important;box-shadow:none!important}
+
+
+/* Accessible lime and sky-blue typography */
+:root{--avr-lime:#b8f34b;--avr-lime-on-light:#477900;--avr-sky:#91dcff;--avr-sky-on-light:#075b86;--avr-text:#203448;--avr-muted:#50677b}
+body{color:var(--avr-text)}
+body :where(.section-kicker,.eyebrow,.plan-eyebrow,.form-title>span,.story-eyebrow,.section-label){color:var(--avr-lime-on-light)!important}
+body :where(a:not(.button),.text-link,.price-cta,.story-text-link){color:var(--avr-sky-on-light)}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero){color:#e8f4fb}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(p,li,small,label,summary,.description,.muted,.disclaimer,.hero-lede,.hero-proof,.stage-caption,.footer-disclaimer){color:#c5dbea!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(h1,h2,h3,h4,strong,b){color:#f4faff}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(a:not(.button),.text-link,.section-kicker,.eyebrow,.video-label,.step-no,.step-foot,.speaker,.live-pill){color:var(--avr-sky)!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--avr-lime)!important}
+body :where(.section,.capabilities,.pricing-section,.faq-section,.onboard-section,.managed-section,.dashboard-quick-preview,.story-promo,.home-paths,.form-panel,.price-card,.cap-card) :where(h1 em,h2 em,h3 em,.accent,.highlight,.section-kicker,.eyebrow){color:var(--avr-lime-on-light)!important}
+body :where(.section,.capabilities,.pricing-section,.faq-section,.onboard-section,.managed-section,.dashboard-quick-preview,.story-promo,.home-paths,.form-panel,.price-card,.cap-card) :where(a:not(.button),.text-link,.price-cta){color:var(--avr-sky-on-light)!important}
+body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid #168fe0!important;outline-offset:3px!important}
+::selection{background:#b8f34b;color:#102235}

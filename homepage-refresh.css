@@ -38,3 +38,15 @@ body#top .onboarding-speech{top:21%!important;left:clamp(190px,19vw,250px)!impor
 body#top .onboarding-speech:after{content:"";position:absolute;left:-8px;top:52%;width:14px;height:14px;background:rgba(5,24,43,.94);border-left:1px solid rgba(131,201,27,.62);border-bottom:1px solid rgba(131,201,27,.62);transform:translateY(-50%) rotate(45deg)}
 @media(max-width:900px){body#top .reference-hero{background-position:58% center!important}body#top .hero-model-column{min-height:390px!important}body#top .hero-model-image{width:clamp(220px,30vw,285px)!important;max-height:385px!important}body#top .onboarding-speech{left:clamp(170px,24vw,215px)!important;top:18%!important;width:min(185px,calc(100% - 175px))!important;font-size:11px!important}}
 @media(max-width:700px){body#top .reference-hero{background-image:linear-gradient(180deg,rgba(2,8,23,.86),rgba(2,8,23,.46)),url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;background-position:58% center!important}body#top .reference-hero .hero-grid{grid-template-columns:1fr!important;gap:8px!important;padding-top:24px!important;padding-bottom:38px!important}body#top .hero-model-column{min-height:250px!important;max-height:270px!important;overflow:visible!important}body#top .hero-model-image{width:190px!important;max-height:255px!important}body#top .hero-model-glow{width:200px!important;height:190px!important;left:-18px!important;bottom:0!important}body#top .hero-model-caption{left:4px!important;bottom:0!important;padding:7px 9px!important;font-size:7px!important}body#top .onboarding-speech{top:16%!important;left:145px!important;width:min(175px,calc(100% - 150px))!important;padding:9px 10px!important;font-size:10px!important}body#top .reference-hero .hero-copy{order:1!important}}
+
+
+/* Homepage: vivid accents on the dark Earth hero, readable tones on light panels. */
+body#top .reference-hero :where(.eyebrow,.hero-proof a,.hero-stats-note a){color:#91dcff!important}
+body#top .reference-hero h1 em{color:#b8f34b!important}
+body#top .reference-hero :where(.hero-lede,.hero-personal-service,.hero-proof,.hero-stats-note){color:#d2e5f1!important}
+body#top .reference-hero .hero-platform-stats strong{color:#f5fbff!important}
+body#top .reference-hero .hero-platform-stats span{color:#c5dbea!important}
+body#top :where(.section-heading h2 em,.story-promo h2 em,.home-paths h2 em){color:#477900!important}
+body#top :where(.section-heading p,.story-promo p,.home-path-card p){color:#40586d!important}
+body#top :where(.story-eyebrow,.home-path-card>span){color:#477900!important}
+body#top :where(.story-text-link,.home-path-card>b){color:#075b86!important}

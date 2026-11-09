@@ -152,3 +152,10 @@ A new visual direction is being introduced on branch `design/academic-lime-sky-r
 - Exact files: `assets/Asistente virtual con headset futurista.png` (receptionist) and `assets/Conexión global_ Tierra e inteligencia artificial.png` (Earth/AI background).
 - A focused visual update is being prepared on branch `design/earth-receptionist-hero-onboarding`: use the new receptionist portrait in the homepage hero, Earth artwork as the hero background, preserve the existing dialogue and place it beside the avatar's face, and add a small receptionist companion beside the discovery form.
 - Preserve the Formspree action `https://formspree.io/f/mrppjqdb`, all form fields, existing Client Login/navigation, and responsive behavior. This branch must be reviewed before merge; main remains untouched.
+
+
+## 2026-11-09 — accessible lime and sky-blue typography
+- User requested bright lime-green and light-blue text throughout the website, with every text element remaining legible.
+- Added a shared typography color system to styles.css: vivid lime and pale sky blue on dark/navy surfaces; darker, high-contrast lime and blue variants on white/light surfaces; improved muted text contrast and visible keyboard focus.
+- Added homepage-specific overrides to homepage-refresh.css so the Earth-at-night hero retains bright lime/sky-blue accents and light sections keep readable text.
+- Committed on design/earth-receptionist-hero-onboarding; not merged to main. Review desktop and mobile before merge.
