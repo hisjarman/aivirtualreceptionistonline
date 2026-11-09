@@ -34,6 +34,8 @@ The form collects business information for follow-up; it does not itself activat
 
 ## Customer and admin portal
 
+See [Client agent configuration and change requests](docs/agent-configuration-change-requests.md) for the read-only configuration view, quote workflow, approval rules and required D1 migration.
+
 Customer portal:
 - Play available Retell call recordings, read transcripts and review AI-generated call summaries.
 - Configure automatic call-summary emails to the business mailbox or up to 10 authorized team recipients (including a team distribution list).

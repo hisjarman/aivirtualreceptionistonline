@@ -162,3 +162,15 @@
 .admin-modal-panel{position:relative;z-index:1;width:min(1080px,100%);max-height:92vh;overflow:auto;padding:22px;border:1px solid #3b5962;border-radius:16px;background:#10232c;box-shadow:0 25px 90px rgba(0,0,0,.5)}
 .admin-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.admin-modal-head h2{margin:6px 0}.workspace-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.workspace-columns .panel{margin:0}.admin-modal-panel h3{margin:0 0 12px}.admin-modal-panel .panel{padding:16px}
 @media(max-width:720px){.admin-modal{padding:8px}.admin-modal-panel{padding:14px;max-height:96vh}.workspace-columns{grid-template-columns:1fr}.admin-modal-head{align-items:flex-start}}
+
+/* Managed agent configuration and client change requests */
+.agent-config-grid{margin-top:18px}.agent-config-heading{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:18px 0 12px}.agent-config-cards,.agent-option-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.agent-config-cards article,.agent-option-card{background:rgba(13,30,37,.72);border:1px solid rgba(120,230,205,.18);border-radius:14px;padding:16px;min-width:0}.agent-config-cards small,.agent-config-cards b{display:block}.agent-config-cards small{color:#9bb8bd;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}.agent-config-cards b{color:#effffb;overflow-wrap:anywhere}.agent-config-privacy,.agent-cost-note{margin-top:14px;color:#b7c9cb;line-height:1.6}.agent-option-card h4{margin:0 0 8px;color:#eafff8}.agent-option-card p{font-size:13px;line-height:1.55;color:#b8c9cc}.agent-option-card .agent-option-cost{display:block;color:#a6ff72;margin:10px 0}.agent-option-card .btn{margin-top:8px}.agent-request-item{align-items:flex-start}.agent-request-item>div{min-width:0;flex:1}.agent-quote{border-left:2px solid #a6ff72;padding:8px 12px;background:rgba(166,255,114,.06)}.agent-cost-note a{color:#a6ff72}@media(max-width:680px){.agent-config-cards,.agent-option-grid{grid-template-columns:1fr}.agent-config-heading{align-items:flex-start;flex-direction:column}}
+
+.sms-business-details{border:1px solid rgba(166,255,114,.3);border-radius:14px;padding:16px;margin:12px 0;background:rgba(8,28,30,.5)}
+.sms-business-details[hidden]{display:none!important}
+.sms-business-details legend{padding:0 8px;color:#a6ff72;font-weight:700}
+.sms-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sms-form-grid .field{min-width:0}
+.sms-form-grid .field.full{grid-column:1/-1}
+.sms-business-details input,.sms-business-details select,.sms-business-details textarea{width:100%;max-width:100%}
+@media(max-width:680px){.sms-form-grid{grid-template-columns:1fr}.sms-form-grid .field.full{grid-column:auto}}

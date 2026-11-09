@@ -9,7 +9,7 @@
  function safeHttps(v){try{const u=new URL(v);return u.protocol==="https:"?u.href:""}catch{return ""}}
  function money(v){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(v)}
  function showPage(page){
-  const labels={overview:["Overview","A clear view of your receptionist and business activity."],receptionist:["Your receptionist","Your assigned AI receptionist and connected phone numbers."],billing:["Plan & billing","Manage your subscription, usage and business profile."],addons:["Upgrades & add-ons","Extend your receptionist with additional capabilities."],calls:["Call activity","Review recent calls, summaries, transcripts and recordings."],support:["Support center","Get help, request changes and track your support requests."]};
+  const labels={overview:["Overview","A clear view of your receptionist and business activity."],receptionist:["Your receptionist","Your assigned AI receptionist, configuration and improvement requests."],billing:["Plan & billing","Manage your subscription, usage and business profile."],addons:["Upgrades & add-ons","Extend your receptionist with additional capabilities."],calls:["Call activity","Review recent calls, summaries, transcripts and recordings."],support:["Support center","Get help, request changes and track your support requests."]};
   document.querySelectorAll("[data-page-panel]").forEach(p=>p.classList.toggle("active",p.dataset.pagePanel===page));
   document.querySelectorAll(".client-nav-item").forEach(b=>{const active=b.dataset.page===page;b.classList.toggle("active",active);if(active)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   const label=labels[page]||labels.overview;$("#client-page-title").textContent=label[0];$("#client-page-description").textContent=label[1];
@@ -80,6 +80,42 @@
   try{await api("/api/client/addons",{method:"POST",body:JSON.stringify({addonKey:key,note:$("#addon-note")?.value||""})});note("Upgrade request submitted. Our team will confirm pricing and availability before any charge.");if($("#addon-note"))$("#addon-note").value="";await loadAddons();button.textContent="Request received"}
   catch(e){note(e.message,true);button.disabled=false;button.textContent=original}
  }
+
+ const agentOptionCatalog=[{"key":"voice","title":"A different voice","description":"Choose a voice style that better represents your business.","type":"voice"},{"key":"knowledge_base","title":"More business knowledge","description":"Add approved FAQs, service areas, services and business documents.","type":"knowledge_base"},{"key":"denoising","title":"Clearer calls in noisy places","description":"Improve how your receptionist handles background noise.","type":"denoising"},{"key":"safety","title":"Additional response safeguards","description":"Add extra rules for supported situations and sensitive call flows.","type":"safety"},{"key":"privacy","title":"Personal-information protection","description":"Explore additional redaction of personal information in supported call processing.","type":"privacy"},{"key":"sms","title":"Text message follow-ups","description":"Request appointment confirmations, follow-up messages or other approved business texts.","type":"sms"},{"key":"phone","title":"Additional phone number","description":"Add another business number or route calls differently.","type":"phone"},{"key":"other","title":"More simultaneous calls","description":"Increase simultaneous call capacity if your business regularly receives overlapping calls.","type":"other"},{"key":"other","title":"Different AI response engine","description":"Review a different balance of response quality, speed and operating cost.","type":"other"},{"key":"workflow","title":"Calendar, CRM or business workflow","description":"Connect supported scheduling, customer-management or business systems.","type":"workflow"}];
+ function renderAgentOptions(){
+  const root=$("#agent-improvement-options");if(!root)return;
+  root.innerHTML=agentOptionCatalog.map(o=>'<article class="agent-option-card"><h4>'+safe(o.title)+'</h4><p>'+safe(o.description)+'</p><p class="small">Pricing and any third-party pass-through costs are confirmed in a written quote before work begins.</p><button type="button" class="btn secondary agent-option-request" data-request-type="'+safe(o.type)+'">Request this improvement</button></article>').join("");
+  root.querySelectorAll(".agent-option-request").forEach(b=>b.addEventListener("click",()=>{$("#agent-change-type").value=b.dataset.requestType;toggleSmsFields();$("#agent-change-details").focus();$("#agent-change-details").scrollIntoView({behavior:"smooth",block:"center"})}));
+ }
+ function toggleSmsFields(){
+  const box=$("#sms-business-details"),sms=$("#agent-change-type")?.value==="sms";
+  if(box)box.hidden=!sms;
+  if(box)box.querySelectorAll("[data-sms-required]").forEach(x=>x.required=sms);
+ }
+ function renderAgentConfiguration(configurations){
+  const root=$("#agent-configuration");if(!root)return;
+  if(!Array.isArray(configurations)||!configurations.length){root.innerHTML='<div class="empty">Your configuration details will appear here after your receptionist is assigned and synced.</div>';return}
+  root.innerHTML=configurations.map(config=>{
+   const fields=[["Language",config.language],["Voice",config.voiceLabel],["AI model",config.modelLabel],["Voice speed",config.voiceSpeed],["Voice temperature",config.voiceTemperature],["Response responsiveness",config.responsiveness],["Backchannel audio",config.backchannel],["Ambient sound",config.ambientSound],["Opening greeting",config.greeting],["Knowledge sources",config.knowledgeBaseCount===null?"Not reported":String(config.knowledgeBaseCount)],["Configured capabilities",config.toolNames?.length?config.toolNames.join(", "):"No tools reported"]];
+   return '<section class="agent-config-unit"><div class="agent-config-heading"><b>'+safe(config.agentName||"Assigned receptionist")+'</b><span class="small">'+safe(config.status||"Active")+' · synced '+safe(fmtDate(config.syncedAt))+'</span></div><div class="agent-config-cards">'+fields.filter(x=>x[1]).map(x=>'<article><small>'+safe(x[0])+'</small><b>'+safe(x[1])+'</b></article>').join("")+'</div></section>';
+  }).join("")+'<p class="small agent-config-privacy">For security, internal prompts, credentials, webhook URLs and private integration settings are not displayed. Your configuration is managed and tested by our team.</p>';
+ }
+ function renderAgentRequests(items){
+  const root=$("#agent-change-requests");if(!root)return;
+  const labels={submitted:"Submitted",reviewing:"Being reviewed",quoted:"Quote ready",approved:"Approved",in_progress:"In progress",completed:"Completed",declined:"Not proceeding"};
+  if(!items?.length){root.innerHTML='<div class="empty">You have not submitted any configuration requests yet.</div>';return}
+  root.innerHTML=items.map(r=>'<article class="resource agent-request-item"><div><b>'+safe(r.title||r.request_type)+'</b><p class="small">'+safe(r.details)+'</p><span class="small">Submitted '+safe(fmtDate(r.created_at))+'</span>'+(r.admin_note?'<p class="small">Team update: '+safe(r.admin_note)+'</p>':'')+(r.quote_summary?'<p class="small agent-quote">'+safe(r.quote_summary)+'</p>':'')+(r.status==="quoted"&&r.quote_summary?'<button type="button" class="btn agent-approve-quote" data-approve-request="'+safe(r.id)+'">Approve this quote</button>':'')+'</div><span class="status">'+safe(labels[r.status]||r.status)+'</span></article>').join("");root.querySelectorAll("[data-approve-request]").forEach(b=>b.addEventListener("click",async()=>{if(!confirm("Approve this written quote? This authorizes our team to proceed with the quoted configuration work and any charges explicitly listed in that quote."))return;b.disabled=true;try{await api("/api/client/agent-change-requests/"+encodeURIComponent(b.dataset.approveRequest)+"/approve",{method:"POST",body:"{}"});await loadAgentConfiguration();note("Quote approved. Our team can now proceed with the agreed change.")}catch(e){note(e.message,true);b.disabled=false}}));
+ }
+ async function loadAgentConfiguration(){
+  try{const [c,r]=await Promise.all([api("/api/client/agent-configuration"),api("/api/client/agent-change-requests")]);renderAgentConfiguration(c.configuration);renderAgentRequests(r.requests||[])}
+  catch(e){const root=$("#agent-configuration");if(root)root.innerHTML='<div class="empty">'+safe(e.message)+'</div>';const req=$("#agent-change-requests");if(req)req.innerHTML='<div class="empty">'+safe(e.message)+'</div>'}
+ }
+ async function submitAgentChange(e){
+  e.preventDefault();const button=$("#agent-change-submit"),status=$("#agent-change-status");button.disabled=true;status.textContent="Submitting securely…";
+  try{const requestType=$("#agent-change-type").value,priority=$("#agent-change-priority").value,details=$("#agent-change-details").value.trim();if(details.length<10)throw Error("Please provide at least 10 characters of detail.");const keys=["legalName","businessType","businessAddress","website","contactName","contactTitle","contactEmail","contactPhone","industry","taxIdStatus","smsUseCase","optInMethod","optInDisclosure","optOutMethod","helpMethod","sampleMessage1","sampleMessage2","messageIncludesLinks","messageIncludesPhone","targetCountries","monthlyVolume","phoneNumberType"];const businessInfo=requestType==="sms"?Object.fromEntries(keys.map(k=>[k,$("#sms-"+k)?.value?.trim()||""])):null;if(requestType==="sms"&&Object.values(businessInfo).some(v=>!v))throw Error("Complete all required SMS business and messaging fields before submitting.");await api("/api/client/agent-change-requests",{method:"POST",body:JSON.stringify({requestType,priority,details,businessInfo})});$("#agent-change-form").reset();toggleSmsFields();status.textContent="Request sent. We’ll review it and provide a quote if additional costs apply.";await loadAgentConfiguration()}
+  catch(err){status.textContent=err.message}
+  finally{button.disabled=false}
+ }
  async function load(){
   if(loading)return;loading=true;$("#refresh-dashboard").disabled=true;
   try{
@@ -106,7 +142,8 @@
    $("#agent-list").innerHTML=d.agents.length?d.agents.map(a=>'<div class="resource"><b>'+safe(a.agent_name||a.agent_id)+'</b><span class="small">Your assigned AI receptionist</span></div>').join(""):'<div class="empty">Your receptionist is being prepared or has not yet been assigned.</div>';
    $("#number-list").innerHTML=d.numbers.length?d.numbers.map(n=>'<div class="resource"><b>'+safe(n.phone_number)+'</b><span class="small">'+safe(n.nickname||"Business line")+'</span></div>').join(""):'<div class="empty">Your business phone number has not been assigned yet.</div>';
    renderCalls(d.calls||[],customer.email||"");
-   await Promise.all([loadAddons(),loadTickets(),loadCallEmailSettings()]);
+   await Promise.all([loadAddons(),loadTickets(),loadCallEmailSettings(),loadAgentConfiguration()]);
+   renderAgentOptions();
   }catch(e){note(e.message,true)}
   finally{loading=false;$("#refresh-dashboard").disabled=false}
  }
@@ -135,6 +172,8 @@
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&voiceModal?.classList.contains("open"))closeVoiceModal()});
  document.querySelectorAll(".addon-request").forEach(b=>b.onclick=()=>{closeVoiceModal();requestAddon(b.dataset.addon,b)});
  $("#refresh-addons")?.addEventListener("click",loadAddons);
+ $("#agent-change-form")?.addEventListener("submit",submitAgentChange);$("#agent-change-type")?.addEventListener("change",toggleSmsFields);toggleSmsFields();
+ $("#refresh-agent-requests")?.addEventListener("click",loadAgentConfiguration);
  $("#billing-portal").onclick=async()=>{try{const d=await api("/api/billing/portal",{method:"POST",body:"{}"});location.href=d.url}catch(e){note(e.message,true)}};
  document.querySelectorAll(".plan-btn").forEach(b=>b.onclick=async()=>{try{const d=await api("/api/billing/checkout",{method:"POST",body:JSON.stringify({plan:b.dataset.plan})});location.href=d.url}catch(e){note(e.message,true)}});
  const params=new URLSearchParams(location.search);

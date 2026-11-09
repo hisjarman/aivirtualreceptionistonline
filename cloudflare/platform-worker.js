@@ -126,6 +126,48 @@ async function route(req,env){
  try{
   if(path==="/api/me"&&req.method==="GET"){const u=await clerkUser(req,env);return json({user:u},200,origin,env)}
   if(path==="/api/client/dashboard"&&req.method==="GET"){const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({customer:null,needsSetup:true},200,origin,env);const calls=await env.DB.prepare("SELECT call_id,agent_id,from_number,to_number,direction,call_status,duration_ms,start_timestamp,transcript,recording_url,call_summary,user_sentiment,disconnection_reason FROM avr_calls WHERE customer_id=? ORDER BY start_timestamp DESC LIMIT 50").bind(c.id).all();const usage=await env.DB.prepare("SELECT COALESCE(SUM(duration_ms),0) AS ms,COUNT(*) AS calls FROM avr_calls WHERE customer_id=? AND start_timestamp>=?").bind(c.id,new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).first();const agent=await env.DB.prepare("SELECT agent_id,agent_name,status FROM avr_agents WHERE customer_id=?").bind(c.id).all();const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=?").bind(c.id).all();return json({customer:{id:c.id,businessName:c.business_name,contactName:c.contact_name,email:c.email,phone:c.phone,status:c.status,plan:c.plan_key,subscriptionStatus:c.subscription_status,periodEnd:c.current_period_end,includedMinutes:c.included_minutes,hasBillingAccount:!!c.stripe_customer_id},calls:calls.results||[],agents:agent.results||[],numbers:nums.results||[],usage:{minutes:Math.ceil(Number(usage?.ms||0)/60000),calls:Number(usage?.calls||0)}},200,origin,env)}
+
+  if(path==="/api/client/agent-configuration"&&req.method==="GET"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const rows=await env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.raw_json,a.synced_at FROM avr_agents a WHERE a.customer_id=? ORDER BY a.agent_name").bind(c.id).all();
+   const configuration=(rows.results||[]).map(row=>{
+    let raw={};try{raw=JSON.parse(row.raw_json||"{}")}catch{}
+    const engine=raw.response_engine||raw.responseEngine||{};
+    const tools=Array.isArray(raw.tools)?raw.tools:[];
+    const voice=raw.voice_id||raw.voiceId||row.agent_id;
+    return {agentName:row.agent_name||"Assigned receptionist",status:row.status||"active",language:raw.language||null,voiceLabel:raw.voice_name||raw.voiceName||"Configured voice",voiceSpeed:raw.voice_speed??raw.voiceSpeed??null,voiceTemperature:raw.voice_temperature??raw.voiceTemperature??null,responsiveness:raw.responsiveness??null,backchannel:typeof raw.enable_backchannel==="boolean"?(raw.enable_backchannel?"Enabled":"Disabled"):null,ambientSound:raw.ambient_sound||null,modelLabel:engine.llm_id||engine.model||raw.llm_id||raw.model||null,greeting:raw.begin_message||raw.beginMessage||null,knowledgeBaseCount:Array.isArray(raw.knowledge_base_ids)?raw.knowledge_base_ids.length:Array.isArray(raw.knowledgeBaseIds)?raw.knowledgeBaseIds.length:null,toolNames:tools.map(t=>String(t.name||t.type||"Capability")).filter(Boolean).slice(0,12),syncedAt:row.synced_at};
+   });
+   const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=? ORDER BY phone_number").bind(c.id).all();
+   return json({configuration,phoneNumbers:nums.results||[]},200,origin,env)
+  }
+  const approveAgentRequest=path.match(/^\/api\/client\/agent-change-requests\/([a-f0-9-]{36})\/approve$/i);
+  if(approveAgentRequest&&req.method==="POST"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const id=approveAgentRequest[1],r=await env.DB.prepare("SELECT id,status,quote_summary FROM avr_agent_change_requests WHERE id=? AND customer_id=?").bind(id,c.id).first();
+   if(!r)throw Error("agent_change_request_not_found");
+   if(r.status!=="quoted"||!String(r.quote_summary||"").trim())throw Error("a_written_quote_must_be_available_before_approval");
+   await env.DB.prepare("UPDATE avr_agent_change_requests SET status='approved',client_approved_at=?,updated_at=? WHERE id=? AND customer_id=?").bind(new Date().toISOString(),new Date().toISOString(),id,c.id).run();
+   return json({approved:true,status:"approved"},200,origin,env)
+  }
+  if(path==="/api/client/agent-change-requests"&&(req.method==="GET"||req.method==="POST")){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   if(req.method==="GET"){const r=await env.DB.prepare("SELECT id,request_type,title,details,priority,status,admin_note,quote_summary,created_at,updated_at FROM avr_agent_change_requests WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();return json({requests:r.results||[]},200,origin,env)}
+   const p=await body(req,16000),requestType=String(p.requestType||""),priority=String(p.priority||"normal"),details=String(p.details||"").trim(),businessInfo=p.businessInfo&&typeof p.businessInfo==="object"?p.businessInfo:null;
+   if(requestType==="sms"){
+    const required=["legalName","businessType","businessAddress","website","contactName","contactTitle","contactEmail","contactPhone","industry","taxIdStatus","smsUseCase","optInMethod","optInDisclosure","optOutMethod","helpMethod","sampleMessage1","sampleMessage2","messageIncludesLinks","messageIncludesPhone","targetCountries","monthlyVolume","phoneNumberType"];
+    if(!businessInfo||required.some(k=>!String(businessInfo[k]||"").trim()))throw Error("complete_all_required_sms_business_and_campaign_fields");
+    for(const k of required)if(String(businessInfo[k]).length>1500)throw Error("sms_field_too_long");
+   }
+   if(!["voice","language","knowledge_base","denoising","safety","privacy","sms","phone","workflow","greeting","other"].includes(requestType))throw Error("invalid_request_type");
+   if(!["normal","high","urgent"].includes(priority))throw Error("invalid_request_priority");
+   if(details.length<10||details.length>4000)throw Error("request_details_must_be_10_to_4000_characters");
+   const recent=await env.DB.prepare("SELECT COUNT(*) n FROM avr_agent_change_requests WHERE customer_id=? AND created_at>=?").bind(c.id,new Date(Date.now()-3600000).toISOString()).first();if(Number(recent?.n||0)>=10)throw Error("request_limit_reached_try_again_later");
+   const assigned=await env.DB.prepare("SELECT agent_id FROM avr_agents WHERE customer_id=? ORDER BY agent_name LIMIT 1").bind(c.id).first();
+   const id=crypto.randomUUID(),title=({voice:"Voice or voice provider",language:"Language configuration",knowledge_base:"Business knowledge and FAQs",denoising:"Background-noise handling",safety:"Safety guardrails",privacy:"Personal-information redaction",sms:"SMS messaging",phone:"Phone number or call routing",workflow:"Calendar, CRM or workflow",greeting:"Greeting, tone or call flow",other:"Other configuration change"})[requestType];
+   await env.DB.prepare("INSERT INTO avr_agent_change_requests(id,customer_id,agent_id,request_type,title,details,request_data_json,priority,status) VALUES(?,?,?,?,?,?,?, ?,'submitted')").bind(id,c.id,assigned?.agent_id||null,requestType,title,details,businessInfo?JSON.stringify(businessInfo):null,priority).run();
+   await env.DB.prepare("INSERT INTO avr_support_tickets(id,customer_id,category,subject,description,priority,status) VALUES(?,?,?,?,?,?,?)").bind(crypto.randomUUID(),c.id,"change_request","Agent configuration: "+title,details,priority,"open").run();
+   return json({created:true,id,status:"submitted"},201,origin,env)
+  }
   if(path==="/api/client/addons"&&req.method==="GET"){
    const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
    const r=await env.DB.prepare("SELECT id,addon_key,addon_name,billing_type,status,customer_note,created_at,updated_at FROM avr_addon_orders WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();
@@ -208,6 +250,22 @@ async function route(req,env){
   if(path==="/api/billing/portal"&&req.method==="POST"){const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c?.stripe_customer_id)throw Error("stripe_customer_not_found");const s=await stripeRequest(env,"billing_portal/sessions",{customer:c.stripe_customer_id,return_url:"https://aivirtualreceptionist.online/client/" });return json({url:s.url},200,origin,env)}
   if(path.startsWith("/api/admin/")){
    const u=await requireAdmin(req,env);
+
+   if(path==="/api/admin/agent-change-requests"&&req.method==="GET"){
+    const r=await env.DB.prepare("SELECT r.*,c.business_name,c.email FROM avr_agent_change_requests r LEFT JOIN avr_customers c ON c.id=r.customer_id ORDER BY CASE r.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 ELSE 2 END,r.created_at DESC LIMIT 300").all();return json({requests:r.results||[]},200,origin,env)
+   }
+   const agentRequestMatch=path.match(/^\/api\/admin\/agent-change-requests\/([a-f0-9-]{36})$/i);
+   if(agentRequestMatch&&req.method==="PATCH"){
+    const id=agentRequestMatch[1],p=await body(req,5000),status=String(p.status||"");
+    if(!["reviewing","quoted","in_progress","completed","declined"].includes(status))throw Error("invalid_agent_request_status");
+    const exists=await env.DB.prepare("SELECT id,customer_id,client_approved_at FROM avr_agent_change_requests WHERE id=?").bind(id).first();if(!exists)throw Error("agent_change_request_not_found");
+    const quote=p.quoteSummary===undefined?null:String(p.quoteSummary).trim().slice(0,2500),note=p.adminNote===undefined?null:String(p.adminNote).trim().slice(0,1500);
+    if(status==="quoted"&&!String(quote??"").trim()&&!String((await env.DB.prepare("SELECT quote_summary FROM avr_agent_change_requests WHERE id=?").bind(id).first())?.quote_summary||"").trim())throw Error("written_quote_required_before_marking_quoted");
+    if(["in_progress","completed"].includes(status)&&!exists.client_approved_at)throw Error("client_approval_required_before_work_can_start");
+    await env.DB.prepare("UPDATE avr_agent_change_requests SET status=?,quote_summary=COALESCE(?,quote_summary),admin_note=COALESCE(?,admin_note),updated_at=? WHERE id=?").bind(status,quote,note,new Date().toISOString(),id).run();
+    await audit(env,u,"agent_change_request_updated",exists.customer_id,{requestId:id,status});
+    return json({saved:true},200,origin,env)
+   }
    if(path==="/api/admin/addon-orders"&&req.method==="GET"){
     const r=await env.DB.prepare("SELECT o.*,c.business_name,c.email FROM avr_addon_orders o LEFT JOIN avr_customers c ON c.id=o.customer_id ORDER BY CASE o.status WHEN 'requested' THEN 0 WHEN 'approved' THEN 1 WHEN 'in_progress' THEN 2 ELSE 3 END,o.created_at DESC LIMIT 300").all();
     return json({orders:r.results||[]},200,origin,env)
