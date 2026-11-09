@@ -159,3 +159,34 @@ A new visual direction is being introduced on branch `design/academic-lime-sky-r
 - Added a shared typography color system to styles.css: vivid lime and pale sky blue on dark/navy surfaces; darker, high-contrast lime and blue variants on white/light surfaces; improved muted text contrast and visible keyboard focus.
 - Added homepage-specific overrides to homepage-refresh.css so the Earth-at-night hero retains bright lime/sky-blue accents and light sections keep readable text.
 - Committed on design/earth-receptionist-hero-onboarding; not merged to main. Review desktop and mobile before merge.
+
+
+## 2026-11-09 homepage model and contrast update (working branch)
+- New user direction: put the newly added `assets/Asistente virtual con headset futurista.png` model in the homepage hero; move the previous `AIVirtualReceptionist_Hero_Frame_LeftFacing.png` model into the global-language section as a supporting brand portrait.
+- Keep the Earth-at-night/AI network background and existing hero speech bubble; no onboarding promotion in the top navigation/header.
+- Improve header contrast with a deep navy header, bright readable sky-blue navigation, lime-green brand accent and a clearly visible lime Client Login action. Keep the Get Started action on desktop/tablet; hide it on narrow mobile widths to protect Client Login and menu visibility.
+- Improve contrast for hero copy, stats, language section and supporting homepage panels. Add responsive menu behavior for tablet/mobile and a supporting model portrait in the language section.
+- Implementation branch: `design/hero-model-swap-readable-contrast`. Not merged into `main`. Verify the new model asset path in browser preview and inspect mobile/tablet layout before merging.
+
+
+## 2026-11-09 challenge expansion update (working branch)
+- The Receptionist Architect now contains 45 scenarios (15 each for Starter, Pro and Expert), with five questions per run and three difficulty tiers.
+- Each difficulty has a distinct reward tier: Starter 10% / CALLSMART10, Pro 15% / CALLSMART15, Expert 20% / CALLSMART20. The page explicitly states that the matching Stripe promotion must be activated before a code can redeem; these codes are not confirmed as configured in Stripe.
+- Replays avoid the immediately previous five questions at the same difficulty when browser session storage is available; graceful fallback remains randomized if storage is unavailable.
+- Homepage challenge card now advertises the 45-scenario bank and three difficulty levels.
+- Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main`.
+
+
+## 2026-11-09 — corrected model placement per user's clarification
+- User's exact layout direction: `Asistente virtual con headset futurista` belongs in the upper-left of the homepage hero at the original hero scale; `AIVirtualReceptionist_Hero_Frame_LeftFacing` belongs elsewhere, specifically beside the intake/discovery form.
+- Corrected `index.html`: keep the new model as the hero image; remove the old model from the global-language section.
+- Corrected `get-started.html`: replace the small discovery-form companion with the old model asset. Preserve the existing Formspree endpoint and form structure.
+- Corrected `homepage-refresh.css`: restore the original hero image sizing (desktop max-width 540px / max-height 650px; original tablet/mobile sizing) while keeping the portrait aligned upper-left. Retain the speech bubble treatment beside the model.
+- This correction is on `design/hero-model-swap-readable-contrast`, not merged into `main`.
+
+
+## 2026-11-09 — AI globe brand identity refresh
+- Replaced the old flat white globe/network badge with a dark navy rounded-square connected-globe mark, bright sky-blue longitude/network lines, lime neural nodes and a headset/microphone silhouette.
+- Updated `assets/favicon.svg`, `assets/brand-symbol.svg` and `assets/ai-receptionist-icon.svg` to use the same scalable vector identity.
+- Updated root public-page headers to use the shared AI receptionist logo asset rather than the older inline phone/chat symbol. The homepage favicon now points directly to `assets/favicon.svg`; removed the portrait image as the Apple touch icon so the receptionist photo is no longer used as a browser/app icon.
+- Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main` and not deployed.
