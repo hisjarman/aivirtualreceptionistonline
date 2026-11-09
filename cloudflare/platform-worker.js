@@ -140,6 +140,15 @@ async function route(req,env){
    const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=? ORDER BY phone_number").bind(c.id).all();
    return json({configuration,phoneNumbers:nums.results||[]},200,origin,env)
   }
+  const approveAgentRequest=path.match(/^\/api\/client\/agent-change-requests\/([a-f0-9-]{36})\/approve$/i);
+  if(approveAgentRequest&&req.method==="POST"){
+   const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
+   const id=approveAgentRequest[1],r=await env.DB.prepare("SELECT id,status,quote_summary FROM avr_agent_change_requests WHERE id=? AND customer_id=?").bind(id,c.id).first();
+   if(!r)throw Error("agent_change_request_not_found");
+   if(r.status!=="quoted"||!String(r.quote_summary||"").trim())throw Error("a_written_quote_must_be_available_before_approval");
+   await env.DB.prepare("UPDATE avr_agent_change_requests SET status='approved',client_approved_at=?,updated_at=? WHERE id=? AND customer_id=?").bind(new Date().toISOString(),new Date().toISOString(),id,c.id).run();
+   return json({approved:true,status:"approved"},200,origin,env)
+  }
   if(path==="/api/client/agent-change-requests"&&(req.method==="GET"||req.method==="POST")){
    const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
    if(req.method==="GET"){const r=await env.DB.prepare("SELECT id,request_type,title,details,priority,status,admin_note,quote_summary,created_at,updated_at FROM avr_agent_change_requests WHERE customer_id=? ORDER BY created_at DESC LIMIT 100").bind(c.id).all();return json({requests:r.results||[]},200,origin,env)}
