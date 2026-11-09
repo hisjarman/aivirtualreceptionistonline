@@ -102,11 +102,13 @@
   }).join("");
   root.querySelectorAll(".agent-option-request").forEach(b=>b.addEventListener("click",()=>{$("#agent-change-type").value=b.dataset.requestType;$("#agent-change-details").focus();$("#agent-change-details").scrollIntoView({behavior:"smooth",block:"center"})}));
  }
- function renderAgentConfiguration(config){
+ function renderAgentConfiguration(configurations){
   const root=$("#agent-configuration");if(!root)return;
-  if(!config){root.innerHTML='<div class="empty">Your configuration details will appear here after your receptionist is assigned and synced.</div>';return}
-  const fields=[["Language",config.language],["Voice",config.voiceLabel],["AI model",config.modelLabel],["Opening greeting",config.greeting],["Knowledge sources",config.knowledgeBaseCount===null?"Not reported":String(config.knowledgeBaseCount)],["Configured capabilities",config.toolNames?.length?config.toolNames.join(", "):"No tools reported"]];
-  root.innerHTML='<div class="agent-config-heading"><b>Configuration snapshot</b><span class="small">Read-only · last synced '+safe(fmtDate(config.syncedAt))+'</span></div><div class="agent-config-cards">'+fields.filter(x=>x[1]).map(x=>'<article><small>'+safe(x[0])+'</small><b>'+safe(x[1])+'</b></article>').join("")+'</div><p class="small agent-config-privacy">For security, internal prompts, credentials, webhook URLs and private integration settings are not displayed. Your configuration is managed and tested by our team.</p>';
+  if(!Array.isArray(configurations)||!configurations.length){root.innerHTML='<div class="empty">Your configuration details will appear here after your receptionist is assigned and synced.</div>';return}
+  root.innerHTML=configurations.map(config=>{
+   const fields=[["Language",config.language],["Voice",config.voiceLabel],["AI model",config.modelLabel],["Opening greeting",config.greeting],["Knowledge sources",config.knowledgeBaseCount===null?"Not reported":String(config.knowledgeBaseCount)],["Configured capabilities",config.toolNames?.length?config.toolNames.join(", "):"No tools reported"]];
+   return '<section class="agent-config-unit"><div class="agent-config-heading"><b>'+safe(config.agentName||"Assigned receptionist")+'</b><span class="small">'+safe(config.status||"Active")+' · synced '+safe(fmtDate(config.syncedAt))+'</span></div><div class="agent-config-cards">'+fields.filter(x=>x[1]).map(x=>'<article><small>'+safe(x[0])+'</small><b>'+safe(x[1])+'</b></article>').join("")+'</div></section>';
+  }).join("")+'<p class="small agent-config-privacy">For security, internal prompts, credentials, webhook URLs and private integration settings are not displayed. Your configuration is managed and tested by our team.</p>';
  }
  function renderAgentRequests(items){
   const root=$("#agent-change-requests");if(!root)return;
