@@ -167,3 +167,11 @@ A new visual direction is being introduced on branch `design/academic-lime-sky-r
 - Improve header contrast with a deep navy header, bright readable sky-blue navigation, lime-green brand accent and a clearly visible lime Client Login action. Keep the Get Started action on desktop/tablet; hide it on narrow mobile widths to protect Client Login and menu visibility.
 - Improve contrast for hero copy, stats, language section and supporting homepage panels. Add responsive menu behavior for tablet/mobile and a supporting model portrait in the language section.
 - Implementation branch: `design/hero-model-swap-readable-contrast`. Not merged into `main`. Verify the new model asset path in browser preview and inspect mobile/tablet layout before merging.
+
+
+## 2026-11-09 challenge expansion update (working branch)
+- The Receptionist Architect now contains 45 scenarios (15 each for Starter, Pro and Expert), with five questions per run and three difficulty tiers.
+- Each difficulty has a distinct reward tier: Starter 10% / CALLSMART10, Pro 15% / CALLSMART15, Expert 20% / CALLSMART20. The page explicitly states that the matching Stripe promotion must be activated before a code can redeem; these codes are not confirmed as configured in Stripe.
+- Replays avoid the immediately previous five questions at the same difficulty when browser session storage is available; graceful fallback remains randomized if storage is unavailable.
+- Homepage challenge card now advertises the 45-scenario bank and three difficulty levels.
+- Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main`.
