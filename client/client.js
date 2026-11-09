@@ -97,7 +97,7 @@
  function renderAgentOptions(minutes){
   const root=$("#agent-improvement-options");if(!root)return;
   root.innerHTML=agentOptionCatalog.map(o=>{
-   const estimate=o.rate===null?"Quote required":o.unit==="per minute"?money(o.rate*minutes)+"/month at "+minutes.toLocaleString()+" minutes":o.unit==="per message"?money(o.rate)+" per message":o.unit==="per month"?money(o.rate)+"/month":o.unit==="per number/month"?money(o.rate)+"/number/month":money(o.rate)+"/"+o.unit;
+   const estimate=o.rate===null?"Quote required":o.unit==="per minute"?"~"+money(o.rate*minutes)+" at "+minutes.toLocaleString()+" minutes used this month":o.unit==="per message"?money(o.rate)+" per message":o.unit==="per month"?money(o.rate)+"/month":o.unit==="per number/month"?money(o.rate)+"/number/month":money(o.rate)+"/"+o.unit;
    return '<article class="agent-option-card"><h4>'+safe(o.title)+'</h4><p>'+safe(o.description)+'</p><strong class="agent-option-cost">'+safe(estimate)+'</strong><p class="small">'+safe(o.note)+'</p><button type="button" class="btn secondary agent-option-request" data-request-type="'+safe(o.key==='elevenlabs'?'voice':o.key==='knowledge_base'?'knowledge_base':o.key==='denoising'?'denoising':o.key==='safety'?'safety':o.key==='privacy'?'privacy':o.key==='sms'?'sms':o.key==='phone'||o.key==='verified_phone'?'phone':o.key==='concurrency'||o.key==='model'?'other':'workflow')+'">Ask about this</button></article>'
   }).join("");
   root.querySelectorAll(".agent-option-request").forEach(b=>b.addEventListener("click",()=>{$("#agent-change-type").value=b.dataset.requestType;$("#agent-change-details").focus();$("#agent-change-details").scrollIntoView({behavior:"smooth",block:"center"})}));
