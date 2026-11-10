@@ -13,7 +13,7 @@ Managed AI receptionist service for service businesses. The agency handles each 
 
 ## Hosting architecture
 
-- **GitHub Pages:** marketing site, customer portal at \`https://aivirtualreceptionist.online/client/\`, admin console at \`https://aivirtualreceptionist.online/admin/\`.
+- **GitHub Pages:** marketing site, customer portal at \`https://star69ai.com/client/\`, admin console at \`https://star69ai.com/admin/\`.
 - **Cloudflare Workers:** API at \`https://avr-platform-api.hisjarman.workers.dev\`.
 - **Cloudflare D1:** uses the existing \`avr-trust-lab\` database; new platform tables are prefixed \`avr_\` to avoid collisions with existing tables.
 - **Clerk:** existing Clerk instance and verified-email login. The Worker verifies Clerk JWT signatures and performs a server-side user lookup. Admin access is separately restricted by \`ADMIN_EMAILS\`.
@@ -153,7 +153,7 @@ Admin-only:
 ## Important launch checks
 
 - The Clerk publishable key in the static pages currently references the existing **development** Clerk instance. Replace it with the production Clerk publishable key when you switch Clerk to production, and update \`CLERK_ISSUER\` in the Worker to the matching production issuer. Keep the secret key server-side.
-- Add \`https://aivirtualreceptionist.online\` and any active www origin to Clerk's allowed origins.
+- Add \`https://star69ai.com\` and any active www origin to Clerk's allowed origins.
 - Configure Stripe test mode first and complete a test purchase, portal update and cancellation before switching to live mode.
 - Confirm the Retell webhook is set to the API key with the Webhook badge.
 - Verify customer-to-customer data isolation and admin permissions with separate test accounts.
