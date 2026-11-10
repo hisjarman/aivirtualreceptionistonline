@@ -90,7 +90,7 @@ Add the following as plain-text variables. Use the recurring monthly Price IDs c
 | \`STRIPE_PRICE_GROWTH\` | Growth | $249/month, 600 included voice minutes |
 | \`STRIPE_PRICE_PRO\` | Pro | $399/month, 1,000 included voice minutes |
 
-Do not change the published plan prices. The $99 one-time setup fee remains separately invoiced and is not added to subscription Checkout.
+Do not change the published plan prices. Current advertised overage rates are Starter $0.49/minute, Growth $0.39/minute and Pro $0.29/minute above each plan's included allowance. The $99 one-time setup fee remains separately invoiced and is not added to subscription Checkout. Automatic metered overage billing is not implemented yet; do not claim these amounts are automatically charged until Stripe meter reporting and end-to-end billing tests are complete.
 
 After adding or changing variables/secrets, redeploy or restart the Worker if the dashboard requests it.
 
@@ -158,7 +158,7 @@ Admin-only:
 - Confirm the Retell webhook is set to the API key with the Webhook badge.
 - Verify customer-to-customer data isolation and admin permissions with separate test accounts.
 - Confirm recording consent, retention, deletion and applicable privacy/legal requirements before exposing recordings or transcripts or emailing call summaries. Customers must add only authorized recipients. Automatic emails are sent on Retell `call_analyzed` events and include call summary metadata, not the full transcript or audio.
-- Usage is currently derived from Retell call duration events and rounded up to whole minutes for display. Confirm the exact billable-minute policy and any overage rates before charging overages.
+- Usage is currently derived from Retell call duration events and rounded up to whole minutes for display. The advertised overage rates are Starter $0.49/minute, Growth $0.39/minute and Pro $0.29/minute. Automatic metered overage billing is not implemented; do not charge or represent overage estimates as automatic charges until Stripe meter reporting, rounding policy and end-to-end billing tests are complete.
 - Admin plan allowance edits do not silently alter Stripe subscriptions. Use the Stripe customer portal or Stripe Dashboard for actual subscription changes.
 
 ## Local preview
