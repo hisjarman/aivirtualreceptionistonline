@@ -1,5 +1,5 @@
 (()=> {
- const API="https://avr-platform-api.hisjarman.workers.dev", OVERAGE_RATE=0.49;
+ const API="https://avr-platform-api.hisjarman.workers.dev", OVERAGE_RATES={starter:0.49,growth:0.39,pro:0.29};
  const $=s=>document.querySelector(s);
  let clerk=null,customer=null,loading=false;
  function note(t,e=false){const n=$("#notice");n.textContent=t;n.classList.remove("hidden","error");if(e)n.classList.add("error")}
@@ -16,14 +16,16 @@
   try{history.replaceState(null,"",page==="overview"?"#overview":"#"+page)}catch{}
  }
  function showSignedOut(){$("#auth").classList.remove("hidden");$("#app").classList.add("hidden");$("#session-pill").textContent="Signed out"}
- function renderUsage(usage,included){
+ function renderUsage(usage,included,plan){
   const used=Math.max(0,Number(usage.minutes||0)),allowance=Math.max(0,Number(included||0)),over=Math.max(0,used-allowance),pct=allowance?Math.min(100,used/allowance*100):0;
   $("#usage-percent").textContent=Math.round(pct)+"%";
   $("#usage-fill").style.width=pct+"%";
   $("#usage-fill").classList.toggle("over-limit",over>0);
   $("#usage-left").textContent=allowance?Math.max(0,allowance-used)+" minutes remaining": "No included minutes on this account";
   $("#usage-total").textContent=used+" of "+allowance+" included minutes";
-  $("#overage-estimate").textContent="Estimated overage: "+money(over*OVERAGE_RATE);
+  const overageRate=OVERAGE_RATES[String(plan||"").toLowerCase()];
+  $("#overage-rate").textContent=overageRate===undefined?"See your plan":money(overageRate)+" / minute";
+  $("#overage-estimate").textContent="Estimated overage: "+(overageRate===undefined?"—":money(over*overageRate));
   $("#minutes-used").textContent=used.toLocaleString();
   $("#minutes-included").textContent=allowance.toLocaleString()+" included minutes";
  }
@@ -128,7 +130,7 @@
    const plans={starter:["Starter","$149 / month"],growth:["Growth","$249 / month"],pro:["Pro","$399 / month"]};
    $("#plan-name").textContent=plans[customer.plan]?.[0]||"Not selected";
    $("#plan-price").textContent=plans[customer.plan]?.[1]||"Select a monthly plan";
-   renderUsage(d.usage||{},customer.includedMinutes||0);
+   renderUsage(d.usage||{},customer.includedMinutes||0,customer.plan);
    $("#calls-count").textContent=Number(d.usage?.calls||0).toLocaleString();
    $("#subscription-status").textContent=customer.subscriptionStatus||"Not active";
    $("#billing-portal").disabled=!customer.hasBillingAccount;
