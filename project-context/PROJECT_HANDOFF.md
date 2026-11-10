@@ -42,7 +42,7 @@ Documented plans in the root README:
 - Pro: $399/month, 1,000 included voice minutes.
 - $99 one-time setup fee, invoiced separately.
 
-User requires usage-based overage billing: once included minutes are exhausted, track additional minutes and bill per minute through Stripe metered billing, correctly associated with the customer's subscription/plan. This is not confirmed as configured. Do not invent the overage rate; verify current Stripe setup or ask the user for the rate. Confirm rounding and event/meter policy before charging.
+User-approved advertised overage rates: Starter $0.49/minute, Growth $0.39/minute, Pro $0.29/minute after the respective included allowance. The public pricing page, legal pricing summary and client portal estimate must use the same plan-specific rates. Automatic Stripe metered overage billing is not implemented; the client portal must label estimates as estimates and not claim automatic charges. Confirm rounding and meter-event policy before charging.
 
 ## Technical architecture (documented in root README)
 - GitHub Pages: public marketing site, client portal at /client/, admin console at /admin/.
@@ -94,7 +94,7 @@ The root README describes customer portal capabilities (assigned agents/numbers,
 1. Verify Clerk is on production keys/issuer and production domain is correctly configured; earlier notes said development instance remained.
 2. Verify Worker secrets exist (never reveal their values).
 3. Verify Stripe plan Price IDs: STRIPE_PRICE_STARTER, STRIPE_PRICE_GROWTH, STRIPE_PRICE_PRO.
-4. Implement/test Stripe metered overage after included minutes are used; obtain exact rate and policy first.
+4. Implement/test Stripe metered overage after included minutes are used using the approved Starter $0.49 / Growth $0.39 / Pro $0.29 per-minute rates; confirm rounding and meter-event policy before charging.
 5. Verify Retell webhook at /webhooks/retell, required events, sync agents/numbers, assign resources and test a real call.
 6. Confirm D1 migration for call-email settings is applied.
 7. User previously saw: D1_ERROR: no such table: avr_addon_orders. Inspect current Worker/frontend references and migrations for schema mismatch; do not invent a table without examining the code and migrations.
@@ -131,7 +131,7 @@ This is a snapshot, not a guarantee that main is the newest user-approved design
 
 ## Open questions — do not guess
 - Exact challenge reward at each difficulty (points, badge, coupon or other).
-- Exact per-minute overage rate and rounding/billing policy.
+- Overage rates are set (Starter $0.49 / Growth $0.39 / Pro $0.29 per minute); rounding/billing policy remains to be confirmed.
 - Whether Clerk has since been migrated to production.
 - Which candidate UI/challenge branches have been merged or approved since this snapshot.
 
