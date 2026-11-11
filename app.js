@@ -66,9 +66,11 @@ document.querySelectorAll("[data-plan]").forEach(link => {
   });
 });
 
-form.addEventListener("submit", async event => {
+// Formspree's normal HTML POST avoids browser CORS/fetch failures on mobile browsers.
+form.addEventListener("submit", event => {
   event.preventDefault();
   if (!validateStep()) return;
+
   submit.disabled = true;
   submit.textContent = "Sending…";
   errorBox.hidden = true;
@@ -88,71 +90,53 @@ form.addEventListener("submit", async event => {
     ["Business hours", payload.hours],
     ["Caller tasks", payload.callTasks],
     ["Common questions", payload.faqs],
+    ["Recording preference", payload.recordingPreference],
+    ["Outbound AI calls", payload.outboundAiCalls],
+    ["Automated SMS", payload.automatedSms],
+    ["Human escalation", payload.humanEscalation],
     ["Phone setup", payload.phoneSetup],
     ["Plan interest", payload.planInterest],
     ["Additional notes", payload.notes],
-    ["Contact request", "Customer submitted the discovery brief and requested a response about this inquiry"],
     ["Privacy acknowledgement", payload.privacyConsent ? "Confirmed" : "Not confirmed"],
     ["Submitted at", submittedAt],
     ["Source", "Star69AI business discovery form"]
-  ].map(([label, value]) => label + ": " + (String(value || "").trim() || "Not provided")).join("\n");
+  ].map(([label, value]) => label + ": " + (String(value || "").trim() || "Not provided")).join("\\n");
 
-  try {
-    const formData = new FormData(form);
-    formData.append("_subject", "New business discovery request — Star69AI");
-    if (payload.email) formData.append("_replyto", payload.email);
-    formData.append("message", brief);
-    formData.append("submittedAt", submittedAt);
-    formData.append("source", "Star69AI business discovery form");
-
-    const response = await fetch("https://formspree.io/f/mrppjqdb", {
-      method: "POST",
-      headers: { "Accept": "application/json" },
-      body: formData
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || result.ok === false) {
-      const detail = Array.isArray(result.errors) ? result.errors.map(item => item.message).filter(Boolean).join(" ") : "";
-      throw new Error(detail || result.error || "Formspree could not accept your request. Please try again.");
+  const hiddenFields = {
+    _subject: "New business discovery request — Star69AI",
+    _replyto: payload.email || "",
+    _next: "https://star69ai.com/get-started.html?submitted=1#start",
+    message: brief,
+    submittedAt,
+    source: "Star69AI business discovery form"
+  };
+  for (const [name, value] of Object.entries(hiddenFields)) {
+    let input = form.querySelector('input[type="hidden"][name="' + name + '"]');
+    if (!input) {
+      input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      form.appendChild(input);
     }
-
-    let confirmationSent = false;
-    {
-      try {
-        const confirmationResponse = await fetch(API_BASE + "/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({
-            type: "onboarding",
-            name: payload.name,
-            email: payload.email,
-            phone: payload.phone,
-            subject: "Business discovery request — " + (payload.business || "New business"),
-            message: brief,
-            contactConsent: true
-          })
-        });
-        const confirmationResult = await confirmationResponse.json().catch(() => ({}));
-        if (!confirmationResponse.ok) throw new Error(confirmationResult.error || "Confirmation service unavailable");
-        confirmationSent = confirmationResult.confirmationSent === true;
-      } catch (confirmationFailure) {
-      }
-    }
-
-    form.hidden = true;
-    const success = document.querySelector("#form-success");
-    success.querySelector("p").textContent = confirmationSent
-      ? "Your business brief has been received. A confirmation email is on its way, and we will review your details and contact you about this request."
-      : "Your business brief has been received. We could not send the confirmation email automatically, but your request was submitted successfully.";
-    success.hidden = false;
-  } catch (error) {
-    errorBox.textContent = error.message || "We couldn't send your brief. Please try again in a moment or contact support@star69ai.com.";
-    errorBox.hidden = false;
-  } finally {
-    submit.disabled = false;
-    submit.textContent = "Submit onboarding request →";
+    input.value = value;
   }
+
+  form.method = "POST";
+  form.action = "https://formspree.io/f/mrppjqdb";
+  // Submit through the browser's native form navigation rather than fetch().
+  HTMLFormElement.prototype.submit.call(form);
 });
+
+// Formspree redirects here only after accepting a native form submission.
+if (new URLSearchParams(window.location.search).get("submitted") === "1") {
+  form.hidden = true;
+  const success = document.querySelector("#form-success");
+  if (success) {
+    success.querySelector("p").textContent =
+      "Your business brief has been received. We'll review your details and contact you about your requested demo.";
+    success.hidden = false;
+  }
+}
 
 const yearLabel = document.querySelector("#year");
 if (yearLabel) yearLabel.textContent = new Date().getFullYear();
