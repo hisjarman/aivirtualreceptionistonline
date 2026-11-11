@@ -308,3 +308,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - Active deployment ID: 7a9dece9-39e4-444d-a459-1c961b23528d; Cloudflare deployment inspection confirms version 28 receives 100% of traffic.
 - Verified version 28 bindings include RESEND_FROM_EMAIL=hello@star69ai.com, RESEND_API_KEY (secret binding), CLERK_SECRET_KEY (secret binding), RETELL_API_KEY (secret binding), D1 DB (same database ID), and the existing ADMIN_EMAILS, ALLOWED_ORIGINS, and CLERK_ISSUER values. Secret values were not read or changed.
 - No D1 data/schema or unrelated service configuration was changed. A live authenticated manual-send test is still required to confirm delivery; if it fails, inspect the new categorized Worker logs and Resend response status rather than assuming the sender configuration is still missing.
+
+
+## Discovery form usability and accessibility update — 2026-11-11
+
+- Branch: feature/discovery-form-ux-accessibility (based on main). No changes were made to main and no deployment or merge has occurred.
+- Updated get-started.html to make the discovery form feel lower-pressure: the intro explains that most questions are optional, and step 2 tells visitors a short answer is enough and they can skip uncertain items.
+- Added an explicit affirmative recording/transcription preference, alongside no-recording, transcript-only and discuss-first choices. The copy states that recording/transcription is subject to legal review, caller notice/consent, access controls and retention settings; this is a preference only, not automatic recording activation.
+- Added optional multi-select feature interests: appointment booking, call recordings/transcripts, emailed summaries, lead qualification, live transfers/urgent escalation, after-hours coverage, multiple languages, software integrations, consent-based SMS follow-ups, and other workflows.
+- Updated app.js so the AI Discovery Coach receives the selected optional interests and the Formspree brief includes every checked option. The native POST flow and Formspree endpoint https://formspree.io/f/mrppjqdb are preserved. No credentials or external services changed.
+- Added high-contrast typography, readable helper/disclosure text, clearer form controls, accessible focus and mobile single-column preference cards in contact.css. Overrides are scoped to the Get Started/onboarding form to avoid changing unrelated pages.
+- Validation status: source-level replacement checks passed during editing. Browser/mobile visual verification, keyboard testing, Formspree delivery test, and color-contrast measurement are still required before merge/publish.
