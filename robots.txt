@@ -1,4 +1,32 @@
+# Star69AI public search and AI-discovery policy
+# Public marketing, editorial, pricing and public Trust Lab pages are crawlable.
 User-agent: *
 Allow: /
+Disallow: /client/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /private/
 Disallow: /newsletter-admin.html
+
+# ChatGPT Search discovery
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /client/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /private/
+Disallow: /newsletter-admin.html
+
+# Perplexity Search discovery
+User-agent: PerplexityBot
+Allow: /
+Disallow: /client/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /private/
+Disallow: /newsletter-admin.html
+
 Sitemap: https://star69ai.com/sitemap.xml

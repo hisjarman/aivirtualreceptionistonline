@@ -321,3 +321,24 @@ Known prior issue to recheck against current source: a portal request reported `
 - Validation status: source-level replacement checks passed during editing. Browser/mobile visual verification, keyboard testing, Formspree delivery test, and color-contrast measurement are still required before merge/publish.
 
 - Pull request: #82 (https://github.com/hisjarman/star69ai/pull/82), open against main. A follow-up source correction restored actual line breaks in app.js after the optional-checkbox context and Formspree summary logic was added. The final app.js source was re-fetched and inspected; no stray escaped line-break sequences remain in the affected logic. Automated Node syntax checking and browser testing were not available in this environment, so those checks remain outstanding.
+
+
+## Technical SEO and AI crawler implementation — 2026-11-11
+
+- SEO implementation is prepared on branch `seo/technical-crawlability-ai-discovery`; production branch `main` remains unchanged pending explicit approval to merge.
+- Confirmed production site architecture: repository-root GitHub Pages publishing with root `CNAME` set to `star69ai.com`. Do not move publishing to `docs/`.
+- Root `robots.txt` allows public marketing, editorial, pricing and public Trust Lab content. It explicitly excludes `/client/`, `/admin/`, `/api/`, `/dashboard/`, `/private/` and `/newsletter-admin.html`; OAI-SearchBot and PerplexityBot have explicit public crawl allowances with the same private-path exclusions. Robots directives are not access control; Clerk and Worker authorization remain the security boundary.
+- Root `sitemap.xml` has been reconciled against the known static public routes. It includes marketing, industry, blog, challenge, insights, Trust Lab, partner and legal pages; it excludes client/admin and API routes.
+- Homepage title and description now emphasize the managed service. Homepage Open Graph/Twitter metadata and JSON-LD Organization, WebSite and Service entities are included. Structured data does not assert unverified ratings, reviews or Star69AI customer-performance statistics.
+- Four insights pages had canonical and Open Graph URLs on the retired `aivirtualreceptionist.online` domain; these are corrected to `star69ai.com`.
+- Public Trust Lab dashboard and partner landing page have self-referencing canonicals; Trust Lab and public legal pages also have self-referencing canonicals.
+- Client and admin portal entry pages carry `noindex,nofollow,noarchive` metadata and are excluded from robots crawling and the sitemap.
+- IndexNow verification key file is `c2bce683c78de699b10abff8601ac838.txt`. This is a public verification token, not an application secret. `scripts/submit-indexnow.ps1` reads the published sitemap and submits its URLs after deployment.
+- After merge/deployment, still verify live HTTP status and redirects; ensure GitHub Pages publishes root files; inspect rendered HTML and canonical URLs; validate JSON-LD; submit the sitemap in Google Search Console and Bing Webmaster Tools; test the IndexNow key URL and submission; review Cloudflare security events for crawler challenges.
+- DNS ownership verification and Search Console/Bing account actions must be completed by the account owner. Sitemap submission, IndexNow notification and live URL tests do not guarantee indexing or ranking.
+
+## Legacy HelloAnswer script removal — 2026-11-11
+
+- Removed the obsolete HelloAnswer client widget script (`clients.aivirtualreception.online/w/w_xin7g6jkr6au9gqlo18h.js`) from the homepage `index.html` on branch `seo/technical-crawlability-ai-discovery`.
+- The script was confirmed to be a legacy HelloAnswer integration and is no longer needed. The current Star69AI Concierge remains embedded through the existing `star69ai-concierge` Cloudflare Worker iframe and its homepage click-to-chat controls; those were not changed.
+- Verified the retired HelloAnswer hostname no longer appears in the homepage source. No other scripts, chat behavior, backend configuration or production branch were changed.
