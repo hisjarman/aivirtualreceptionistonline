@@ -44,7 +44,15 @@
    if(!form.elements.authorized.checked){status.textContent="Please confirm the recipient is authorized.";return}
    button.disabled=true;status.textContent="Sending…";
    try{await api("/api/client/calls/"+encodeURIComponent(form.dataset.callId)+"/email",{method:"POST",body:JSON.stringify({email})});status.textContent="Call details emailed successfully."}
-   catch(err){status.textContent=err.message;button.disabled=false}
+   catch(err){
+    const emailErrors={
+     email_sender_not_configured_check_resend:"Email sending is not configured correctly. Please contact support.",
+     email_provider_rate_limited_try_again:"The email service is temporarily rate-limiting requests. Please wait a moment and try again.",
+     email_provider_temporarily_unavailable_try_again:"The email service could not confirm delivery. Please wait a moment and try again.",
+     email_provider_rejected_request_contact_support:"The email service rejected this request. Please contact support so we can investigate."
+    };
+    status.textContent=emailErrors[err.message]||err.message;button.disabled=false
+   }
   }));
  }
 

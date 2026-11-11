@@ -21,7 +21,7 @@ async function clerkUser(req,env){
  return {id:c.sub,email:String(em.email_address).toLowerCase(),name:[u.first_name,u.last_name].filter(Boolean).join(" ")};
 }
 async function requireAdmin(req,env){const u=await clerkUser(req,env),allowed=(env.ADMIN_EMAILS||"").split(",").map(x=>x.trim().toLowerCase());if(!allowed.includes(u.email))throw Error("admin_access_required");return u}
-function fail(e,origin,env){const m=e?.message||"request_failed",status=m==="admin_access_required"?403:m==="clerk_backend_not_configured"||m==="call_email_not_configured_contact_support"?503:m==="sign_in_required"||m.includes("session")||m.includes("signature")?401:m==="email_verification_required"?403:400;return json({error:m},status,origin,env)}
+function fail(e,origin,env){const m=e?.message||"request_failed",status=m==="admin_access_required"?403:m==="clerk_backend_not_configured"||m==="call_email_not_configured_contact_support"||m==="email_sender_not_configured_check_resend"||m==="email_provider_temporarily_unavailable_try_again"?503:m==="email_provider_rate_limited_try_again"?429:m==="email_provider_rejected_request_contact_support"?502:m==="sign_in_required"||m.includes("session")||m.includes("signature")?401:m==="email_verification_required"?403:400;return json({error:m},status,origin,env)}
 async function body(req,max=20000){const t=await req.text();if(t.length>max)throw Error("payload_too_large");try{return JSON.parse(t)}catch{throw Error("invalid_json")}}
 const planInfo={starter:{name:"Starter",price:149,minutes:300,priceEnv:"STRIPE_PRICE_STARTER"},growth:{name:"Growth",price:249,minutes:600,priceEnv:"STRIPE_PRICE_GROWTH"},pro:{name:"Pro",price:399,minutes:1000,priceEnv:"STRIPE_PRICE_PRO"}};
 async function customerFor(user,env){let c=await env.DB.prepare("SELECT * FROM avr_customers WHERE clerk_user_id=? LIMIT 1").bind(user.id).first();if(!c)c=await env.DB.prepare("SELECT * FROM avr_customers WHERE lower(email)=? LIMIT 1").bind(user.email).first();if(c&&!c.clerk_user_id)await env.DB.prepare("UPDATE avr_customers SET clerk_user_id=?,updated_at=? WHERE id=?").bind(user.id,new Date().toISOString(),c.id).run();return c}
@@ -251,9 +251,33 @@ async function route(req,env){
    const subject="Call details — "+String(call.from_number||"Unknown caller");
    const plain=["Star69AI.com — Call details","Business: "+(c.business_name||"Your business"),"Caller: "+(call.from_number||"Unknown"),"Business line: "+(call.to_number||"Unknown"),"Date/time: "+date,"Direction: "+(call.direction||"Unknown"),"Status: "+(call.call_status||"Unknown"),"Duration: "+duration,"Sentiment: "+(call.user_sentiment||"Unknown"),"Disconnection: "+(call.disconnection_reason||"Unknown"),"","Summary:",call.call_summary||"No summary available.","","Transcript:",call.transcript||"No transcript available."].join("\n");
    const html="<div style=\"font-family:Arial,sans-serif;max-width:680px;margin:auto;color:#20343b\"><h2>Call details</h2><p><b>Business:</b> "+esc(c.business_name)+"</p><p><b>Caller:</b> "+esc(call.from_number)+"<br><b>Business line:</b> "+esc(call.to_number)+"<br><b>Date/time:</b> "+esc(date)+"<br><b>Direction:</b> "+esc(call.direction)+"<br><b>Status:</b> "+esc(call.call_status)+"<br><b>Duration:</b> "+esc(duration)+"<br><b>Sentiment:</b> "+esc(call.user_sentiment)+"</p><h3>Call summary</h3><p>"+esc(call.call_summary||"No summary available.")+"</p><h3>Transcript</h3><pre style=\"white-space:pre-wrap;font:14px/1.5 Arial,sans-serif;background:#f4f7f7;padding:16px;border-radius:8px\">"+esc(call.transcript||"No transcript available.")+"</pre><p style=\"font-size:12px;color:#68777c\">Sent securely from your Star69AI client portal.</p></div>";
-   const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"avr-call-details/"+call.call_id+"/"+to},body:JSON.stringify({from:resendFrom(env),to:[to],subject,html:brandEmail(html),text:plain})});
-   const result=await sent.json().catch(()=>({}));
-   if(!sent.ok){console.error("call_email_send_failed",sent.status,result);throw Error(sent.status===401||sent.status===403?"email_sender_not_configured_check_resend": "call_email_send_failed_try_again")}
+   const emailPayload=JSON.stringify({from:resendFrom(env),to:[to],subject,html:brandEmail(html),text:plain});
+   const idempotencyKey="avr-call-details/"+call.call_id+"/"+to;
+   let sent=null,result={};
+   for(let attempt=0;attempt<2;attempt++){
+    try{
+     sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":idempotencyKey},body:emailPayload});
+     result=await sent.json().catch(()=>({}));
+     if(sent.ok)break;
+     const retryable=sent.status===429||sent.status>=500;
+     const providerCode=String(result?.name||result?.code||result?.type||"unknown").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,60);
+     console.error("manual_call_email_resend_rejected",{status:sent.status,providerCode,attempt:attempt+1});
+     if(retryable&&attempt===0){await new Promise(resolve=>setTimeout(resolve,350));continue}
+     break;
+    }catch(error){
+     const errorName=String(error?.name||"Error").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,40);
+     console.error("manual_call_email_transport_error",{errorName,attempt:attempt+1});
+     if(attempt===0){await new Promise(resolve=>setTimeout(resolve,350));continue}
+     throw Error("email_provider_temporarily_unavailable_try_again");
+    }
+   }
+   if(!sent?.ok){
+    const status=Number(sent?.status||0);
+    if(status===401||status===403)throw Error("email_sender_not_configured_check_resend");
+    if(status===429)throw Error("email_provider_rate_limited_try_again");
+    if(status>=500||status===0)throw Error("email_provider_temporarily_unavailable_try_again");
+    throw Error("email_provider_rejected_request_contact_support");
+   }
    return json({sent:true,emailId:result.id||null},200,origin,env);
   }
   if(path==="/api/client/profile"&&req.method==="PATCH"){const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);const p=await body(req),name=String(p.businessName||"").trim().slice(0,160),contact=String(p.contactName||"").trim().slice(0,120),phone=String(p.phone||"").trim().slice(0,40);if(name.length<2)throw Error("business_name_required");await env.DB.prepare("UPDATE avr_customers SET business_name=?,contact_name=?,phone=?,updated_at=? WHERE id=?").bind(name,contact,phone,new Date().toISOString(),c.id).run();return json({saved:true},200,origin,env)}
