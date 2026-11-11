@@ -248,3 +248,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - Homepage hero CTA visibility update merged in PR #78, squash commit `d5372a67561e0d1fad9ed05b01c1417d33b5a6e1`. The hero receptionist now speaks in first person, explains visitors can chat about their business, and shows a prominent "START CHATTING WITH ME" action label. The existing accessible dialog and iframe still open the deployed Concierge.
 - GitHub Pages source changes are merged to `main`. Workflow run #395 (commit `317585197e49a54ef413d8899682364a7106e331`) was observed queued and then in progress; final Pages publish status was not yet available at the last check. Track at https://github.com/hisjarman/star69ai/actions/runs/42966615120.
 - Static source checks passed. A live external browser request could not be completed in this tool environment (DNS/network resolution unavailable), so do not claim visual browser or end-to-end inference/form submission verification. The Cloudflare API confirms the new Worker version is deployed and active.
+
+
+## Compact hero receptionist prompt and discovery form readability — 2026-11-11
+
+- Homepage hero receptionist is presented as a small portrait/avatar beside a compact speech-bubble CTA rather than a large portrait occupying the hero column.
+- The bubble asks visitors to ask the AI receptionist a question and remains the clickable entry point to the existing Concierge dialog/iframe. Chat URL and behavior are unchanged.
+- Get Started discovery form typography is enlarged for readability: labels, field values, placeholders, step headings, helper copy, privacy disclosures, consent text and buttons receive larger sizes, stronger contrast and more comfortable line-height. Mobile inputs use 16px to avoid browser zoom on focus.
+- Changes are on `feature/compact-hero-chat-readable-discovery`; no merge, Pages publication or Worker deployment has been performed.
+- Static source checks: verify hero CTA text/ARIA label and discovery stylesheet overrides. Browser/mobile visual checks and live chat/form submission tests remain outstanding.
