@@ -237,3 +237,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - The chat control is restyled as a prominent dark teal/lime bordered call-to-action card with a clear "START CHATTING WITH ME" action label, keyboard focus and hover feedback, including a compact mobile treatment.
 - Existing dialog/iframe wiring and Concierge URL are unchanged. The click opens the live Star69AI Concierge panel.
 - Awaiting branch checks/PR merge and live browser verification. The AI Discovery Coach Worker deployment is tracked separately below.
+
+
+## AI Discovery Coach Worker deployment and hero chat CTA — 2026-11-11
+
+- Deployed the merged `main` version of `cloudflare/concierge-worker.js` to Cloudflare Worker `star69ai-concierge` on 2026-11-11.
+- Cloudflare upload/deployment ID: `a16f3e3c-1619-420d-a6db-e606eaaf6102`; deployed Worker version ID: `f7a8fd29-984b-4117-acd2-fa634f6a7e74`; 100% of traffic assigned to this version.
+- Verified Worker settings after deployment: AI binding `AI` retained; D1 binding `DB` retained with database ID `6cf68b12-2aa8-4ed4-9f92-8a7824520d1a`; compatibility date remains `2026-11-10`.
+- The deployed Worker source includes the discovery form context message receiver, Worker-side safe field allowlist and length limits, untrusted-input treatment, practical form-coach prompt, and active-field indicator in the Concierge UI.
+- Homepage hero CTA visibility update merged in PR #78, squash commit `d5372a67561e0d1fad9ed05b01c1417d33b5a6e1`. The hero receptionist now speaks in first person, explains visitors can chat about their business, and shows a prominent "START CHATTING WITH ME" action label. The existing accessible dialog and iframe still open the deployed Concierge.
+- GitHub Pages source changes are merged to `main`; the normal Pages build/deployment should publish them. Workflow run status still needs checking.
+- Static source checks passed. A live external browser request could not be completed in this tool environment (DNS/network resolution unavailable), so do not claim visual browser or end-to-end inference/form submission verification. The Cloudflare API confirms the new Worker version is deployed and active.
