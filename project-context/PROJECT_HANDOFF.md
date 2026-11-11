@@ -392,3 +392,10 @@ Known prior issue to recheck against current source: a portal request reported `
 - Desktop panel width is constrained to the model column (up to 440px) and uses a bounded responsive height. On mobile it remains full-column width with a bounded viewport-relative height; it does not cover the sales-copy column.
 - No Concierge Worker, AI endpoint, D1, authentication, Formspree, billing or provider configuration was changed.
 - Source-level validation and live browser verification are pending. Do not claim the layout is published until the PR is approved/merged and GitHub Pages deployment succeeds.
+
+## Intake-page Concierge conversation viewport expansion — 2026-11-11
+
+- On branch `fix/hero-concierge-opens-below-model` (PR #87), increased the inline Discovery Coach panel height so more of the Concierge conversation and generated responses remain visible without an overly short embedded viewport.
+- Desktop panel now uses a 760px minimum with an 88vh preferred height and 940px maximum. Tablet uses 760px; mobile uses 700px. The iframe is explicitly allowed to flex and fill the remaining panel height.
+- The Concierge Worker iframe URL, internal Worker UI, conversation endpoint, contextual form-sharing behavior, privacy exclusions, and Formspree form are unchanged. No Worker, D1, auth, billing, secrets or provider configuration changed.
+- Source-level validation confirms the new sizing overrides are appended after the existing responsive rules. Browser visual testing on desktop/mobile and live conversation testing remain outstanding; do not claim the larger panel is visually verified until checked in a browser.
