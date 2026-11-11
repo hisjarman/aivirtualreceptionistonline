@@ -432,3 +432,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - This is a proposal branch only. Do not merge to `main` or claim production deployment until the user approves the pull request and GitHub Pages deployment succeeds.
 
 - Follow-up responsive refinement: moved the existing YouTube demo out of the hero copy and into its own section immediately below the hero. This keeps the short lead form visible before the demo on narrow/mobile layouts while retaining the same video URL and player permissions.
+
+
+## Fresh glass-inspired homepage visual refresh — 2026-11-11
+
+- Working branch: `design/fresh-glass-light-homepage`, based on current `main`.
+- Visual reference: Run It Remote homepage (`https://runitremote.com/`). Borrowed the clean, bright presentation, spacious hierarchy and clear progression from hero to industries/content to inquiry; Star69AI copy, brand, assets and lead-capture behavior remain its own.
+- Updated only the homepage-scoped `homepage-refresh.css` overrides. The Earth-at-night/network hero artwork remains in place, now softened by a graduated translucent white veil (strongest behind the copy, lighter over the artwork) to create the requested frosted-window / white-film effect.
+- Changed homepage hero foreground typography to solid dark navy and muted blue-gray for readability; retained lime green as the accent and blue for primary actions. Receptionist artwork remains visible with a softer shadow. The Concierge speech bubble and lead-capture card now use translucent white glass surfaces with subtle borders, blur and restrained shadows.
+- Refined homepage header, dashboard/story/feature surfaces, language section and footer toward a lighter, calmer visual rhythm. Responsive veil opacity is adjusted for tablet and mobile so the artwork does not overwhelm text.
+- No HTML, copy, form fields, Formspree endpoint, navigation destinations, SEO metadata, Concierge iframe/chat behavior, backend integrations, pricing or non-homepage styles were changed.
+- Browser visual QA at desktop/tablet/mobile widths, keyboard/focus review and contrast measurement remain outstanding. Review the branch/PR before merge; do not claim the live site has changed until the PR is merged and GitHub Pages deployment succeeds.

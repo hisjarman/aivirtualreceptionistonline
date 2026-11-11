@@ -832,3 +832,154 @@ body#top .hero-lead-form .hero-lead-honeypot{position:absolute!important;left:-1
   body#top .reference-hero .hero-actions{display:grid!important;grid-template-columns:1fr!important}
   body#top .reference-hero .hero-actions .button{width:100%!important;justify-content:center!important}
 }
+
+
+/* 2026-11-11: Run It Remote-inspired fresh glass / soft white-film homepage treatment.
+   Keep Star69AI's Earth artwork and lime accent; use a translucent white veil to
+   separate readable foreground content from the background image. */
+body#top{
+  background:#f5f8fb!important;
+  color:#172d40!important;
+}
+body#top .reference-topbar{
+  background:rgba(255,255,255,.88)!important;
+  border-bottom:1px solid rgba(205,220,231,.82)!important;
+  box-shadow:0 8px 28px rgba(27,55,78,.07)!important;
+  color:#172d40!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.15)!important;
+  backdrop-filter:blur(18px) saturate(1.15)!important;
+}
+body#top .reference-brand,body#top .reference-brand-copy strong{color:#172d40!important}
+body#top .reference-brand-copy small{color:#65798a!important}
+body#top .reference-nav a{color:#40586d!important}
+body#top .reference-nav a:hover,body#top .reference-nav a.active{color:#477d0c!important}
+body#top .reference-topbar .nav-login[href="./client/"]{
+  background:#f2f8e9!important;border:1px solid #cfe3ad!important;color:#355c0c!important;
+  box-shadow:none!important;
+}
+body#top .reference-topbar .reference-start{
+  background:#168fe0!important;border:1px solid #168fe0!important;color:#fff!important;
+}
+body#top .reference-topbar .menu-toggle span{background:#29465d!important}
+body#top .reference-nav.open{
+  background:rgba(255,255,255,.97)!important;border-bottom:1px solid #dce6ed!important;
+  box-shadow:0 16px 28px rgba(27,55,78,.12)!important;
+}
+body#top .reference-nav.open a{color:#29465d!important}
+
+/* The image remains visible, but sits behind a graduated milky-white glass layer. */
+body#top .reference-hero{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  background-color:#eaf2f7!important;
+  background-image:url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
+  background-position:center center!important;background-size:cover!important;background-repeat:no-repeat!important;
+  color:#172d40!important;
+}
+body#top .reference-hero:before{
+  z-index:0!important;inset:0!important;opacity:1!important;
+  background:
+    radial-gradient(ellipse at 78% 42%,rgba(115,190,224,.13),transparent 43%),
+    linear-gradient(115deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.88) 43%,rgba(255,255,255,.66) 72%,rgba(255,255,255,.48) 100%)!important;
+  pointer-events:none!important;
+}
+body#top .reference-hero:after{
+  z-index:0!important;inset:0!important;opacity:1!important;
+  background:linear-gradient(180deg,rgba(248,252,255,.18) 0%,rgba(244,249,252,.10) 58%,rgba(235,243,248,.36) 100%)!important;
+  pointer-events:none!important;
+}
+body#top .reference-hero .hero-grid{position:relative!important;z-index:1!important}
+body#top .reference-hero .hero-copy h1{
+  color:#142b40!important;text-shadow:none!important;
+  font-weight:800!important;letter-spacing:-.05em!important;
+}
+body#top .reference-hero .hero-copy h1 em{color:#568d12!important}
+body#top .reference-hero :where(.eyebrow,.hero-preheadline){color:#537d20!important}
+body#top .reference-hero :where(.hero-lede,.hero-personal-service,.hero-proof,.hero-stats-note){
+  color:#40596e!important;text-shadow:none!important;
+}
+body#top .reference-hero .hero-lede strong{color:#18364d!important}
+body#top .reference-hero .hero-stats-note a{color:#086b9e!important}
+body#top .reference-hero .hero-platform-stats>div{
+  background:rgba(255,255,255,.76)!important;
+  border:1px solid rgba(202,219,231,.92)!important;
+  box-shadow:0 8px 24px rgba(35,67,91,.08)!important;
+  -webkit-backdrop-filter:blur(12px)!important;backdrop-filter:blur(12px)!important;
+}
+body#top .reference-hero .hero-platform-stats strong{color:#18364d!important;text-shadow:none!important}
+body#top .reference-hero .hero-platform-stats span{color:#5b7182!important}
+body#top .reference-hero .hero-model-image{
+  filter:drop-shadow(0 14px 28px rgba(25,57,78,.20))!important;
+}
+body#top .reference-hero .hero-model-glow{
+  background:radial-gradient(ellipse,rgba(141,204,73,.20),rgba(81,173,218,.12) 52%,transparent 76%)!important;
+}
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+  background:rgba(255,255,255,.90)!important;
+  color:#234158!important;border:1px solid rgba(190,213,227,.95)!important;
+  box-shadow:0 12px 30px rgba(30,66,91,.12)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.12)!important;
+  backdrop-filter:blur(14px) saturate(1.12)!important;
+}
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger:after{
+  background:rgba(255,255,255,.90)!important;
+  border-color:rgba(190,213,227,.95)!important;
+}
+body#top .reference-hero .onboarding-speech-kicker{color:#568d12!important}
+body#top .reference-hero .onboarding-speech-text{color:#234158!important}
+body#top .reference-hero .concierge-bubble-hint{color:#64798a!important}
+body#top .reference-hero .hero-model-caption{
+  background:rgba(255,255,255,.88)!important;color:#35556d!important;
+  border:1px solid rgba(196,216,228,.95)!important;
+  box-shadow:0 8px 24px rgba(25,57,78,.10)!important;
+}
+
+/* The inquiry card reads as a calm white surface rather than a dark-overlay contrast block. */
+body#top .hero-lead-panel{
+  background:rgba(255,255,255,.91)!important;
+  border:1px solid rgba(202,219,231,.95)!important;
+  box-shadow:0 18px 48px rgba(34,66,88,.13)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.12)!important;
+  backdrop-filter:blur(16px) saturate(1.12)!important;
+}
+body#top .hero-lead-panel h2{color:#172f44!important}
+body#top .hero-lead-panel>p{color:#5a7081!important}
+body#top .hero-lead-form label{color:#29465b!important}
+body#top .hero-lead-form input,body#top .hero-lead-form select{
+  background:rgba(255,255,255,.98)!important;color:#172d40!important;border-color:#cbd9e3!important;
+}
+body#top .hero-lead-form input::placeholder{color:#758898!important}
+body#top .hero-lead-form small{color:#687d8d!important}
+
+/* A light, consistent rhythm below the hero; preserve the existing card and dashboard content. */
+body#top .dashboard-quick-preview,body#top .story-promo,body#top .home-paths{
+  background:#f8fafc!important;color:#172d40!important;
+}
+body#top .dashboard-preview-window,body#top .home-path-card,body#top .story-subscribe{
+  background:rgba(255,255,255,.94)!important;
+  border:1px solid #e0e9ef!important;
+  box-shadow:0 10px 30px rgba(32,65,88,.055)!important;
+}
+body#top .reference-language{
+  background:#edf3f7!important;border-top:1px solid #e0e9ef!important;
+  border-bottom:1px solid #e0e9ef!important;
+}
+body#top .reference-language .language-card{
+  background:rgba(255,255,255,.94)!important;border-color:#dce6ed!important;
+  box-shadow:0 8px 22px rgba(32,65,88,.055)!important;
+}
+body#top .footer,body#top .site-footer{
+  background:#eef3f6!important;border-top:1px solid #dce6ed!important;
+}
+@media(max-width:900px){
+  body#top .reference-hero:before{
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.90) 0%,rgba(255,255,255,.84) 55%,rgba(255,255,255,.64) 100%)!important;
+  }
+}
+@media(max-width:600px){
+  body#top .reference-hero:before{
+    background:linear-gradient(180deg,rgba(255,255,255,.93) 0%,rgba(255,255,255,.88) 62%,rgba(255,255,255,.70) 100%)!important;
+  }
+  body#top .reference-hero .hero-copy h1{line-height:1.04!important}
+  body#top .hero-lead-panel{box-shadow:0 12px 30px rgba(34,66,88,.10)!important}
+}
