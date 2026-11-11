@@ -320,7 +320,7 @@ Known prior issue to recheck against current source: a portal request reported `
 - Added high-contrast typography, readable helper/disclosure text, clearer form controls, accessible focus and mobile single-column preference cards in contact.css. Overrides are scoped to the Get Started/onboarding form to avoid changing unrelated pages.
 - Validation status: source-level replacement checks passed during editing. Browser/mobile visual verification, keyboard testing, Formspree delivery test, and color-contrast measurement are still required before merge/publish.
 
-- Pull request: #82 (https://github.com/hisjarman/star69ai/pull/82), open against main. A follow-up source correction restored actual line breaks in app.js after the optional-checkbox context and Formspree summary logic was added. The final app.js source was re-fetched and inspected; no stray escaped line-break sequences remain in the affected logic. Automated Node syntax checking and browser testing were not available in this environment, so those checks remain outstanding.
+- Pull request: #82 (https://github.com/hisjarman/star69ai/pull/82), merged to main on 2026-11-11 at commit `1388731013d4cb3b13c60d08d5111fa0a8d29dba`. A follow-up source correction restored actual line breaks in app.js after the optional-checkbox context and Formspree summary logic was added. Automated browser testing and a live Formspree delivery test remain outstanding.
 
 
 ## Technical SEO and AI crawler implementation — 2026-11-11
@@ -346,9 +346,29 @@ Known prior issue to recheck against current source: a portal request reported `
 
 ## Hero Concierge left-rail placement — 2026-11-11
 
-- Implementation branch: `fix/hero-concierge-left-rail`, based on the current `main` commit after the technical SEO / obsolete HelloAnswer cleanup. Pull request #84 is open against `main`: https://github.com/hisjarman/star69ai/pull/84 (mergeable; not merged).
+- Implementation branch: `fix/hero-concierge-left-rail`, based on the current `main` commit after the technical SEO / obsolete HelloAnswer cleanup. Pull request #84 (https://github.com/hisjarman/star69ai/pull/84) was merged to `main` on 2026-11-11 at squash commit `24192f2566601f40f80c864e80b1950db2c9869c`.
 - Updated `homepage-refresh.css` with a final, scoped layout contract for the homepage hero. At desktop widths, the hero reserves a dedicated left column for the receptionist avatar and clickable AI prompt, while the sales copy remains in a separate right column. The assistant prompt is anchored within that left rail and cannot sit over the sales headline or sales copy.
 - At tablet and mobile widths, the assistant remains left-aligned in its own row above the sales copy instead of overlapping it. The existing model asset, prompt text, accessible button, Concierge iframe URL, and chat behavior are unchanged.
 - When opened, the Concierge chat panel is anchored to the lower-left side of the viewport on desktop so it does not cover the sales pitch. On mobile it expands within the viewport margins for usable chat controls.
 - This is a CSS-only change; no Worker, D1, authentication, form, SEO metadata, or provider configuration was changed.
-- Validation performed: inspected the current homepage DOM, stylesheet load order, existing competing hero overrides and the active chat iframe markup; confirmed the new override is appended to the final-loaded `homepage-refresh.css`. A real desktop/mobile browser visual test and live chat submission test remain outstanding because browser access to the deployed site/Worker is unavailable in this tool session. No merge or production deployment has been performed.
+- Validation performed: inspected the current homepage DOM, stylesheet load order, existing competing hero overrides and the active chat iframe markup; confirmed the new override is appended to the final-loaded `homepage-refresh.css`. PR #84 was merged as noted above. A real desktop/mobile browser visual test and live chat submission test remain outstanding because browser access to the deployed site/Worker is unavailable in this tool session.
+
+
+## Discovery Coach side-by-side UX implementation — 2026-11-11
+
+- Working branch: `ux/discovery-coach-side-by-side-2026-11-11`, created from the verified current `main` after PR #84 and PR #82 had both merged. Pull request #85 is open as a draft against `main`: https://github.com/hisjarman/star69ai/pull/85.
+- Reworked `get-started.html` so the AI Discovery Coach is a permanent, independently labeled panel in the left onboarding column and the existing three-step Formspree discovery form remains in the right column. The floating/toggle panel and duplicate assistant controls were removed.
+- Desktop uses a two-column layout; widths at 900px and below stack the assistant above the form. Mobile uses a shorter assistant viewport while keeping its composer and conversation frame available without fixed-position overlays.
+- Preserved the existing Concierge Worker iframe URL, exact allowed `postMessage` target origin, contextual form payload, field allowlist and privacy exclusions. The contact name, email, phone, business name, website, human escalation and privacy-consent fields remain excluded. No Worker, D1, secrets or provider configuration changed.
+- Preserved the existing Formspree endpoint `https://formspree.io/f/mrppjqdb`, native POST submission, three-step validation, optional feature selections, recording preference, plan interest and disclosures.
+- Improved the assistant privacy copy and increased helper/disclosure text sizes and focus visibility on the discovery form.
+- Homepage demo CTA now says “Watch a Sample Call” to avoid implying the scripted simulator is a live AI call. The demos navigation label was clarified and the demos footer now uses the current Star69AI logo asset.
+- Removed the obsolete HelloAnswer client widget script from `get-started.html`; the current Star69AI Concierge iframe remains the only discovery assistant integration on that page. The privacy notice's conditional HelloAnswer vendor disclosure was not deleted because whether it applies to any existing deployment still requires an operational vendor/configuration review.
+- Source-level validation: confirmed one Discovery Coach iframe remains, the toggle and floating panel are removed, the Formspree endpoint remains unchanged, the Worker origin target remains exact, and the sensitive contact/identity fields are not added to the allowlist. Automated browser rendering, keyboard/screen-reader testing, live Formspree submission and live Concierge conversation tests remain outstanding; do not claim these are complete.
+
+
+## Marketing-page legacy wordmark cleanup — 2026-11-11
+
+- On this branch, replaced the retired “AI VIRTUAL RECEPTIONIST” text wordmark in the roofing, plumbing and HVAC industry landing-page headers and both existing “Saved by the AI Receptionist!” blog headers with the canonical Star69AI logo asset.
+- Used the correct relative asset path for each page depth and descriptive Star69AI alternative text. No page copy, canonical metadata, structured data, or industry content was changed.
+- These pages now match the current Star69AI identity at the header; broader navigation harmonization across every marketing page remains a separate follow-up.
