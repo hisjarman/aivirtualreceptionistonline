@@ -419,3 +419,16 @@ Known prior issue to recheck against current source: a portal request reported `
 - Adjusted the compact header row so the close button remains aligned at the right edge.
 - No Concierge Worker, AI prompt, D1, authentication, billing, form, email, or provider configuration was changed.
 - Source-level validation: confirmed the removed heading and sentence are absent from the homepage markup and the dialog retains its close control and iframe. Browser visual verification and a live conversation test remain outstanding until the change is merged and published.
+
+
+## Homepage lead-capture hero redesign — 2026-11-11
+
+- Working branch: `ux/homepage-lead-capture-hero`, created from current `main`.
+- Reframed the homepage hero as a lead-generation surface: concise sales copy on the left and a short custom-demo inquiry form on the right at desktop widths. The form captures name, business email, phone, business name and industry before visitors need to navigate to the longer discovery brief.
+- The homepage form posts directly to the existing Formspree endpoint `https://formspree.io/f/mrppjqdb`, with a source label, email subject and honeypot field. The full three-step discovery form and AI Discovery Coach on `get-started.html` remain available and unchanged.
+- Desktop layout prioritizes the lead form alongside the hero message. Tablet/mobile stack the copy, short form and receptionist/Concierge visual without overlaying form fields. Existing homepage artwork, Concierge iframe/chat behavior, YouTube demo, dashboard preview, navigation, SEO metadata, and all backend integrations are preserved.
+- CSS changes are appended as a scoped homepage-only override in `homepage-refresh.css`; no global styles or other pages are changed.
+- Source checks: confirm a single hero lead form, exact existing Formspree endpoint, required contact fields, industry selector, honeypot, and preservation of the existing three-step intake form/Discovery Coach/Concierge iframe and hero video. Browser visual testing, keyboard/accessibility review and live Formspree delivery testing remain outstanding.
+- This is a proposal branch only. Do not merge to `main` or claim production deployment until the user approves the pull request and GitHub Pages deployment succeeds.
+
+- Follow-up responsive refinement: moved the existing YouTube demo out of the hero copy and into its own section immediately below the hero. This keeps the short lead form visible before the demo on narrow/mobile layouts while retaining the same video URL and player permissions.
