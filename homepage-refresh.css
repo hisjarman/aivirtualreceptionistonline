@@ -785,7 +785,7 @@ body#top .reference-hero .hero-model-caption{position:relative!important;inset:a
     position:relative!important;margin:0!important;
   }
 }
-body#top .reference-hero .hero-copy h1{font-size:clamp(38px,4vw,58px)!important;line-height:1.02!important;letter-spacing:-.045em!important}
+body#top .reference-hero .hero-copy h2{font-size:clamp(38px,4vw,58px)!important;line-height:1.02!important;letter-spacing:-.045em!important}
 body#top .reference-hero .hero-copy .hero-lede{max-width:650px!important;font-size:clamp(15px,1.2vw,17px)!important;line-height:1.65!important}
 body#top .reference-hero .hero-copy .hero-personal-service{max-width:620px!important;font-size:14px!important;line-height:1.6!important}
 body#top .reference-hero .hero-platform-stats{max-width:680px!important}
@@ -828,7 +828,7 @@ body#top .hero-lead-form .hero-lead-honeypot{position:absolute!important;left:-1
   body#top .hero-lead-panel{padding:18px!important;border-radius:15px!important}
   body#top .hero-lead-form{grid-template-columns:1fr!important}
   body#top .hero-lead-form label{grid-column:1/-1!important}
-  body#top .reference-hero .hero-copy h1{font-size:clamp(36px,10vw,48px)!important}
+  body#top .reference-hero .hero-copy h2{font-size:clamp(36px,10vw,48px)!important}
   body#top .reference-hero .hero-actions{display:grid!important;grid-template-columns:1fr!important}
   body#top .reference-hero .hero-actions .button{width:100%!important;justify-content:center!important}
 }
@@ -888,11 +888,11 @@ body#top .reference-hero:after{
   pointer-events:none!important;
 }
 body#top .reference-hero .hero-grid{position:relative!important;z-index:1!important}
-body#top .reference-hero .hero-copy h1{
+body#top .reference-hero .hero-copy h2{
   color:#142b40!important;text-shadow:none!important;
   font-weight:800!important;letter-spacing:-.05em!important;
 }
-body#top .reference-hero .hero-copy h1 em{color:#568d12!important}
+body#top .reference-hero .hero-copy h2 em{color:#568d12!important}
 body#top .reference-hero :where(.eyebrow,.hero-preheadline){color:#537d20!important}
 body#top .reference-hero :where(.hero-lede,.hero-personal-service,.hero-proof,.hero-stats-note){
   color:#40596e!important;text-shadow:none!important;
@@ -980,7 +980,7 @@ body#top .footer,body#top .site-footer{
   body#top .reference-hero:before{
     background:linear-gradient(180deg,rgba(255,255,255,.93) 0%,rgba(255,255,255,.88) 62%,rgba(255,255,255,.70) 100%)!important;
   }
-  body#top .reference-hero .hero-copy h1{line-height:1.04!important}
+  body#top .reference-hero .hero-copy h2{line-height:1.04!important}
   body#top .hero-lead-panel{box-shadow:0 12px 30px rgba(34,66,88,.10)!important}
 }
 
