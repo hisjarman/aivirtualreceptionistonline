@@ -40,6 +40,19 @@ const assistantClose = document.querySelector("#discovery-assistant-close");
 const assistantFrame = document.querySelector("#discovery-assistant-frame");
 const assistantSafeFields = new Set(["industry","industryOther","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","outboundAiCalls","automatedSms","phoneSetup","notes"]);
 const industrySelect = form.elements.namedItem("industry");
+const industrySearch = document.querySelector("#industry-search");
+industrySearch?.addEventListener("input", () => {
+  const query = industrySearch.value.trim().toLocaleLowerCase();
+  for (const group of industrySelect?.querySelectorAll("optgroup") || []) {
+    let visible = 0;
+    for (const option of group.querySelectorAll("option")) {
+      const match = !query || option.textContent.toLocaleLowerCase().includes(query);
+      option.hidden = !match;
+      if (match) visible++;
+    }
+    group.hidden = visible === 0;
+  }
+});
 const industryOtherWrap = document.querySelector("#industry-other-wrap");
 const industryOtherInput = form.elements.namedItem("industryOther");
 function syncCustomIndustry() {
