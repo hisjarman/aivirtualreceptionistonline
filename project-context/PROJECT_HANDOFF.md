@@ -170,3 +170,30 @@ Known prior issue to recheck against current source: a portal request reported `
 - Worker deployment ID: `ec94eecee3fc451f9df5f846f2b11cfc` (2026-11-11). Existing AI and D1 bindings were preserved.
 - The deployed Worker source is now tracked at `cloudflare/concierge-worker.js`.
 - Verification limitation: requests to the Worker hostname are blocked in the current tool environment, so the page and image transformation still need browser verification. Do not claim the visual result or WebP byte reduction is confirmed until checked in a browser.
+
+
+## Click-to-chat homepage bubble and Concierge layout correction — 2026-11-11
+
+- The homepage receptionist speech bubble is now an accessible button with the message: “I can help you design a receptionist around the way your business works.” Visitors can click it to open the embedded AI Concierge panel without leaving the homepage. The panel includes a close control, Escape-key support, dialog labeling, and an iframe title.
+- The embedded panel loads the existing `star69ai-concierge` Worker UI; it reuses the same `/api/chat` conversation endpoint rather than creating a second chat implementation. The Worker already allows `https://star69ai.com` and `https://www.star69ai.com` as frame ancestors.
+- The Concierge desktop frame now gives the chat approximately 70% of the workspace and confines the receptionist portrait to a narrow right-side column with a 470px maximum image height. At 640px and below, the model becomes a compact 112px header row and the chat occupies the remaining frame height. This prevents the portrait from forcing the chat/composer below the visible frame.
+- Updated Concierge Worker deployed successfully to Cloudflare Worker `star69ai-concierge` on 2026-11-11 (deployment ID `50dc3138a93d4ce8b372ef044a0b912d`). The existing AI and D1 bindings were preserved; Cloudflare accepted the module upload with no validation errors.
+- GitHub changes are on `feature/concierge-hero-chat-launch`, based on the still-open PR #74 branch. The homepage iframe and styling are not live on GitHub Pages until the dependent PR is merged. No merge to `main` is performed.
+- Browser verification of the homepage iframe, live chat submission, and responsive layout remains required; the tool environment previously blocked direct requests to the Worker hostname.
+
+
+## Concierge full-width header and chat-only frame — 2026-11-11
+
+- Reworked the Concierge page so the Star69AI logo, Concierge title, descriptor, online status, and receptionist model share one full-width branded header. The model is positioned as a small visual at the upper-right of that header, not in a separate column or chat content area.
+- Removed the split model/chat workspace. The conversation history now fills the main frame below the banner, and the message composer remains anchored at the bottom of that chat frame.
+- Responsive header rules shrink the logo and model on mobile while preserving the full-height chat and composer.
+- Updated Worker successfully deployed to Cloudflare `star69ai-concierge` on 2026-11-11 (deployment ID `a3517580524a4825aaa36d259e9f8641`); existing AI and D1 bindings were retained.
+- Change committed to `feature/concierge-hero-chat-launch`; PR #75 remains open and depends on PR #74. No GitHub Pages merge performed.
+
+
+## Merge recovery — 2026-11-11
+
+- PR #74 merged to `main` on 2026-11-11 (squash commit `8e31edd75952f013ff0f887069e890145072738d`).
+- PR #75 was retargeted to `main` but GitHub reported a content conflict because the Concierge Worker source was independently added on both branches. Its homepage/Worker changes were transplanted to `feature/concierge-chat-homepage-merge`, created from the post-PR-74 `main` commit, to preserve the full-width branded header and chat-only main frame while retaining the homepage click-to-chat implementation.
+- The replacement branch carries the current full-width Concierge Worker, homepage bubble/panel integration, responsive panel styles, and this handoff. PR #75 remains unmerged until the replacement PR is reviewed/merged.
+- Latest Worker deployment ID for the full-width header/chat-only frame: `a3517580524a4825aaa36d259e9f8641` (2026-11-11). Homepage GitHub Pages activation still requires merging the replacement PR.
