@@ -455,3 +455,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - No backend, Formspree configuration, email, Concierge, authentication, pricing, SEO metadata or other pages were changed.
 - Source-level checks: verify one homepage Formspree form, unchanged endpoint and required field names, standalone section immediately after header/main opening, hero no longer contains the form, handoff updated, and responsive CSS present. Browser-rendered visual testing, keyboard/focus review, measured contrast and live form delivery remain outstanding.
 - This proposal must be reviewed before merging. Do not claim it is live until explicitly approved, merged and GitHub Pages deployment succeeds.
+
+
+## Discovery form optional fields and one-click AI suggestions — 2026-11-11
+
+- Added to the existing homepage conversation-first PR branch `ux/homepage-conversation-section-under-header`; PR #93 remains the review target.
+- Removed required-field validation from the three-step `get-started.html` business discovery form. Visitors may leave any or all fields blank and continue through the steps; non-empty email/URL values are still checked for valid format. The separate quick-contact form and homepage lead form are not part of this change.
+- Removed the redundant “Find your industry” search input and its filtering JavaScript. The grouped industry dropdown remains available and is optional. The custom-industry follow-up remains conditional when “Other / not listed” is selected, but it is no longer required.
+- Updated the Concierge Worker prompt to provide a concise, context-aware suggestion for the currently active discovery field using a constrained machine-readable marker. Worker parsing only accepts an explicit allowlist of business/call-handling fields and bounds suggestion length.
+- The Concierge UI presents a “Use this suggestion” action when a valid suggestion is returned. Only after the visitor clicks it does the iframe send the suggestion to the parent page. The parent verifies the exact Worker origin, validates the field allowlist and select-option values, fills the field, dispatches normal input/change events, and refreshes assistant context. The AI cannot silently overwrite answers or submit the form.
+- Existing Formspree endpoint, native browser POST, three-step navigation, privacy notice, contact-field exclusion from assistant context, and Worker rate limiting remain unchanged.
+- Validation to perform: JavaScript syntax checks; verify zero required attributes in the intake form, no industry-search markup or handler, optional-step navigation, marker allowlist and length checks, origin validation, exact select-value validation, one-click fill behavior, desktop/mobile browser tests, real model inference, and a live Formspree test.
+- `cloudflare/concierge-worker.js` is source only on this PR branch. Do not claim the Worker behavior is live until the Worker is separately deployed and tested. No production deployment or merge is performed here.
