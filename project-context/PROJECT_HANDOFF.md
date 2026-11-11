@@ -267,3 +267,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - The Get Started discovery form now has larger, higher-contrast labels, inputs, placeholders, instructions, privacy/consent copy and buttons; mobile form inputs use 16px text.
 - Static source checks passed before merge. Browser visual verification, live chat, and Formspree submission testing remain outstanding.
 - GitHub Pages publication status was not verified at the time of this handoff update. No Worker deployment was needed because the Concierge backend was unchanged.
+
+
+## Expanded industry discovery and AI coach — 2026-11-11
+
+- Added a grouped industry selector to `get-started.html`, covering home services/contractors, automotive/transportation, healthcare/wellness, professional services, hospitality/retail/lifestyle, and community organizations.
+- Added an optional custom-industry description that appears and becomes required only when the visitor chooses “Other / not listed.” The custom field is disabled and cleared when not in use.
+- Added `industryOther` to the client-side and Worker-side AI context allowlists. The coach receives the custom industry description only as business context; dedicated identity/contact/escalation/consent fields remain excluded.
+- Expanded the Concierge instructions to recognize the supported industry groups and provide relevant call scenarios plus sample receptionist responses when helpful. Examples must be labeled illustrative and cannot invent a business's actual services, prices, hours, policies or capabilities.
+- Preserved the existing three-step discovery form, native Formspree POST destination (`https://formspree.io/f/mrppjqdb`), privacy boundaries, and existing Worker endpoints.
+- Implementation branch: `feature/expanded-industry-discovery`. No merge to `main`, GitHub Pages publish, Cloudflare Worker deployment, or live end-to-end test has been performed. Review the branch, test desktop/mobile selector behavior and custom-industry validation, verify coach context and scenarios, then test a real Formspree submission before deployment.

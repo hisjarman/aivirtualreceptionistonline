@@ -38,7 +38,35 @@ const assistantToggle = document.querySelector("#discovery-assistant-toggle");
 const assistantPanel = document.querySelector("#discovery-assistant-panel");
 const assistantClose = document.querySelector("#discovery-assistant-close");
 const assistantFrame = document.querySelector("#discovery-assistant-frame");
-const assistantSafeFields = new Set(["industry","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","outboundAiCalls","automatedSms","phoneSetup","notes"]);
+const assistantSafeFields = new Set(["industry","industryOther","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","outboundAiCalls","automatedSms","phoneSetup","notes"]);
+const industrySelect = form.elements.namedItem("industry");
+const industrySearch = document.querySelector("#industry-search");
+industrySearch?.addEventListener("input", () => {
+  const query = industrySearch.value.trim().toLocaleLowerCase();
+  for (const group of industrySelect?.querySelectorAll("optgroup") || []) {
+    let visible = 0;
+    for (const option of group.querySelectorAll("option")) {
+      const match = !query || option.textContent.toLocaleLowerCase().includes(query);
+      option.hidden = !match;
+      if (match) visible++;
+    }
+    group.hidden = visible === 0;
+  }
+});
+const industryOtherWrap = document.querySelector("#industry-other-wrap");
+const industryOtherInput = form.elements.namedItem("industryOther");
+function syncCustomIndustry() {
+  const custom = industrySelect?.value === "Other / not listed";
+  if (industryOtherWrap) industryOtherWrap.hidden = !custom;
+  if (industryOtherInput) {
+    industryOtherInput.disabled = !custom;
+    industryOtherInput.required = custom;
+    if (!custom) industryOtherInput.value = "";
+  }
+}
+industrySelect?.addEventListener("change", () => { syncCustomIndustry(); sendAssistantContext(industrySelect); });
+syncCustomIndustry();
+
 function buildAssistantContext(activeControl) {
   const answers = {};
   for (const name of assistantSafeFields) {
@@ -51,7 +79,7 @@ function buildAssistantContext(activeControl) {
   return {
     source: "Star69AI discovery form",
     step: "Step " + (currentStep + 1) + " of " + fields.length,
-    industry: String(form.elements.namedItem("industry")?.value || ""),
+    industry: String(form.elements.namedItem("industry")?.value === "Other / not listed" ? form.elements.namedItem("industryOther")?.value || "Other / not listed" : form.elements.namedItem("industry")?.value || ""),
     answers,
     activeField: activeAllowed ? { name: activeName, label: activeLabel, value: String(activeControl.value || "").slice(0, 900) } : null
   };
@@ -133,6 +161,7 @@ form.addEventListener("submit", event => {
     ["Phone", payload.phone],
     ["Business", payload.business],
     ["Industry", payload.industry],
+    ["Industry details", payload.industryOther],
     ["Website", payload.website],
     ["Service area", payload.serviceArea],
     ["Services", payload.services],
