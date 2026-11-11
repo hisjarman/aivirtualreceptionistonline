@@ -145,3 +145,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Verify call email delivery after the Star69AI template deployment.
 - Reconcile the prior `avr_addon_orders` missing-table report against current schema and Worker code.
 - Update this handoff whenever brand, architecture, implementation or launch status changes.
+
+
+## Star69AI logo delivery update — 2026-11-11
+
+- Canonical supplied logo source: `assets/star69ai-logo.png` (approximately 1.95 MB in the repository).
+- The shared platform email wrapper now places the supplied logo in the email footer using the PNG-compatible endpoint `https://star69ai-concierge.hisjarman.workers.dev/brand-logo.png`. Both automatic call-summary emails and manually requested call-details emails pass through this wrapper.
+- The Concierge Worker serves `/brand-logo.png` (500px target, PNG for email-client compatibility) and `/brand-logo.webp` (440px target, WebP for browser display) from the canonical GitHub logo source using Cloudflare image resizing. Responses are cached for reuse; a source-fetch fallback is retained if transformation is unavailable.
+- Concierge header now uses the horizontal Star69AI logo, with a compact mobile width. The Concierge browser icon uses `assets/favicon.svg`.
+- Deployment to Cloudflare Worker `star69ai-concierge` completed on 2026-11-11 (deployment ID `4e03ab9755f74934877b8a7e36d173c2`).
+- Verification limitation: the tool environment blocks direct requests to this Worker hostname, so the optimized response size and visual rendering could not be independently confirmed here. Verify `/brand-logo.png` and `/brand-logo.webp` in a browser and check the `X-Logo-Transform` response header. Do not claim an exact byte reduction until measured.
