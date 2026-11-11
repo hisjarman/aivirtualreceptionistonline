@@ -187,4 +187,5 @@ Known prior issue to recheck against current source: a portal request reported `
 - Reworked the Concierge page so the Star69AI logo, Concierge title, descriptor, online status, and receptionist model share one full-width branded header. The model is positioned as a small visual at the upper-right of that header, not in a separate column or chat content area.
 - Removed the split model/chat workspace. The conversation history now fills the main frame below the banner, and the message composer remains anchored at the bottom of that chat frame.
 - Responsive header rules shrink the logo and model on mobile while preserving the full-height chat and composer.
+- Updated Worker successfully deployed to Cloudflare `star69ai-concierge` on 2026-11-11 (deployment ID `a3517580524a4825aaa36d259e9f8641`); existing AI and D1 bindings were retained.
 - Change committed to `feature/concierge-hero-chat-launch`; PR #75 remains open and depends on PR #74. No GitHub Pages merge performed.
