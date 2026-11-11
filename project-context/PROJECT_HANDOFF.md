@@ -365,3 +365,10 @@ Known prior issue to recheck against current source: a portal request reported `
 - Homepage demo CTA now says “Watch a Sample Call” to avoid implying the scripted simulator is a live AI call. The demos navigation label was clarified and the demos footer now uses the current Star69AI logo asset.
 - Removed the obsolete HelloAnswer client widget script from `get-started.html`; the current Star69AI Concierge iframe remains the only discovery assistant integration on that page. The privacy notice's conditional HelloAnswer vendor disclosure was not deleted because whether it applies to any existing deployment still requires an operational vendor/configuration review.
 - Source-level validation: confirmed one Discovery Coach iframe remains, the toggle and floating panel are removed, the Formspree endpoint remains unchanged, the Worker origin target remains exact, and the sensitive contact/identity fields are not added to the allowlist. Automated browser rendering, keyboard/screen-reader testing, live Formspree submission and live Concierge conversation tests remain outstanding; do not claim these are complete.
+
+
+## Marketing-page legacy wordmark cleanup — 2026-11-11
+
+- On this branch, replaced the retired “AI VIRTUAL RECEPTIONIST” text wordmark in the roofing, plumbing and HVAC industry landing-page headers and both existing “Saved by the AI Receptionist!” blog headers with the canonical Star69AI logo asset.
+- Used the correct relative asset path for each page depth and descriptive Star69AI alternative text. No page copy, canonical metadata, structured data, or industry content was changed.
+- These pages now match the current Star69AI identity at the header; broader navigation harmonization across every marketing page remains a separate follow-up.
