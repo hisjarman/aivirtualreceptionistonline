@@ -469,3 +469,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - `cloudflare/concierge-worker.js` is source only on this PR branch. Do not claim the Worker behavior is live until the Worker is separately deployed and tested. No production deployment or merge is performed here.
 
 - Follow-up refinement: the discovery form introduction and plan-interest helper now explicitly say every field is optional. The AI suggestion action is rendered as a properly styled quick-action button, and the Worker prompt now includes the exact supported dropdown values so it can return valid selectable suggestions rather than arbitrary text.
+
+
+## Client call-details email rejection fix — 2026-11-11
+
+- Investigated the client portal Call Activity “Email details” error: the UI mapped Resend 4xx rejections to a generic support message, while the Worker logged only a sanitized provider code without returning a trace reference.
+- The manual call-details sender previously reused a deterministic Resend idempotency key derived from call ID and recipient. A later attempt for the same call/recipient could conflict if the call payload had changed since the earlier request.
+- The sender now creates a unique idempotency key per user-initiated send. Internal retries within that same request continue reusing the same key, preserving retry safety without blocking a later intentional resend.
+- Rejected requests now return a short reference ID, HTTP provider status and sanitized provider error code. The client portal displays the reference and provider code so a support investigation can correlate the request with Worker logs; no provider response body, credentials, transcript or recipient address is exposed.
+- Resend domain status was checked through the connected Resend account on 2026-11-11: `star69ai.com` was verified and sending was enabled. This does not prove that the sender identity, recipient or each message payload is accepted.
+- Validation still required: JavaScript syntax checks, deploy the updated `avr-platform-api` Worker, then send call details twice to the same recipient and confirm both requests can be accepted. Inspect Worker logs using the displayed reference ID if Resend rejects a request. No production Worker deployment is performed by this branch/PR.
