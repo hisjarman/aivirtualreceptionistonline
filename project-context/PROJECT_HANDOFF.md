@@ -346,7 +346,7 @@ Known prior issue to recheck against current source: a portal request reported `
 
 ## Hero Concierge left-rail placement — 2026-11-11
 
-- Implementation branch: `fix/hero-concierge-left-rail`, based on the current `main` commit after the technical SEO / obsolete HelloAnswer cleanup.
+- Implementation branch: `fix/hero-concierge-left-rail`, based on the current `main` commit after the technical SEO / obsolete HelloAnswer cleanup. Pull request #84 is open against `main`: https://github.com/hisjarman/star69ai/pull/84 (mergeable; not merged).
 - Updated `homepage-refresh.css` with a final, scoped layout contract for the homepage hero. At desktop widths, the hero reserves a dedicated left column for the receptionist avatar and clickable AI prompt, while the sales copy remains in a separate right column. The assistant prompt is anchored within that left rail and cannot sit over the sales headline or sales copy.
 - At tablet and mobile widths, the assistant remains left-aligned in its own row above the sales copy instead of overlapping it. The existing model asset, prompt text, accessible button, Concierge iframe URL, and chat behavior are unchanged.
 - When opened, the Concierge chat panel is anchored to the lower-left side of the viewport on desktop so it does not cover the sales pitch. On mobile it expands within the viewport margins for usable chat controls.
