@@ -35,3 +35,90 @@
 .form-panel .form-actions .button{font-size:14px!important;min-height:48px!important;}
 .form-panel .form-error,.form-panel .form-success p{font-size:14px!important;line-height:1.6!important;}
 @media(max-width:650px){.form-panel{padding:20px!important;}.form-panel label{font-size:14px!important;}.form-panel input:not([type=checkbox]),.form-panel textarea,.form-panel select{font-size:16px!important;}.form-panel .form-title h3{font-size:22px!important;}.form-panel .form-title p,.form-panel .privacy-disclosure p,.form-panel .setup-invoice-note,.form-panel .submit-note{font-size:14px!important;}}
+
+
+/* Permanent side-by-side Discovery Coach and business brief */
+#start .onboard-layout{
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  gap:clamp(24px,3.6vw,48px);
+  align-items:start;
+}
+#start .onboard-copy.discovery-assistant-column{
+  position:static;
+  top:auto;
+  min-width:0;
+}
+#start .discovery-assistant-panel--inline{
+  position:static!important;
+  inset:auto!important;
+  z-index:auto;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  max-width:none;
+  height:clamp(520px,68vh,700px);
+  margin:26px 0 0;
+  overflow:hidden;
+  border:1px solid rgba(115,216,245,.38);
+  border-radius:18px;
+  background:#07131d;
+  box-shadow:0 18px 48px rgba(0,0,0,.22),0 0 24px rgba(39,174,220,.10);
+}
+#start .discovery-assistant-panel--inline>header{
+  flex:0 0 auto;
+  justify-content:flex-start;
+  padding:17px 18px;
+}
+#start .discovery-assistant-panel--inline>header strong{font-size:16px}
+#start .discovery-assistant-panel--inline>header span{font-size:13px}
+#start .discovery-assistant-intro{flex:0 0 auto;padding:12px 16px 4px}
+#start .discovery-assistant-intro p{
+  margin:0;
+  color:#edf5f7;
+  font-size:14px;
+  line-height:1.6;
+}
+#start .discovery-assistant-panel--inline .discovery-assistant-privacy{
+  flex:0 0 auto;
+  padding:12px 16px;
+  color:#d2e0e7;
+  font-size:13px;
+  line-height:1.55;
+}
+#start .discovery-assistant-panel--inline iframe{
+  display:block;
+  flex:1 1 auto;
+  width:100%;
+  min-height:0;
+  border:0;
+  background:#07131d;
+}
+#start .discovery-assistant-column .privacy-note{
+  margin-top:18px;
+  color:#40566a;
+  font-size:13px;
+  line-height:1.6;
+}
+#start .form-panel{min-width:0;width:100%}
+#start .form-panel .need-option small{font-size:13px!important;line-height:1.5!important;color:#52677b!important}
+#start .form-panel .field-help{font-size:13px!important;line-height:1.6!important;color:#52677b!important}
+#start .form-panel .privacy-disclosure p,
+#start .form-panel .submit-note,
+#start .form-panel .setup-invoice-note{font-size:14px!important;line-height:1.7!important}
+#start .form-panel :focus-visible,
+#start .discovery-assistant-column :focus-visible{
+  outline:3px solid #75a92f;
+  outline-offset:3px;
+}
+@media(max-width:900px){
+  #start .onboard-layout{grid-template-columns:minmax(0,1fr);gap:28px}
+  #start .discovery-assistant-panel--inline{height:520px}
+}
+@media(max-width:650px){
+  #start .onboard-layout{grid-template-columns:minmax(0,1fr);gap:22px}
+  #start .discovery-assistant-panel--inline{height:460px;margin-top:20px;border-radius:14px}
+  #start .discovery-assistant-panel--inline>header{padding:14px}
+  #start .discovery-assistant-panel--inline>header strong{font-size:16px}
+  #start .discovery-assistant-panel--inline .discovery-assistant-privacy{font-size:12px;line-height:1.5}
+  #start .form-panel{padding:20px 16px}
+}
