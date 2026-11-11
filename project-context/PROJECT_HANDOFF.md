@@ -443,3 +443,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - Refined homepage header, dashboard/story/feature surfaces, language section and footer toward a lighter, calmer visual rhythm. Responsive veil opacity is adjusted for tablet and mobile so the artwork does not overwhelm text.
 - No HTML, copy, form fields, Formspree endpoint, navigation destinations, SEO metadata, Concierge iframe/chat behavior, backend integrations, pricing or non-homepage styles were changed.
 - Browser visual QA at desktop/tablet/mobile widths, keyboard/focus review and contrast measurement remain outstanding. Review the branch/PR before merge; do not claim the live site has changed until the PR is merged and GitHub Pages deployment succeeds.
+
+
+## Homepage conversation-first layout — 2026-11-11
+
+- Working branch: `ux/homepage-conversation-section-under-header`, based on the latest `main` after PR #92.
+- Rebuilt the homepage lead-capture presentation as a complete, standalone conversation section immediately below the global header. It is no longer awkwardly embedded as a sidecar inside the hero.
+- The first section now has a clear headline and concise explanation on the left, a three-step expectation-setting sequence, and a polished inquiry form on the right. The form retains the existing five required fields, industry options, Formspree endpoint `https://formspree.io/f/mrppjqdb`, subject/source metadata and honeypot.
+- Removed the duplicate form placement from the hero. The following hero now reads as the brand/service introduction with the receptionist visual and supporting sales copy, so the page has a clear order: header → custom-demo conversation → service introduction → supporting content.
+- Desktop uses a balanced two-column conversation layout; tablet/mobile stack the copy, short process and form into one readable column. The existing hero is also rebalanced into a receptionist visual beside the service introduction on desktop.
+- No backend, Formspree configuration, email, Concierge, authentication, pricing, SEO metadata or other pages were changed.
+- Source-level checks: verify one homepage Formspree form, unchanged endpoint and required field names, standalone section immediately after header/main opening, hero no longer contains the form, handoff updated, and responsive CSS present. Browser-rendered visual testing, keyboard/focus review, measured contrast and live form delivery remain outstanding.
+- This proposal must be reviewed before merging. Do not claim it is live until explicitly approved, merged and GitHub Pages deployment succeeds.
