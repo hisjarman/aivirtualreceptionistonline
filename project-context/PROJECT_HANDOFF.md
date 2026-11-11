@@ -372,3 +372,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - On this branch, replaced the retired “AI VIRTUAL RECEPTIONIST” text wordmark in the roofing, plumbing and HVAC industry landing-page headers and both existing “Saved by the AI Receptionist!” blog headers with the canonical Star69AI logo asset.
 - Used the correct relative asset path for each page depth and descriptive Star69AI alternative text. No page copy, canonical metadata, structured data, or industry content was changed.
 - These pages now match the current Star69AI identity at the header; broader navigation harmonization across every marketing page remains a separate follow-up.
+
+
+## Discovery Coach replaces the full left column — 2026-11-11
+
+- Correction to PR #85's side-by-side implementation: the previous layout retained the “START YOUR CUSTOM SETUP” heading, introduction and three numbered steps above the assistant. This did not match the requested composition.
+- On branch `fix/discovery-coach-replace-left-column`, removed that entire left-side introduction block. The AI Discovery Coach is now the sole content in the left column; the existing three-step Formspree discovery form remains in the right column on desktop.
+- At widths of 900px and below, the coach stacks first and the form follows beneath it. The coach panel starts at the top of its column with no top margin and has a taller desktop viewport. Mobile retains a compact but usable panel.
+- Preserved the existing Concierge iframe URL, privacy disclosure, safe contextual form-sharing behavior, Formspree endpoint, fields, validation and submission logic. No Worker, D1, auth, billing or provider configuration was changed.
+- Source checks passed: exactly one coach iframe and one intake form; old setup heading and numbered intro block absent; coach markup precedes the form and is the only content in the left column; original Formspree endpoint and Concierge Worker URL remain unchanged; desktop two-column and <=900px stacked responsive rules are present.
+- Browser-rendered desktop/mobile testing and live form/assistant interaction tests remain outstanding. Do not claim visual deployment verification until the PR is merged, Pages deployment succeeds and the live page is checked.
