@@ -32,11 +32,8 @@ const errorBox = document.querySelector("#form-error");
 let currentStep = 0;
 let lastAssistantField = null;
 
-// Optional AI Discovery Coach. Only business/call-handling fields are shared;
-// contact details, business name, website, escalation contact and consent are excluded.
-const assistantToggle = document.querySelector("#discovery-assistant-toggle");
-const assistantPanel = document.querySelector("#discovery-assistant-panel");
-const assistantClose = document.querySelector("#discovery-assistant-close");
+// The AI Discovery Coach is permanently visible beside the form.
+// Only approved business/call-handling fields are shared; contact and identity data stay local.
 const assistantFrame = document.querySelector("#discovery-assistant-frame");
 const assistantSafeFields = new Set(["industry","industryOther","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","additionalNeeds","outboundAiCalls","automatedSms","phoneSetup","notes"]);
 const industrySelect = form.elements.namedItem("industry");
@@ -71,12 +68,18 @@ function buildAssistantContext(activeControl) {
   const answers = {};
   for (const name of assistantSafeFields) {
     const control = form.elements.namedItem(name);
-    if (name === "additionalNeeds") { const selected = [...form.querySelectorAll('input[name="additionalNeeds"]:checked')].map(item => item.value); if (selected.length) answers[name] = selected; continue; }
+    if (name === "additionalNeeds") {
+      const selected = [...form.querySelectorAll('input[name="additionalNeeds"]:checked')].map(item => item.value);
+      if (selected.length) answers[name] = selected;
+      continue;
+    }
     if (control && String(control.value || "").trim()) answers[name] = String(control.value).trim().slice(0, 650);
   }
   const activeName = activeControl?.name || "";
   const activeAllowed = assistantSafeFields.has(activeName);
-  const activeLabel = activeAllowed ? String(activeControl.closest("label")?.innerText || activeName).replace(/\s+/g, " ").trim().slice(0, 140) : "";
+  const activeLabel = activeAllowed
+    ? String(activeControl.closest("label")?.innerText || activeName).replace(/\s+/g, " ").trim().slice(0, 140)
+    : "";
   return {
     source: "Star69AI discovery form",
     step: "Step " + (currentStep + 1) + " of " + fields.length,
@@ -86,28 +89,18 @@ function buildAssistantContext(activeControl) {
   };
 }
 function sendAssistantContext(activeControl) {
-  if (!assistantPanel || assistantPanel.hidden || !assistantFrame?.contentWindow) return;
-  assistantFrame.contentWindow.postMessage({type:"star69ai-form-context",context:buildAssistantContext(activeControl)}, "https://star69ai-concierge.hisjarman.workers.dev");
+  if (!assistantFrame?.contentWindow) return;
+  assistantFrame.contentWindow.postMessage(
+    {type:"star69ai-form-context",context:buildAssistantContext(activeControl)},
+    "https://star69ai-concierge.hisjarman.workers.dev"
+  );
 }
-if (assistantToggle && assistantPanel && assistantClose) {
-  const setAssistantOpen = open => {
-    assistantPanel.hidden = !open;
-    assistantToggle.setAttribute("aria-expanded", String(open));
-    if (open) {
-      sendAssistantContext(lastAssistantField);
-      assistantClose.focus();
-    } else assistantToggle.focus();
-  };
-  assistantToggle.addEventListener("click", () => setAssistantOpen(assistantPanel.hidden));
-  assistantClose.addEventListener("click", () => setAssistantOpen(false));
-  assistantFrame?.addEventListener("load", () => sendAssistantContext(null));
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !assistantPanel.hidden) setAssistantOpen(false);
-  });
-  form.addEventListener("input", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
-  form.addEventListener("change", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
-  form.addEventListener("focusin", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
-}
+assistantFrame?.addEventListener("load", () => sendAssistantContext(lastAssistantField));
+form.addEventListener("input", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
+form.addEventListener("change", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
+form.addEventListener("focusin", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
+// Send once immediately as well; the iframe load handler repeats this after navigation if needed.
+sendAssistantContext(lastAssistantField);
 
 function showStep(index) {
   currentStep = index;
