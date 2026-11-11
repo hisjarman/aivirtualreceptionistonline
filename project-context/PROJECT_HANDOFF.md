@@ -382,3 +382,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Preserved the existing Concierge iframe URL, privacy disclosure, safe contextual form-sharing behavior, Formspree endpoint, fields, validation and submission logic. No Worker, D1, auth, billing or provider configuration was changed.
 - Source checks passed: exactly one coach iframe and one intake form; old setup heading and numbered intro block absent; coach markup precedes the form and is the only content in the left column; original Formspree endpoint and Concierge Worker URL remain unchanged; desktop two-column and <=900px stacked responsive rules are present.
 - Browser-rendered desktop/mobile testing and live form/assistant interaction tests remain outstanding. Do not claim visual deployment verification until the PR is merged, Pages deployment succeeds and the live page is checked.
+
+
+## Homepage Concierge opens beneath receptionist model — 2026-11-11
+
+- Follow-up branch: `fix/hero-concierge-opens-below-model`, based on main after PR #86.
+- The homepage hero's Concierge panel previously used fixed viewport positioning at the bottom-left. It now uses normal flow inside `.hero-model-column`, directly below the receptionist portrait and clickable speech-bubble trigger.
+- The panel remains hidden until the existing accessible speech-bubble button is activated. The existing close button, Escape-key behavior, dialog labeling, iframe source and shared Concierge Worker conversation endpoint are unchanged.
+- Desktop panel width is constrained to the model column (up to 440px) and uses a bounded responsive height. On mobile it remains full-column width with a bounded viewport-relative height; it does not cover the sales-copy column.
+- No Concierge Worker, AI endpoint, D1, authentication, Formspree, billing or provider configuration was changed.
+- Source-level validation and live browser verification are pending. Do not claim the layout is published until the PR is approved/merged and GitHub Pages deployment succeeds.
