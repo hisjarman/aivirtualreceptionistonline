@@ -7,3 +7,34 @@
 .onboard-assistant-note:before{content:"";position:absolute;left:-6px;bottom:16px;width:10px;height:10px;background:#fff;border-left:1px solid #dce8ef;border-bottom:1px solid #dce8ef;transform:rotate(45deg)}
 @media(max-width:900px){.onboard-assistant{max-width:520px}.onboard-assistant img{flex-basis:100px;width:100px;height:120px}}
 @media(max-width:650px){.onboard-assistant{margin-top:20px;min-height:112px}.onboard-assistant img{flex-basis:92px;width:92px;height:112px}.onboard-assistant-note{font-size:9px;padding:10px 11px}}
+
+
+/* Discovery form: consistent high-contrast type and simple optional feature choices. */
+#start .onboard-copy{color:#203448}
+#start .onboard-copy h2{color:#14283d!important}
+#start .onboard-copy>p,#start .onboard-points p,#start .onboard-points small,#start .privacy-note{color:#40566a!important}
+#start .onboard-points b{color:#1b3449!important}
+#start .onboard-points>div>span{color:#315b0b!important;background:#eaf6d8}
+.form-panel{background:#fff!important;color:#203448!important}
+.form-panel .form-progress>div,.form-panel .form-title h3,.form-panel label,.form-panel legend{color:#1b3449!important}
+.form-panel .form-title p,.form-panel .field-help{color:#50677b!important}
+.form-panel .field-help{display:block;margin-top:7px;font-size:12px;line-height:1.55;font-weight:500}
+.form-panel input:not([type=checkbox]),.form-panel textarea,.form-panel select{background:#fff!important;color:#172b3d!important;border:1px solid #b9c9d6!important}
+.form-panel select option,.form-panel select optgroup{background:#fff!important;color:#172b3d!important}
+.form-panel input::placeholder,.form-panel textarea::placeholder{color:#64798b!important;opacity:1}
+.form-panel .needs-fieldset{margin:20px 0;padding:16px;border:1px solid #cfdae4;border-radius:12px;background:#f7fafc}
+.form-panel .needs-fieldset legend{padding:0 6px;font-size:14px;font-weight:800;line-height:1.5}
+.form-panel .needs-fieldset legend span{font-size:12px;font-weight:500;color:#52687b}
+.form-panel .needs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.form-panel .need-option{display:flex!important;align-items:flex-start;gap:10px;margin:0!important;padding:12px;border:1px solid #d5e0e8;border-radius:9px;background:#fff;cursor:pointer}
+.form-panel .need-option:hover{border-color:#83b83c;background:#fbfff5}
+.form-panel .need-option input{flex:0 0 18px;width:18px;height:18px;margin:2px 0 0;accent-color:#4d8510}
+.form-panel .need-option span{display:grid;gap:3px}
+.form-panel .need-option b{color:#20384d;font-size:13px;line-height:1.35}
+.form-panel .need-option small{color:#52687b;font-size:11px;line-height:1.45;font-weight:500}
+.form-panel .privacy-disclosure,.form-panel .setup-invoice-note,.form-panel .submit-note{background:#f5f9fc!important;color:#354d61!important;border-color:#d5e1e9}
+.form-panel .privacy-disclosure strong,.form-panel .setup-invoice-note strong{color:#18354c!important}
+.form-panel .privacy-disclosure p,.form-panel .consent,.form-panel .consent span{color:#40586d!important}
+.form-panel .privacy-disclosure a{color:#075b86!important}
+.form-panel .form-actions .button-quiet{background:#edf3f7!important;color:#27445b!important;border:1px solid #c7d6e1!important}
+@media(max-width:650px){.form-panel .needs-grid{grid-template-columns:1fr}.form-panel .needs-fieldset{padding:13px}.form-panel .need-option{padding:11px}.form-panel .needs-fieldset legend{font-size:13px}.form-panel .needs-fieldset legend span{display:block;margin-top:2px}}

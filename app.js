@@ -38,7 +38,7 @@ const assistantToggle = document.querySelector("#discovery-assistant-toggle");
 const assistantPanel = document.querySelector("#discovery-assistant-panel");
 const assistantClose = document.querySelector("#discovery-assistant-close");
 const assistantFrame = document.querySelector("#discovery-assistant-frame");
-const assistantSafeFields = new Set(["industry","industryOther","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","outboundAiCalls","automatedSms","phoneSetup","notes"]);
+const assistantSafeFields = new Set(["industry","industryOther","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","additionalNeeds","outboundAiCalls","automatedSms","phoneSetup","notes"]);
 const industrySelect = form.elements.namedItem("industry");
 const industrySearch = document.querySelector("#industry-search");
 industrySearch?.addEventListener("input", () => {
@@ -71,6 +71,7 @@ function buildAssistantContext(activeControl) {
   const answers = {};
   for (const name of assistantSafeFields) {
     const control = form.elements.namedItem(name);
+    if (name === "additionalNeeds") { const selected = [...form.querySelectorAll('input[name="additionalNeeds"]:checked')].map(item => item.value); if (selected.length) answers[name] = selected; continue; }
     if (control && String(control.value || "").trim()) answers[name] = String(control.value).trim().slice(0, 650);
   }
   const activeName = activeControl?.name || "";
@@ -153,7 +154,9 @@ form.addEventListener("submit", event => {
   submit.textContent = "Sending…";
   errorBox.hidden = true;
 
-  const payload = Object.fromEntries(new FormData(form).entries());
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+  payload.additionalNeeds = formData.getAll("additionalNeeds");
   const submittedAt = new Date().toISOString();
   const brief = [
     ["Contact name", payload.name],
@@ -170,6 +173,7 @@ form.addEventListener("submit", event => {
     ["Caller tasks", payload.callTasks],
     ["Common questions", payload.faqs],
     ["Recording preference", payload.recordingPreference],
+    ["Additional features requested", Array.isArray(payload.additionalNeeds) ? payload.additionalNeeds.join(", ") : payload.additionalNeeds],
     ["Outbound AI calls", payload.outboundAiCalls],
     ["Automated SMS", payload.automatedSms],
     ["Human escalation", payload.humanEscalation],
