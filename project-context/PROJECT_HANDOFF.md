@@ -219,3 +219,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Corrected assistant panel button typography and whitespace normalization in the field-label extraction.
 - Static source checks passed for the assistant entry point/panel, parent-to-iframe context messaging, Worker-side allowlist and model prompt, privacy disclosure, and retention of the existing native Formspree POST. Live browser testing, real inference and end-to-end form submission remain outstanding.
 - No Cloudflare Worker deployment or GitHub Pages deployment has been performed from this feature branch. Merge and Worker deployment require review/approval; do not claim the helper is live.
+
+
+## AI Discovery Coach merged to main — 2026-11-11
+
+- PR #77 merged successfully to `main` on 2026-11-11. Squash merge commit: `839a5d0e660349fa927847371f38584280e9beca`.
+- The Get Started discovery form now includes an optional AI coach panel using the existing Star69AI Concierge iframe. It receives the current step, active field and allowlisted business/call-handling answers as the visitor focuses, types, changes answers and navigates steps.
+- The Concierge shows the active field and can offer industry-tailored explanations and example wording for longer descriptions. The model is instructed not to invent business facts or submit/change the form.
+- The client-side and Worker-side allowlists exclude dedicated contact and identity fields; Worker-side length limits and untrusted-input handling remain in place. Visitors are warned not to put sensitive or customer data in free text.
+- `privacy.html` discloses optional Cloudflare Workers AI processing. The existing Formspree endpoint `https://formspree.io/f/mrppjqdb` remains unchanged.
+- Static source checks passed before merge. **The new Worker source has not yet been deployed to Cloudflare**, and live browser, real AI inference, mobile rendering and end-to-end Formspree submission tests remain outstanding. Do not describe the AI coach as live until the Worker is deployed and tested.
