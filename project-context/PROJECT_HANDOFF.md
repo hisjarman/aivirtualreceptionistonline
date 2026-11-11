@@ -208,3 +208,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - Worker independently re-applies the field allowlist and length limits before adding the form context to the model prompt. Visitor-provided values are explicitly treated as untrusted data, not instructions.
 - The public form continues to submit natively to Formspree `https://formspree.io/f/mrppjqdb`; the AI helper does not submit the form or alter the user's answers.
 - This is an implementation branch only. No Worker deployment, Formspree configuration change, D1 change or merge to `main` has been performed. Test privacy behavior, mobile layout, contextual suggestions and form submission before merge/deploy.
+
+
+### AI Discovery Coach refinements and validation — 2026-11-11
+
+- The coach receives live updates as visitors focus, change or type into allowlisted discovery fields; it also receives the last active field when opened and refreshes context when the visitor moves between form steps.
+- The Worker enforces the allowlist a second time and limits each field before model inference. The Concierge prompt explicitly treats all visitor-provided form values as untrusted data and instructs the model to explain fields, tailor examples to industry/prior answers, and never edit or submit the form.
+- Updated the Get Started privacy note to clarify that dedicated contact/business identity fields are excluded and that visitors should not place those details in free-text fields.
+- Updated privacy.html to disclose optional Cloudflare Workers AI processing for selected business and call-handling answers when the visitor opens the coach.
+- Corrected assistant panel button typography and whitespace normalization in the field-label extraction.
+- Static source checks passed for the assistant entry point/panel, parent-to-iframe context messaging, Worker-side allowlist and model prompt, privacy disclosure, and retention of the existing native Formspree POST. Live browser testing, real inference and end-to-end form submission remain outstanding.
+- No Cloudflare Worker deployment or GitHub Pages deployment has been performed from this feature branch. Merge and Worker deployment require review/approval; do not claim the helper is live.
