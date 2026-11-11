@@ -47,6 +47,12 @@ async function stripeWebhook(req,env){const raw=await req.text(),sig=req.headers
  return {received:true};
 }
 
+function resendFrom(env){
+  const configured=String(env.RESEND_FROM_EMAIL||"").trim();
+  if(!configured)return "";
+  return /^[^<>]+<[^<>]+>$/.test(configured)?configured:"Star69AI <"+configured+">";
+}
+
 async function sendAutomaticCallSummary(env,customerId,callId){
  try{
   if(!env.RESEND_API_KEY||!env.RESEND_FROM_EMAIL)return;
@@ -65,7 +71,7 @@ async function sendAutomaticCallSummary(env,customerId,callId){
   const subject="New call summary — "+String(customer?.business_name||"Your business")+" — "+String(call.from_number||"Unknown caller");
   const text=["Star69AI.com — Call summary","Business: "+(customer?.business_name||"Your business"),"Caller: "+(call.from_number||"Unknown"),"Business line: "+(call.to_number||"Unknown"),"Date/time: "+date,"Direction: "+(call.direction||"Unknown"),"Duration: "+duration,"Sentiment: "+(call.user_sentiment||"Unknown"),"","Call summary:",summary,"","Open your client portal to review the transcript and available recording: https://star69ai.com/client/#calls"].join("\n");
   const html="<div style=\"font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#20343b\"><h2>New call summary</h2><p><b>Business:</b> "+esc(customer?.business_name)+"</p><p><b>Caller:</b> "+esc(call.from_number)+"<br><b>Business line:</b> "+esc(call.to_number)+"<br><b>Date/time:</b> "+esc(date)+"<br><b>Direction:</b> "+esc(call.direction)+"<br><b>Duration:</b> "+esc(duration)+"<br><b>Sentiment:</b> "+esc(call.user_sentiment)+"</p><h3>Call summary</h3><p>"+esc(summary)+"</p><p><a href=\"https://star69ai.com/client/#calls\">Open call history to listen to the recording and read the transcript</a></p><p style=\"font-size:12px;color:#68777c\">Sent because automatic call-summary emails are enabled in your client portal.</p></div>";
-  const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"avr-auto-call-summary/"+call.call_id},body:JSON.stringify({from:env.RESEND_FROM_EMAIL,to:recipients,subject,html,text})});
+  const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"avr-auto-call-summary/"+call.call_id},body:JSON.stringify({from:resendFrom(env),to:recipients,subject,html,text})});
   if(!sent.ok){const result=await sent.json().catch(()=>({}));console.error("automatic_call_summary_email_failed",sent.status,result)}
  }catch(e){console.error("automatic_call_summary_email_error",e.message)}
 }
@@ -240,7 +246,7 @@ async function route(req,env){
    const subject="Call details — "+String(call.from_number||"Unknown caller");
    const plain=["Star69AI.com — Call details","Business: "+(c.business_name||"Your business"),"Caller: "+(call.from_number||"Unknown"),"Business line: "+(call.to_number||"Unknown"),"Date/time: "+date,"Direction: "+(call.direction||"Unknown"),"Status: "+(call.call_status||"Unknown"),"Duration: "+duration,"Sentiment: "+(call.user_sentiment||"Unknown"),"Disconnection: "+(call.disconnection_reason||"Unknown"),"","Summary:",call.call_summary||"No summary available.","","Transcript:",call.transcript||"No transcript available."].join("\n");
    const html="<div style=\"font-family:Arial,sans-serif;max-width:680px;margin:auto;color:#20343b\"><h2>Call details</h2><p><b>Business:</b> "+esc(c.business_name)+"</p><p><b>Caller:</b> "+esc(call.from_number)+"<br><b>Business line:</b> "+esc(call.to_number)+"<br><b>Date/time:</b> "+esc(date)+"<br><b>Direction:</b> "+esc(call.direction)+"<br><b>Status:</b> "+esc(call.call_status)+"<br><b>Duration:</b> "+esc(duration)+"<br><b>Sentiment:</b> "+esc(call.user_sentiment)+"</p><h3>Call summary</h3><p>"+esc(call.call_summary||"No summary available.")+"</p><h3>Transcript</h3><pre style=\"white-space:pre-wrap;font:14px/1.5 Arial,sans-serif;background:#f4f7f7;padding:16px;border-radius:8px\">"+esc(call.transcript||"No transcript available.")+"</pre><p style=\"font-size:12px;color:#68777c\">Sent securely from your Star69AI.com client portal.</p></div>";
-   const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"avr-call-details/"+call.call_id+"/"+to},body:JSON.stringify({from:env.RESEND_FROM_EMAIL,to:[to],subject,html,text:plain})});
+   const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"avr-call-details/"+call.call_id+"/"+to},body:JSON.stringify({from:resendFrom(env),to:[to],subject,html,text:plain})});
    const result=await sent.json().catch(()=>({}));
    if(!sent.ok){console.error("call_email_send_failed",sent.status,result);throw Error(sent.status===401||sent.status===403?"email_sender_not_configured_check_resend": "call_email_send_failed_try_again")}
    return json({sent:true,emailId:result.id||null},200,origin,env);
