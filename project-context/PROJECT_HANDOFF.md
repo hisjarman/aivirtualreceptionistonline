@@ -257,3 +257,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Get Started discovery form typography is enlarged for readability: labels, field values, placeholders, step headings, helper copy, privacy disclosures, consent text and buttons receive larger sizes, stronger contrast and more comfortable line-height. Mobile inputs use 16px to avoid browser zoom on focus.
 - Changes are on `feature/compact-hero-chat-readable-discovery`; no merge, Pages publication or Worker deployment has been performed.
 - Static source checks: verify hero CTA text/ARIA label and discovery stylesheet overrides. Browser/mobile visual checks and live chat/form submission tests remain outstanding.
+
+
+## Compact hero receptionist and discovery form readability merged — 2026-11-11
+
+- PR #79 was squash-merged into `main` on 2026-11-11.
+- Merge commit: `62d120cea23cda699a40fa80b18868767d6fc5d1`.
+- The homepage hero receptionist is now styled as a compact avatar with an adjacent speech bubble inviting visitors to ask a question. The bubble remains the clickable trigger for the existing Concierge chat iframe/dialog.
+- The Get Started discovery form now has larger, higher-contrast labels, inputs, placeholders, instructions, privacy/consent copy and buttons; mobile form inputs use 16px text.
+- Static source checks passed before merge. Browser visual verification, live chat, and Formspree submission testing remain outstanding.
+- GitHub Pages publication status was not verified at the time of this handoff update. No Worker deployment was needed because the Concierge backend was unchanged.
