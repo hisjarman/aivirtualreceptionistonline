@@ -356,7 +356,7 @@ Known prior issue to recheck against current source: a portal request reported `
 
 ## Discovery Coach side-by-side UX implementation — 2026-11-11
 
-- Working branch: `ux/discovery-coach-side-by-side-2026-11-11`, created from the verified current `main` after PR #84 and PR #82 had both merged.
+- Working branch: `ux/discovery-coach-side-by-side-2026-11-11`, created from the verified current `main` after PR #84 and PR #82 had both merged. Pull request #85 is open as a draft against `main`: https://github.com/hisjarman/star69ai/pull/85.
 - Reworked `get-started.html` so the AI Discovery Coach is a permanent, independently labeled panel in the left onboarding column and the existing three-step Formspree discovery form remains in the right column. The floating/toggle panel and duplicate assistant controls were removed.
 - Desktop uses a two-column layout; widths at 900px and below stack the assistant above the form. Mobile uses a shorter assistant viewport while keeping its composer and conversation frame available without fixed-position overlays.
 - Preserved the existing Concierge Worker iframe URL, exact allowed `postMessage` target origin, contextual form payload, field allowlist and privacy exclusions. The contact name, email, phone, business name, website, human escalation and privacy-consent fields remain excluded. No Worker, D1, secrets or provider configuration changed.
