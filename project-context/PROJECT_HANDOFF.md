@@ -443,3 +443,29 @@ Known prior issue to recheck against current source: a portal request reported `
 - Refined homepage header, dashboard/story/feature surfaces, language section and footer toward a lighter, calmer visual rhythm. Responsive veil opacity is adjusted for tablet and mobile so the artwork does not overwhelm text.
 - No HTML, copy, form fields, Formspree endpoint, navigation destinations, SEO metadata, Concierge iframe/chat behavior, backend integrations, pricing or non-homepage styles were changed.
 - Browser visual QA at desktop/tablet/mobile widths, keyboard/focus review and contrast measurement remain outstanding. Review the branch/PR before merge; do not claim the live site has changed until the PR is merged and GitHub Pages deployment succeeds.
+
+
+## Homepage conversation-first layout — 2026-11-11
+
+- Working branch: `ux/homepage-conversation-section-under-header`, based on the latest `main` after PR #92.
+- Rebuilt the homepage lead-capture presentation as a complete, standalone conversation section immediately below the global header. It is no longer awkwardly embedded as a sidecar inside the hero.
+- The conversation section is the page's single primary H1; the following service-introduction hero uses an H2. The first section now has a clear headline and concise explanation on the left, a three-step expectation-setting sequence, and a polished inquiry form on the right. The form retains the existing five required fields, industry options, Formspree endpoint `https://formspree.io/f/mrppjqdb`, subject/source metadata and honeypot.
+- Removed the duplicate form placement from the hero. The following hero now reads as the brand/service introduction with the receptionist visual and supporting sales copy, so the page has a clear order: header → custom-demo conversation → service introduction → supporting content.
+- Desktop uses a balanced two-column conversation layout; tablet/mobile stack the copy, short process and form into one readable column. The existing hero is also rebalanced into a receptionist visual beside the service introduction on desktop.
+- No backend, Formspree configuration, email, Concierge, authentication, pricing, SEO metadata or other pages were changed.
+- Source-level checks: verify one homepage Formspree form, unchanged endpoint and required field names, standalone section immediately after header/main opening, hero no longer contains the form, handoff updated, and responsive CSS present. Browser-rendered visual testing, keyboard/focus review, measured contrast and live form delivery remain outstanding.
+- This proposal must be reviewed before merging. Do not claim it is live until explicitly approved, merged and GitHub Pages deployment succeeds.
+
+
+## Discovery form optional fields and one-click AI suggestions — 2026-11-11
+
+- Added to the existing homepage conversation-first PR branch `ux/homepage-conversation-section-under-header`; PR #93 remains the review target.
+- Removed required-field validation from the three-step `get-started.html` business discovery form. Visitors may leave any or all fields blank and continue through the steps; non-empty email/URL values are still checked for valid format. The separate quick-contact form and homepage lead form are not part of this change.
+- Removed the redundant “Find your industry” search input and its filtering JavaScript. The grouped industry dropdown remains available and is optional. The custom-industry follow-up remains conditional when “Other / not listed” is selected, but it is no longer required.
+- Updated the Concierge Worker prompt to provide a concise, context-aware suggestion for the currently active discovery field using a constrained machine-readable marker. Worker parsing only accepts an explicit allowlist of business/call-handling fields and bounds suggestion length.
+- The Concierge UI presents a “Use this suggestion” action when a valid suggestion is returned. Only after the visitor clicks it does the iframe send the suggestion to the parent page. The parent verifies the exact Worker origin, validates the field allowlist and select-option values, fills the field, dispatches normal input/change events, and refreshes assistant context. The AI cannot silently overwrite answers or submit the form.
+- Existing Formspree endpoint, native browser POST, three-step navigation, privacy notice, contact-field exclusion from assistant context, and Worker rate limiting remain unchanged.
+- Validation to perform: JavaScript syntax checks; verify zero required attributes in the intake form, no industry-search markup or handler, optional-step navigation, marker allowlist and length checks, origin validation, exact select-value validation, one-click fill behavior, desktop/mobile browser tests, real model inference, and a live Formspree test.
+- `cloudflare/concierge-worker.js` is source only on this PR branch. Do not claim the Worker behavior is live until the Worker is separately deployed and tested. No production deployment or merge is performed here.
+
+- Follow-up refinement: the discovery form introduction and plan-interest helper now explicitly say every field is optional. The AI suggestion action is rendered as a properly styled quick-action button, and the Worker prompt now includes the exact supported dropdown values so it can return valid selectable suggestions rather than arbitrary text.

@@ -37,19 +37,6 @@ let lastAssistantField = null;
 const assistantFrame = document.querySelector("#discovery-assistant-frame");
 const assistantSafeFields = new Set(["industry","industryOther","serviceArea","services","callVolume","hours","callTasks","faqs","recordingPreference","additionalNeeds","outboundAiCalls","automatedSms","phoneSetup","notes"]);
 const industrySelect = form.elements.namedItem("industry");
-const industrySearch = document.querySelector("#industry-search");
-industrySearch?.addEventListener("input", () => {
-  const query = industrySearch.value.trim().toLocaleLowerCase();
-  for (const group of industrySelect?.querySelectorAll("optgroup") || []) {
-    let visible = 0;
-    for (const option of group.querySelectorAll("option")) {
-      const match = !query || option.textContent.toLocaleLowerCase().includes(query);
-      option.hidden = !match;
-      if (match) visible++;
-    }
-    group.hidden = visible === 0;
-  }
-});
 const industryOtherWrap = document.querySelector("#industry-other-wrap");
 const industryOtherInput = form.elements.namedItem("industryOther");
 function syncCustomIndustry() {
@@ -57,7 +44,6 @@ function syncCustomIndustry() {
   if (industryOtherWrap) industryOtherWrap.hidden = !custom;
   if (industryOtherInput) {
     industryOtherInput.disabled = !custom;
-    industryOtherInput.required = custom;
     if (!custom) industryOtherInput.value = "";
   }
 }
@@ -102,6 +88,26 @@ form.addEventListener("focusin", event => { lastAssistantField = event.target; s
 // Send once immediately as well; the iframe load handler repeats this after navigation if needed.
 sendAssistantContext(lastAssistantField);
 
+// The coach may suggest text for an allowlisted business field. Nothing is applied
+// until the visitor explicitly clicks "Use this suggestion" inside the coach.
+window.addEventListener("message", event => {
+  if (event.origin !== "https://star69ai-concierge.hisjarman.workers.dev") return;
+  const data = event.data;
+  if (data?.type !== "star69ai-form-suggestion" || !data.suggestion) return;
+  const name = String(data.suggestion.field || "");
+  const value = String(data.suggestion.value || "").trim().slice(0, 900);
+  if (!assistantSafeFields.has(name) || name === "additionalNeeds" || !value) return;
+  const control = form.elements.namedItem(name);
+  if (!control || control.disabled) return;
+  if (control.tagName === "SELECT" && ![...control.options].some(option => option.value === value)) return;
+  control.value = value;
+  control.dispatchEvent(new Event("input", {bubbles:true}));
+  control.dispatchEvent(new Event("change", {bubbles:true}));
+  control.focus({preventScroll:false});
+  lastAssistantField = control;
+  sendAssistantContext(control);
+});
+
 function showStep(index) {
   currentStep = index;
   fields.forEach((field, i) => field.hidden = i !== currentStep);
@@ -118,7 +124,7 @@ function showStep(index) {
 function validateStep() {
   const controls = [...fields[currentStep].querySelectorAll("input,select,textarea")];
   for (const control of controls) {
-    if (!control.checkValidity()) {
+    if (String(control.value || "").trim() && !control.checkValidity()) {
       control.reportValidity();
       return false;
     }
