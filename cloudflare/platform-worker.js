@@ -1,4 +1,4 @@
-const DEFAULT_ORIGINS=["https://star69ai.com","https://www.star69ai.com","https://aivirtualreceptionist.online","https://www.aivirtualreceptionist.online","https://hisjarman.github.io"];
+const DEFAULT_ORIGINS=["https://star69ai.com","https://www.star69ai.com","https://hisjarman.github.io"];
 let jwksCache={expires:0,keys:[]};
 const json=(data,status=200,origin,env)=>new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer","Vary":"Origin",...(origin&&origins(env).includes(origin)?{"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"GET, POST, PUT, PATCH, DELETE, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type, Accept, Stripe-Signature, X-Retell-Signature","Access-Control-Max-Age":"86400"}:{})}});
 function origins(env){return (env.ALLOWED_ORIGINS||DEFAULT_ORIGINS.join(",")).split(",").map(x=>x.trim()).filter(Boolean)}

@@ -94,16 +94,16 @@ form.addEventListener("submit", async event => {
     ["Contact request", "Customer submitted the discovery brief and requested a response about this inquiry"],
     ["Privacy acknowledgement", payload.privacyConsent ? "Confirmed" : "Not confirmed"],
     ["Submitted at", submittedAt],
-    ["Source", "AIVirtualReceptionist.online business discovery form"]
+    ["Source", "Star69AI business discovery form"]
   ].map(([label, value]) => label + ": " + (String(value || "").trim() || "Not provided")).join("\n");
 
   try {
     const formData = new FormData(form);
-    formData.append("_subject", "New business discovery request — AI Virtual Receptionist");
+    formData.append("_subject", "New business discovery request — Star69AI");
     if (payload.email) formData.append("_replyto", payload.email);
     formData.append("message", brief);
     formData.append("submittedAt", submittedAt);
-    formData.append("source", "AIVirtualReceptionist.online business discovery form");
+    formData.append("source", "Star69AI business discovery form");
 
     const response = await fetch("https://formspree.io/f/mrppjqdb", {
       method: "POST",
@@ -146,7 +146,7 @@ form.addEventListener("submit", async event => {
       : "Your business brief has been received. We could not send the confirmation email automatically, but your request was submitted successfully.";
     success.hidden = false;
   } catch (error) {
-    errorBox.textContent = error.message || "We couldn't send your brief. Please try again in a moment or contact admin@aivirtualreceptionist.online.";
+    errorBox.textContent = error.message || "We couldn't send your brief. Please try again in a moment or contact support@star69ai.com.";
     errorBox.hidden = false;
   } finally {
     submit.disabled = false;
@@ -165,8 +165,8 @@ if (quickContact) quickContact.addEventListener("submit", async event => {
   const button=quickContact.querySelector('button[type="submit"]'), status=quickContact.querySelector("[data-contact-status]"), data=new FormData(quickContact);
   const payload={type:"quick_question",name:String(data.get("name")||"").trim(),email:String(data.get("email")||"").trim(),phone:String(data.get("phone")||"").trim(),subject:String(data.get("subject")||"").trim(),message:String(data.get("message")||"").trim(),meetingRequest:data.get("meetingRequest")==="on",contactConsent:true,website:String(data.get("website")||"")};
   button.disabled=true;button.textContent="Sending…";status.textContent="";
-  try { const response=await fetch(API_BASE+"/api/contact",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.message||"We couldn't send your message. Please try again.");quickContact.reset();status.textContent=!result.notificationSent?"Your message was saved, but our notification service had a problem. Please email admin@aivirtualreceptionist.online if your request is urgent.":result.meetingRequested?(result.confirmationSent?"Message received. Check your inbox; we will contact you to arrange an engineering call.":"Message received. We will contact you to arrange an engineering call. A confirmation email could not be sent."):(result.confirmationSent?"Message received. A confirmation email is on its way.":"Message received, but the confirmation email could not be sent.");status.classList.remove("error");}
-  catch(error){status.textContent=error.message||"Please email admin@aivirtualreceptionist.online directly.";status.classList.add("error");}
+  try { const response=await fetch(API_BASE+"/api/contact",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.message||"We couldn't send your message. Please try again.");quickContact.reset();status.textContent=!result.notificationSent?"Your message was saved, but our notification service had a problem. Please email support@star69ai.com if your request is urgent.":result.meetingRequested?(result.confirmationSent?"Message received. Check your inbox; we will contact you to arrange an engineering call.":"Message received. We will contact you to arrange an engineering call. A confirmation email could not be sent."):(result.confirmationSent?"Message received. A confirmation email is on its way.":"Message received, but the confirmation email could not be sent.");status.classList.remove("error");}
+  catch(error){status.textContent=error.message||"Please email support@star69ai.com directly.";status.classList.add("error");}
   finally{button.disabled=false;button.textContent="Send message ↗";}
 });
 
