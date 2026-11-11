@@ -391,4 +391,21 @@ Known prior issue to recheck against current source: a portal request reported `
 - Internal integration code, Worker secrets, webhooks, provider-specific API operations and internal technical handoff notes must retain accurate provider references. Do not rename API fields, secrets, routes, event types, D1 schema or integration logic as part of a marketing cleanup.
 - Privacy, recording/transcription and other legally operative notices must accurately identify any third-party provider that actually processes caller or customer information, and describe the relevant processing. Do not remove a real processor from legal disclosures merely to conceal the integration. Keep those disclosures factual and separate from marketing; clarify that use of a provider does not imply affiliation, sponsorship or endorsement.
 - On 2026-11-11, the homepage hero was changed to describe Star69AI's own managed service and to replace third-party platform metrics with service-benefit statements. Pricing copy now describes multilingual capability without vendor branding. The vendor-specific editorial article and its listing/sitemap entry were retired. Public README architecture language now uses a generic voice-provider description. The legal notices remain unchanged pending a compliance review of the actual production data flow.
-- These changes are prepared on branch `brand/remove-voice-vendor-marketing`; no merge or production deployment has occurred. Review the PR and confirm the live legal disclosures match the active processor configuration before onboarding customers.
+- PR #88 was squash-merged into `main` as `9bf4a68966d4c4702e9dd986d53a1864ad85e370` on 2026-11-11. GitHub Pages workflow run 43092588091 completed successfully. Legal notices remain unchanged pending a compliance review of the actual production data flow.
+
+
+## Homepage Concierge opens beneath receptionist model — 2026-11-11
+
+- Follow-up branch: `fix/hero-concierge-opens-below-model`, based on main after PR #86.
+- The homepage hero's Concierge panel previously used fixed viewport positioning at the bottom-left. It now uses normal flow inside `.hero-model-column`, directly below the receptionist portrait and clickable speech-bubble trigger.
+- The panel remains hidden until the existing accessible speech-bubble button is activated. The existing close button, Escape-key behavior, dialog labeling, iframe source and shared Concierge Worker conversation endpoint are unchanged.
+- Desktop panel width is constrained to the model column (up to 440px) and uses a bounded responsive height. On mobile it remains full-column width with a bounded viewport-relative height; it does not cover the sales-copy column.
+- No Concierge Worker, AI endpoint, D1, authentication, Formspree, billing or provider configuration was changed.
+- Source-level validation and live browser verification are pending. Do not claim the layout is published until the PR is approved/merged and GitHub Pages deployment succeeds.
+
+## Intake-page Concierge conversation viewport expansion — 2026-11-11
+
+- On branch `fix/hero-concierge-opens-below-model` (PR #87), increased the inline Discovery Coach panel height so more of the Concierge conversation and generated responses remain visible without an overly short embedded viewport.
+- Desktop panel now uses a 760px minimum with an 88vh preferred height and 940px maximum. Tablet uses 760px; mobile uses 700px. The iframe is explicitly allowed to flex and fill the remaining panel height.
+- The Concierge Worker iframe URL, internal Worker UI, conversation endpoint, contextual form-sharing behavior, privacy exclusions, and Formspree form are unchanged. No Worker, D1, auth, billing, secrets or provider configuration changed.
+- Source-level validation confirms the new sizing overrides are appended after the existing responsive rules. Browser visual testing on desktop/mobile and live conversation testing remain outstanding; do not claim the larger panel is visually verified until checked in a browser.
