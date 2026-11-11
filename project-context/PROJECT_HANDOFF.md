@@ -336,3 +336,9 @@ Known prior issue to recheck against current source: a portal request reported `
 - IndexNow verification key file is `c2bce683c78de699b10abff8601ac838.txt`. This is a public verification token, not an application secret. `scripts/submit-indexnow.ps1` reads the published sitemap and submits its URLs after deployment.
 - After merge/deployment, still verify live HTTP status and redirects; ensure GitHub Pages publishes root files; inspect rendered HTML and canonical URLs; validate JSON-LD; submit the sitemap in Google Search Console and Bing Webmaster Tools; test the IndexNow key URL and submission; review Cloudflare security events for crawler challenges.
 - DNS ownership verification and Search Console/Bing account actions must be completed by the account owner. Sitemap submission, IndexNow notification and live URL tests do not guarantee indexing or ranking.
+
+## Legacy HelloAnswer script removal — 2026-11-11
+
+- Removed the obsolete HelloAnswer client widget script (`clients.aivirtualreception.online/w/w_xin7g6jkr6au9gqlo18h.js`) from the homepage `index.html` on branch `seo/technical-crawlability-ai-discovery`.
+- The script was confirmed to be a legacy HelloAnswer integration and is no longer needed. The current Star69AI Concierge remains embedded through the existing `star69ai-concierge` Cloudflare Worker iframe and its homepage click-to-chat controls; those were not changed.
+- Verified the retired HelloAnswer hostname no longer appears in the homepage source. No other scripts, chat behavior, backend configuration or production branch were changed.
