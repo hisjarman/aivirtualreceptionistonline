@@ -1,192 +1,147 @@
-# AIVirtualReceptionist.online — Project Context Handoff
+# Star69AI — Project Context Handoff
 
-Last consolidated: 2026-11-08
+Last consolidated: 2026-11-11
 
-Read this file before making changes. It captures the user's project decisions, technical architecture, current requests and development rules. The root README remains the detailed technical setup guide.
+Read this file before making substantial changes. It records current project decisions, technical architecture, development rules and known follow-ups. Verify all implementation claims against the current repository and live provider configuration.
 
-## Product and business model
-AIVirtualReceptionist.online is a managed AI receptionist service for small and service-based businesses; roofing is the first demonstration use case. The agency configures and manages each client's AI phone receptionist. This is a done-for-you service, not a self-serve voice-agent builder.
+## Brand and business
 
-Core offer: answer incoming calls 24/7, answer approved business questions, capture/qualify leads, help schedule appointments and route calls when configured. The agency handles setup, call flows, phone routing, monitoring and ongoing support.
+- **Brand:** Star69AI
+- **Canonical website:** https://star69ai.com
+- **GitHub repository:** https://github.com/hisjarman/star69ai
+- **Founder:** Solomon Jarman
+- **Business/operator disclosure:** SIMIAPP CLOUD
+- **General email:** hello@star69ai.com
+- **Support/reply-to:** support@star69ai.com
+- **Hosting:** GitHub Pages for static pages; Cloudflare Workers and D1 for backend services.
+- The previous project branding has been retired. Use Star69AI branding in current user-facing materials, page titles, footers, email templates, repository descriptions and documentation. Do not reintroduce the previous domain as the current website.
 
-Brand/domain: https://aivirtualreceptionist.online/
-Founder/About name: Solomon Jarman.
-Operator/footer reference: SIMIAPP CLOUD.
+## Product positioning
 
-## Visual and UX decisions
-- User prefers a vivid lime-green accent.
-- Premium modern SaaS design; dark, space-inspired visual language with strong contrast and readable navigation.
-- Hero model/avatar should be smaller and positioned toward the upper-left of its column.
-- Speech bubble should originate near the model's mouth, not have a long misplaced tail.
-- Add a meaningful digital AI-brain background resembling Earth at night with illuminated network/city lights and aurora-like light. Avoid a plain circular glow.
-- Keep navigation/menu and Client Login visible at the top of every page. Promotional banners must not push them off-screen.
-- Remove the “Onboarding Clients” / “ONBOARDING OPEN” item from the top banner. If onboarding messaging is retained, put it in the hero/avatar speech bubble.
-- Dashboard preview data must be clearly marked illustrative; do not present fictional sample metrics as customer results.
-- Retell platform-wide metrics must be attributed and clearly distinguished from this agency's results.
+Star69AI is a managed, done-for-you AI receptionist service, not a self-service software platform. The agency builds, configures, customizes, tests and maintains each client's receptionist and phone workflow.
 
-## Public website
-Canonical repository: https://github.com/hisjarman/aivirtualreceptionistonline
-Default branch: main.
-The public static website is at the repository root and is published with GitHub Pages at the custom domain. The old docs subdirectory was moved to root; do not restore that layout.
+Target customers include roofing, plumbing, HVAC, general contractors, cleaning, automotive services and real estate businesses.
 
-Public site includes Home, Features, Pricing, How It Works, FAQ, About, Get Started, Demos, Insights, Industries, blog/story series, AI Trust Lab, partner program and interactive AI challenge (“The Receptionist Architect”).
+Depending on customer configuration and third-party provider capabilities, the service may answer calls, respond to approved FAQs, capture and qualify leads, assist with appointment requests, route/escalate calls, and provide call summaries and call activity.
 
-The existing business discovery form MUST continue to use Formspree:
+## Visual and UX direction
+
+- Premium, modern interface with a dark space-inspired visual language where appropriate.
+- Lime green is the preferred brand accent; sky blue is a supporting accent.
+- Prioritize readable contrast, calm spacing, accessible focus states and responsive layouts.
+- Keep navigation and Client Login visible and usable on desktop and mobile.
+- Do not put onboarding promotions in the top banner if they push navigation or login off-screen.
+- Homepage hero direction: Earth-at-night / illuminated global AI network artwork and receptionist model, with speech bubble visually aligned near the model's mouth.
+- Use supplied assets from `assets/` after verifying exact filenames and current usage.
+- Dashboard preview figures must be identified as illustrative; never imply sample data is real customer performance.
+- Retell-wide metrics must be attributed to Retell and distinguished from Star69AI customer results.
+
+## Public website and content
+
+GitHub Pages publishes the static site from the repository root using the root `CNAME` file. Do not move the site back into a `docs/` publishing folder.
+
+The site includes marketing pages, pricing, FAQs, demos, industries, insights, the weekly business-comedy series, partner pages, the Trust Lab and the Receptionist Architect challenge. Preserve existing SEO metadata, canonical URLs, navigation, footer, forms and responsive behavior when editing shared components.
+
+### Demo/discovery form
+
+The public discovery form must keep using Formspree:
+
+```text
 https://formspree.io/f/mrppjqdb
-It collects business details for follow-up/demo preparation; it does not activate a subscription.
+```
 
-## Pricing and billing intent
-Documented plans in the root README:
-- Starter: $149/month, 300 included voice minutes.
-- Growth: $249/month, 600 included voice minutes.
-- Pro: $399/month, 1,000 included voice minutes.
-- $99 one-time setup fee, invoiced separately.
+The form is for demo/discovery follow-up only; it does not create an account or activate a subscription. The current form submission implementation was changed from JavaScript cross-origin `fetch()` to a native browser POST to avoid the mobile browser “Failed to fetch” error. The Formspree endpoint and live delivery still require an end-to-end test after the website update is published.
 
-User-approved advertised overage rates: Starter $0.49/minute, Growth $0.39/minute, Pro $0.29/minute after the respective included allowance. The public pricing page, legal pricing summary and client portal estimate must use the same plan-specific rates. Automatic Stripe metered overage billing is not implemented; the client portal must label estimates as estimates and not claim automatic charges. Confirm rounding and meter-event policy before charging.
+## Published pricing
 
-## Technical architecture (documented in root README)
-- GitHub Pages: public marketing site, client portal at /client/, admin console at /admin/.
-- Cloudflare Worker: avr-platform-api, documented URL https://avr-platform-api.hisjarman.workers.dev.
-- Cloudflare D1: Worker binding DB points to existing avr-trust-lab database. New platform tables use avr_ prefixes to avoid collisions.
-- Clerk: frontend authentication; Worker validates Clerk JWTs and performs server-side user lookup. Admin access is enforced server-side with ADMIN_EMAILS.
-- Stripe: Checkout, customer billing portal and signed webhooks.
-- Retell AI: agent/phone-number sync, customer assignments, signed call webhooks, call summaries/transcripts and usage records.
-- Existing avr-trust-lab-api and Trust Lab/contact/newsletter/partner features are separate and must remain intact.
-- User explicitly does NOT want Render. Do not revive old Render/Manus deployments. Use GitHub Pages for static hosting and Cloudflare Workers/D1 for backend needs.
+| Plan | Monthly price | Included voice minutes | Advertised overage |
+|---|---:|---:|---:|
+| Starter | $149 | 300 | $0.49/minute |
+| Growth | $249 | 600 | $0.39/minute |
+| Pro | $399 | 1,000 | $0.29/minute |
 
-The root README describes customer portal capabilities (assigned agents/numbers, call recordings/transcripts/summaries, usage, profile, summary-email recipients, Stripe billing portal) and admin capabilities (customer workspaces, support/upgrade requests, client supervision, Retell sync/assignments, cross-customer calls and billing events). Verify the code and live configuration before claiming every capability is production-ready.
+- One-time setup fee: $99, invoiced separately.
+- Do not silently change these published values in one page or portal surface without synchronizing all pricing displays and legal summaries.
+- Automatic Stripe metered overage billing is not to be claimed as implemented until usage meter reporting, reconciliation, rounding rules and end-to-end billing tests are complete.
+- Usage estimates must be labeled as estimates until actual billing is implemented and verified.
+- Any annual offer or setup-fee waiver must match the active checkout and written offer terms.
 
-## Integrations and security
-- Clerk production migration was previously listed as pending: frontend publishable key and Worker issuer must match the same production Clerk instance. Verify before changing.
-- Worker secrets expected: CLERK_SECRET_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RETELL_API_KEY. Never place secrets in GitHub, HTML, browser JS, public config or chat.
-- Stripe subscription state should be updated from verified webhooks, not only browser redirects.
-- Retell webhook signatures must be verified and events deduplicated.
-- Verify tenant isolation and admin authorization with separate test accounts.
-- Recording consent, retention/deletion and privacy/legal requirements must be addressed before exposing recordings/transcripts or sending summaries.
-- Root README references migration cloudflare/migrations/2026-11-07-call-email-settings.sql; confirm it has been applied before relying on those settings.
+## Technical architecture
 
-## Current active user requests
-### Challenge game
-- Current challenge reportedly has only about five question/scenario variations and becomes repetitive.
-- Expand the scenario/question library substantially.
-- Repeated attempts should receive different questions; randomize from a larger bank and avoid immediate repeats where practical.
-- Add difficulty levels.
-- Higher difficulty must provide higher rewards. Define/display a clear progression, but do not promise cash or real-world rewards unless explicitly configured.
-- Keep scoring, answer validation, completion and rewards consistent with difficulty.
-- Candidate branch: feature/challenge-difficulty-question-bank. Inspect it before use/merge.
+- **GitHub Pages:** public website, client portal at `/client/`, admin console at `/admin/`.
+- **Cloudflare Workers:** server-side API and integrations.
+- **Cloudflare D1:** application data; existing D1 binding and table prefixes must be preserved.
+- **Clerk:** authentication. Worker-side JWT verification and authorization are required; hiding controls in browser code is not sufficient.
+- **Stripe:** subscription checkout, customer billing portal and signed webhook processing.
+- **Retell AI:** voice agents, phone numbers, assignments, call webhooks and call analysis.
+- **Formspree:** public demo/discovery form.
+- **Resend:** transactional email.
+- The platform API Worker has been documented as `avr-platform-api` at `https://avr-platform-api.hisjarman.workers.dev`. Verify the deployed Worker URL and routes before changing configuration.
+- The separate Trust Lab Worker and its contact, newsletter and partner workflows must remain independent and operational.
+- Do not use Render. Do not restore obsolete Manus/CallPilot deployment paths.
 
-### Homepage/header
-- Lime green accent.
-- Remove “Onboarding Clients” from top banner/topbar.
-- Preserve clear, visible navigation and Client Login at the top across pages and screen sizes.
-- Smaller upper-left hero avatar, mouth-aligned speech bubble, Earth-at-night/aurora AI brain background.
-- Candidate branches visible at consolidation time: design/remove-onboarding-banner, design/compact-receptionist-speech, fix/header-onboarding-speech-bubble, feat/homepage-client-dashboard-login, feature/global-client-login-button, feat/retell-powered-homepage-hero, merge/homepage-hero-dashboard. Do not merge blindly; compare diffs and test.
+## Repository map
 
-### Other recent requests
-- Voice-clone explanation should be concise, opened in a modal/window from a button; explain the process, likely third-party providers, required recordings/consent and steps.
-- Actual client dashboard should resemble the advertised preview, with left sidebar and top panel.
-- Client Login should be clearly visible on every page.
-- The founder letter/About content should use Solomon Jarman.
-- Explain Retell AI technology and vendor scale only with legally supportable, attributed facts. Never imply platform stats are this agency's customer results.
-- Weekly business-comedy series title direction: “Saved by the AI Receptionist!”
+- Root HTML/CSS/JS: public marketing site.
+- `client/`: customer portal frontend.
+- `admin/`: agency admin frontend.
+- `cloudflare/platform-worker.js`: platform API.
+- `cloudflare/trust-lab-worker.js`: Trust Lab/contact/newsletter/partner API.
+- `cloudflare/schema.sql` and `cloudflare/migrations/`: database schema and migrations.
+- `docs/`: implementation notes.
+- `assets/`: brand, illustration and media assets.
 
-## Known issues / launch follow-ups
-1. Verify Clerk is on production keys/issuer and production domain is correctly configured; earlier notes said development instance remained.
-2. Verify Worker secrets exist (never reveal their values).
-3. Verify Stripe plan Price IDs: STRIPE_PRICE_STARTER, STRIPE_PRICE_GROWTH, STRIPE_PRICE_PRO.
-4. Implement/test Stripe metered overage after included minutes are used using the approved Starter $0.49 / Growth $0.39 / Pro $0.29 per-minute rates; confirm rounding and meter-event policy before charging.
-5. Verify Retell webhook at /webhooks/retell, required events, sync agents/numbers, assign resources and test a real call.
-6. Confirm D1 migration for call-email settings is applied.
-7. User previously saw: D1_ERROR: no such table: avr_addon_orders. Inspect current Worker/frontend references and migrations for schema mismatch; do not invent a table without examining the code and migrations.
-8. Preserve and test Formspree endpoint after form edits.
-9. End-to-end test login, admin/customer authorization, tenant isolation, calls, recordings, summaries, email delivery, usage, checkout, portal, webhooks and cancellation.
-10. Confirm Pages and Worker deploy separately; a static-site commit does not deploy Worker code or apply SQL migrations.
+## Email and domain configuration notes
 
-## Main-branch inspection snapshot (2026-11-08)
-- Root README exists and documents the GitHub Pages + Cloudflare Worker + D1 + Clerk + Stripe + Retell architecture.
-- Root index.html links to homepage-polish.css, contact.css, story-series.css, dashboard-demo.css, experience.css and demo-center.css.
-- The homepage HTML on main still contained an “ONBOARDING OPEN” topbar item and an extra unmatched closing span near it. This likely contributes to the header/layout issue; recheck the branch before changing.
-- Hero image asset referenced: assets/AIVirtualReceptionist_Hero_Frame_LeftFacing.png. Icon assets referenced: assets/ai-receptionist-icon.svg and assets/favicon.svg.
-- Homepage includes a dashboard preview with fictional sample metrics and a disclaimer.
-- Homepage copy still described the challenge as five puzzles; the challenge branch may supersede this.
-This is a snapshot, not a guarantee that main is the newest user-approved design.
+- Resend domain `star69ai.com` has been reported verified.
+- Production sender is `Star69AI <hello@star69ai.com>`.
+- Support/reply-to address is `support@star69ai.com`.
+- Branded email templates use the Star69AI logo and footer.
+- Cloudflare Worker secrets must be managed in Cloudflare, never committed here.
+- Never print or expose API keys, Clerk secrets, Stripe secrets, webhook signing secrets or customer information in source code or documentation.
 
-## Recommended next steps
-1. Inspect feature/challenge-difficulty-question-bank; implement/test the expanded randomized question bank, difficulty levels and reward progression.
-2. Compare homepage/header branches and consolidate approved lime-green, avatar, speech-bubble, brain-background and login/header changes.
-3. Diagnose avr_addon_orders D1 error against actual Worker queries and SQL migrations.
-4. Verify Clerk production setup and portal behavior.
-5. Complete Stripe metered overage only after confirming rate, meter event and billing policy.
-6. Run launch checks and update this handoff whenever decisions or implementation status change.
+## Implementation history verified in this conversation
 
-## Development rules (must follow)
-- Work in branches. User explicitly asked to use GitHub branches. Do not silently commit feature work directly to main.
-- Inspect target branch and diffs before editing or merging. Do not merge branches without explicit user approval.
-- Make focused commits with descriptive messages and report branch + commit.
-- Read source files, related CSS/JS, Worker routes and D1 migrations before changing behavior.
-- Preserve Formspree, Trust Lab, partner features, navigation, SEO and existing working behavior.
-- Test responsive layout, menu/login visibility, links, forms, assets and scripts.
-- Never claim a feature is complete or deployed unless verified.
+- PR #70 added Star69AI branding to outgoing email templates and was merged to `main`. Platform and Trust Lab Workers were deployed after that change; deployment success was confirmed, but do not infer endpoint health from deployment status alone.
+- PR #71 changed the demo request form from JavaScript `fetch()` to native Formspree POST and was merged to `main` at commit `afe041a6bd39249e43de261618ca247ac41f7b5f`.
+- The actual Formspree submission and return confirmation have not yet been verified with a real end-to-end request.
+- The prior call-details email attempt showed a generic portal error even though an earlier Resend email was delivered. That earlier delivery predated the new email-branding deployment and does not prove the current manual email path is healthy. If revisiting, add safe diagnostic error codes without exposing provider secrets or private details.
+
+## Security and production-readiness checks
+
+Before onboarding customers, verify:
+
+1. Clerk frontend publishable key and Worker issuer belong to the same production Clerk instance.
+2. Cloudflare Worker bindings, secrets and allowed origins are configured for the production domain.
+3. Admin authorization is enforced in the Worker and customer records are isolated by tenant.
+4. Stripe Price IDs, checkout, portal, signed webhooks, cancellation and payment-failure handling work in test mode before live mode.
+5. Retell webhook signatures are validated, events are deduplicated, and calls are associated with the correct client.
+6. Required D1 migrations are applied. A static website deployment does not apply SQL migrations or deploy Worker code.
+7. Recording consent, access control, retention, deletion and applicable privacy/legal requirements are addressed.
+8. Email delivery is tested for automatic call summaries, manually requested call details, support notifications and Trust Lab flows.
+9. The Formspree discovery form is tested with a real submission and confirmed receipt.
+10. Overage rates are not automatically charged until Stripe metering, rounding, reconciliation and billing tests are complete.
+
+Known prior issue to recheck against current source: a portal request reported `D1_ERROR: no such table: avr_addon_orders`. Inspect Worker queries, frontend calls and migrations before adding or changing a table.
+
+## Development rules
+
+- Always inspect the root README, this handoff, current branch, related source files and relevant migrations before making substantial changes.
+- Work in a dedicated branch. Do not silently commit feature work to `main`.
+- Inspect diffs and test changes before proposing a merge. Never merge to `main` without the user's explicit approval.
+- Keep commits focused and descriptive; report branch, PR and commit details.
+- Preserve the GitHub Pages root layout, CNAME, navigation, Client Login, SEO, Formspree, Trust Lab, partner workflows and existing working functionality.
+- Use GitHub Pages for static hosting and Cloudflare Workers/D1 for backend needs. No Render.
 - Never commit secrets or customer data.
+- Do not claim a feature is deployed, healthy, billable or production-ready unless the relevant behavior has been verified.
 
-## Open questions — do not guess
-- Exact challenge reward at each difficulty (points, badge, coupon or other).
-- Overage rates are set (Starter $0.49 / Growth $0.39 / Pro $0.29 per minute); rounding/billing policy remains to be confirmed.
-- Whether Clerk has since been migrated to production.
-- Which candidate UI/challenge branches have been merged or approved since this snapshot.
+## Open launch work
 
-
-## 2026-11-08 visual refresh
-A new visual direction is being introduced on branch `design/academic-lime-sky-refresh`:
-- White/light backgrounds with dark navy body text for legibility.
-- Lime green as the restrained brand accent; sky blue for primary action buttons.
-- Academic/editorial design principles: strong typographic hierarchy, generous whitespace, consistent grid, restrained color, clear focus states and reduced-motion support.
-- Homepage hero uses a custom vector illustration of an interconnected world and AI neural network (`assets/ai-world-network.svg`).
-- Brand icon and favicon use a simple, scalable connected-globe/network symbol (`assets/brand-symbol.svg`); existing icon paths are updated to match.
-- The top “ONBOARDING OPEN” banner is removed from the main public pages; the Client Login link is exposed in the header. Onboarding messaging remains in the homepage receptionist speech bubble.
-- Main homepage and shared CSS were updated; validate every page and mobile navigation before merging. Changes are in a branch and have not been merged to `main`.
-
-
-## 2026-11-09 — user-supplied Earth and receptionist artwork
-- User confirmed the assets are in the root repository's `assets/` folder on `main`.
-- Exact files: `assets/Asistente virtual con headset futurista.png` (receptionist) and `assets/Conexión global_ Tierra e inteligencia artificial.png` (Earth/AI background).
-- A focused visual update is being prepared on branch `design/earth-receptionist-hero-onboarding`: use the new receptionist portrait in the homepage hero, Earth artwork as the hero background, preserve the existing dialogue and place it beside the avatar's face, and add a small receptionist companion beside the discovery form.
-- Preserve the Formspree action `https://formspree.io/f/mrppjqdb`, all form fields, existing Client Login/navigation, and responsive behavior. This branch must be reviewed before merge; main remains untouched.
-
-
-## 2026-11-09 — accessible lime and sky-blue typography
-- User requested bright lime-green and light-blue text throughout the website, with every text element remaining legible.
-- Added a shared typography color system to styles.css: vivid lime and pale sky blue on dark/navy surfaces; darker, high-contrast lime and blue variants on white/light surfaces; improved muted text contrast and visible keyboard focus.
-- Added homepage-specific overrides to homepage-refresh.css so the Earth-at-night hero retains bright lime/sky-blue accents and light sections keep readable text.
-- Committed on design/earth-receptionist-hero-onboarding; not merged to main. Review desktop and mobile before merge.
-
-
-## 2026-11-09 homepage model and contrast update (working branch)
-- New user direction: put the newly added `assets/Asistente virtual con headset futurista.png` model in the homepage hero; move the previous `AIVirtualReceptionist_Hero_Frame_LeftFacing.png` model into the global-language section as a supporting brand portrait.
-- Keep the Earth-at-night/AI network background and existing hero speech bubble; no onboarding promotion in the top navigation/header.
-- Improve header contrast with a deep navy header, bright readable sky-blue navigation, lime-green brand accent and a clearly visible lime Client Login action. Keep the Get Started action on desktop/tablet; hide it on narrow mobile widths to protect Client Login and menu visibility.
-- Improve contrast for hero copy, stats, language section and supporting homepage panels. Add responsive menu behavior for tablet/mobile and a supporting model portrait in the language section.
-- Implementation branch: `design/hero-model-swap-readable-contrast`. Not merged into `main`. Verify the new model asset path in browser preview and inspect mobile/tablet layout before merging.
-
-
-## 2026-11-09 challenge expansion update (working branch)
-- The Receptionist Architect now contains 45 scenarios (15 each for Starter, Pro and Expert), with five questions per run and three difficulty tiers.
-- Each difficulty has a distinct reward tier: Starter 10% / CALLSMART10, Pro 15% / CALLSMART15, Expert 20% / CALLSMART20. The page explicitly states that the matching Stripe promotion must be activated before a code can redeem; these codes are not confirmed as configured in Stripe.
-- Replays avoid the immediately previous five questions at the same difficulty when browser session storage is available; graceful fallback remains randomized if storage is unavailable.
-- Homepage challenge card now advertises the 45-scenario bank and three difficulty levels.
-- Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main`.
-
-
-## 2026-11-09 — corrected model placement per user's clarification
-- User's exact layout direction: `Asistente virtual con headset futurista` belongs in the upper-left of the homepage hero at the original hero scale; `AIVirtualReceptionist_Hero_Frame_LeftFacing` belongs elsewhere, specifically beside the intake/discovery form.
-- Corrected `index.html`: keep the new model as the hero image; remove the old model from the global-language section.
-- Corrected `get-started.html`: replace the small discovery-form companion with the old model asset. Preserve the existing Formspree endpoint and form structure.
-- Corrected `homepage-refresh.css`: restore the original hero image sizing (desktop max-width 540px / max-height 650px; original tablet/mobile sizing) while keeping the portrait aligned upper-left. Retain the speech bubble treatment beside the model.
-- This correction is on `design/hero-model-swap-readable-contrast`, not merged into `main`.
-
-
-## 2026-11-09 — AI globe brand identity refresh
-- Replaced the old flat white globe/network badge with a dark navy rounded-square connected-globe mark, bright sky-blue longitude/network lines, lime neural nodes and a headset/microphone silhouette.
-- Updated `assets/favicon.svg`, `assets/brand-symbol.svg` and `assets/ai-receptionist-icon.svg` to use the same scalable vector identity.
-- Updated root public-page headers to use the shared AI receptionist logo asset rather than the older inline phone/chat symbol. The homepage favicon now points directly to `assets/favicon.svg`; removed the portrait image as the Apple touch icon so the receptionist photo is no longer used as a browser/app icon.
-- Implemented on `design/hero-model-swap-readable-contrast`; not merged into `main` and not deployed.
+- Verify the Formspree native POST with an actual demo request and confirm receipt.
+- Verify current Clerk production configuration.
+- Run customer/admin authorization and tenant-isolation tests.
+- Verify Stripe checkout, customer portal, webhooks and cancellation; complete the overage-metering implementation before enabling automatic overage charges.
+- Verify Retell agent/number sync, assignments, call events, recordings and analysis.
+- Verify call email delivery after the Star69AI template deployment.
+- Reconcile the prior `avr_addon_orders` missing-table report against current schema and Worker code.
+- Update this handoff whenever brand, architecture, implementation or launch status changes.
