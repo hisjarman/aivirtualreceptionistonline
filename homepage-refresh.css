@@ -575,3 +575,41 @@ body#top .concierge-embed iframe{display:block;flex:1 1 auto;width:100%;min-heig
 @media(max-width:700px){
   body#top .concierge-embed{right:10px;bottom:10px;width:calc(100vw - 20px);height:min(640px,calc(100dvh - 20px));border-radius:15px}
 }
+
+
+/* Make the hero receptionist's chat invitation unmistakable. */
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+  width:min(100%,390px)!important;max-width:390px!important;margin:18px auto 12px!important;
+  padding:17px 19px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  gap:9px!important;text-align:left!important;white-space:normal!important;
+  border:1px solid rgba(183,243,74,.62)!important;border-radius:18px!important;
+  background:linear-gradient(125deg,rgba(14,43,54,.97),rgba(7,25,36,.97))!important;
+  box-shadow:0 12px 36px rgba(0,0,0,.28),0 0 24px rgba(183,243,74,.12)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger:hover,
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger:focus-visible{
+  transform:translateY(-2px)!important;border-color:#c5ff58!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.36),0 0 30px rgba(183,243,74,.22)!important;
+}
+body#top .reference-hero .concierge-bubble-kicker,
+body#top .reference-hero .onboarding-speech-kicker{
+  display:block!important;color:#c5ff58!important;font:800 10px/1.2 "DM Mono",monospace!important;
+  letter-spacing:.14em!important;
+}
+body#top .reference-hero .onboarding-speech-text{
+  display:block!important;color:#f1fbff!important;font:650 15px/1.5 Inter,system-ui,sans-serif!important;
+  text-shadow:none!important;
+}
+body#top .reference-hero .concierge-bubble-hint{
+  display:inline-flex!important;align-items:center!important;gap:7px!important;margin-top:2px!important;
+  padding:8px 11px!important;border:1px solid rgba(197,255,88,.45)!important;border-radius:999px!important;
+  background:rgba(183,243,74,.1)!important;color:#d7ff8b!important;
+  font:800 10px/1.2 "DM Mono",monospace!important;letter-spacing:.1em!important;
+}
+@media(max-width:700px){
+  body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+    width:min(100%,360px)!important;margin:14px auto 10px!important;padding:14px 16px!important;
+  }
+  body#top .reference-hero .onboarding-speech-text{font-size:14px!important}
+}

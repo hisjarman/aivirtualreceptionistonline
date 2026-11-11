@@ -229,3 +229,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - The client-side and Worker-side allowlists exclude dedicated contact and identity fields; Worker-side length limits and untrusted-input handling remain in place. Visitors are warned not to put sensitive or customer data in free text.
 - `privacy.html` discloses optional Cloudflare Workers AI processing. The existing Formspree endpoint `https://formspree.io/f/mrppjqdb` remains unchanged.
 - Static source checks passed before merge. **The new Worker source has not yet been deployed to Cloudflare**, and live browser, real AI inference, mobile rendering and end-to-end Formspree submission tests remain outstanding. Do not describe the AI coach as live until the Worker is deployed and tested.
+
+
+## Hero model chat invitation visibility — 2026-11-11
+
+- New branch `feature/hero-model-chat-cta` makes the homepage hero receptionist's interactive nature explicit. The speech bubble now says the pictured receptionist is the AI and invites visitors to chat about their business, ask questions or explore capabilities.
+- The chat control is restyled as a prominent dark teal/lime bordered call-to-action card with a clear "START CHATTING WITH ME" action label, keyboard focus and hover feedback, including a compact mobile treatment.
+- Existing dialog/iframe wiring and Concierge URL are unchanged. The click opens the live Star69AI Concierge panel.
+- Awaiting branch checks/PR merge and live browser verification. The AI Discovery Coach Worker deployment is tracked separately below.
