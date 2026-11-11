@@ -30,6 +30,7 @@ const stepLabel = document.querySelector("#step-label");
 const stepPercent = document.querySelector("#step-percent");
 const errorBox = document.querySelector("#form-error");
 let currentStep = 0;
+let lastAssistantField = null;
 
 // Optional AI Discovery Coach. Only business/call-handling fields are shared;
 // contact details, business name, website, escalation contact and consent are excluded.
@@ -46,7 +47,7 @@ function buildAssistantContext(activeControl) {
   }
   const activeName = activeControl?.name || "";
   const activeAllowed = assistantSafeFields.has(activeName);
-  const activeLabel = activeAllowed ? String(activeControl.closest("label")?.innerText || activeName).replace(/\\s+/g, " ").trim().slice(0, 140) : "";
+  const activeLabel = activeAllowed ? String(activeControl.closest("label")?.innerText || activeName).replace(/\s+/g, " ").trim().slice(0, 140) : "";
   return {
     source: "Star69AI discovery form",
     step: "Step " + (currentStep + 1) + " of " + fields.length,
@@ -64,7 +65,7 @@ if (assistantToggle && assistantPanel && assistantClose) {
     assistantPanel.hidden = !open;
     assistantToggle.setAttribute("aria-expanded", String(open));
     if (open) {
-      sendAssistantContext(document.activeElement?.form === form ? document.activeElement : null);
+      sendAssistantContext(lastAssistantField);
       assistantClose.focus();
     } else assistantToggle.focus();
   };
@@ -74,9 +75,9 @@ if (assistantToggle && assistantPanel && assistantClose) {
   document.addEventListener("keydown", event => {
     if (event.key === "Escape" && !assistantPanel.hidden) setAssistantOpen(false);
   });
-  form.addEventListener("input", event => sendAssistantContext(event.target));
-  form.addEventListener("change", event => sendAssistantContext(event.target));
-  form.addEventListener("focusin", event => sendAssistantContext(event.target));
+  form.addEventListener("input", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
+  form.addEventListener("change", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
+  form.addEventListener("focusin", event => { lastAssistantField = event.target; sendAssistantContext(event.target); });
 }
 
 function showStep(index) {
@@ -90,6 +91,7 @@ function showStep(index) {
   stepLabel.textContent = `STEP ${currentStep + 1} OF ${fields.length}`;
   stepPercent.textContent = pct + "%";
   errorBox.hidden = true;
+  sendAssistantContext(lastAssistantField);
 }
 function validateStep() {
   const controls = [...fields[currentStep].querySelectorAll("input,select,textarea")];
