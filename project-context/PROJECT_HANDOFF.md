@@ -430,3 +430,5 @@ Known prior issue to recheck against current source: a portal request reported `
 - CSS changes are appended as a scoped homepage-only override in `homepage-refresh.css`; no global styles or other pages are changed.
 - Source checks: confirm a single hero lead form, exact existing Formspree endpoint, required contact fields, industry selector, honeypot, and preservation of the existing three-step intake form/Discovery Coach/Concierge iframe and hero video. Browser visual testing, keyboard/accessibility review and live Formspree delivery testing remain outstanding.
 - This is a proposal branch only. Do not merge to `main` or claim production deployment until the user approves the pull request and GitHub Pages deployment succeeds.
+
+- Follow-up responsive refinement: moved the existing YouTube demo out of the hero copy and into its own section immediately below the hero. This keeps the short lead form visible before the demo on narrow/mobile layouts while retaining the same video URL and player permissions.
