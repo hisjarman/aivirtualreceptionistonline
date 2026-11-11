@@ -41,7 +41,7 @@ The public website is a static site published from the repository root through G
 - Root HTML/CSS/JavaScript — public marketing website and content.
 - `client/` — customer portal frontend.
 - `admin/` — agency administration frontend.
-- `cloudflare/platform-worker.js` — customer/admin API, authentication, billing and Retell integration.
+- `cloudflare/platform-worker.js` — customer/admin API, authentication, billing and voice-provider integration.
 - `cloudflare/trust-lab-worker.js` — separate Trust Lab, contact, newsletter and partner workflows.
 - `cloudflare/schema.sql` and `cloudflare/migrations/` — D1 schema and migrations.
 - `docs/` — implementation notes and technical documentation.
@@ -55,7 +55,7 @@ The public website is a static site published from the repository root through G
 | Cloudflare Workers | Runs the API and server-side integrations |
 | Cloudflare D1 | Stores application, customer, call, support and Trust Lab data |
 | Clerk | Customer and administrator authentication; authorization is also enforced server-side |
-| Retell AI | Voice agents, phone numbers, call events and call analysis |
+| Voice AI provider | Configured voice agents, phone numbers, call events and call analysis |
 | Stripe | Subscription checkout, customer billing portal and webhook-driven subscription state |
 | Formspree | Receives the public demo/discovery form |
 | Resend | Sends branded transactional emails from the verified Star69AI domain |
@@ -98,7 +98,7 @@ Before onboarding paying customers, verify:
 - Worker secrets and allowed origins are configured in Cloudflare.
 - Admin access and customer-to-customer data isolation are enforced server-side.
 - Stripe products, price IDs, customer portal settings and signed webhooks are configured and tested.
-- Retell webhooks validate signatures, deduplicate events and associate calls with the correct customer.
+- Voice-provider webhooks validate signatures, deduplicate events and associate calls with the correct customer.
 - D1 migrations required by the deployed Worker have been applied.
 - Recording consent, access, retention, deletion and applicable privacy obligations are addressed.
 - Automatic usage/overage billing is not enabled or advertised as automatic until the metering implementation is complete and tested.
