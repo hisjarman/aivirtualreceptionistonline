@@ -101,3 +101,26 @@
   #start .discovery-assistant-panel--inline .discovery-assistant-privacy{font-size:11px;line-height:1.45}
   #start .form-panel{padding:20px 16px}
 }
+
+/* 2026-11-11: Give the embedded Discovery Coach enough vertical room for the full conversation. */
+#start .discovery-assistant-panel--inline{
+  height:clamp(760px,88vh,940px)!important;
+  min-height:760px!important;
+}
+#start .discovery-assistant-panel--inline iframe{
+  flex:1 1 0!important;
+  height:100%!important;
+  min-height:0!important;
+}
+@media(max-width:900px){
+  #start .discovery-assistant-panel--inline{
+    height:760px!important;
+    min-height:760px!important;
+  }
+}
+@media(max-width:650px){
+  #start .discovery-assistant-panel--inline{
+    height:700px!important;
+    min-height:700px!important;
+  }
+}

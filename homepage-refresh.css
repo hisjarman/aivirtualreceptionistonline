@@ -707,3 +707,45 @@ body#top .concierge-embed{
   }
   body#top .concierge-embed{left:10px!important;right:10px!important;bottom:10px!important;width:auto!important;}
 }
+
+
+/* 2026-11-11: Open the homepage Concierge inline directly beneath the receptionist. */
+body#top .reference-hero .hero-model-column{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:flex-start!important;gap:0!important;height:auto!important;min-height:0!important;
+  max-height:none!important;overflow:visible!important;
+}
+body#top .reference-hero .hero-model-image{
+  display:block!important;flex:0 0 auto!important;margin:0 auto!important;
+}
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+  position:relative!important;inset:auto!important;flex:0 0 auto!important;
+  margin:10px auto 12px!important;
+}
+body#top .concierge-embed{
+  position:relative!important;inset:auto!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;z-index:5!important;
+  display:flex;flex:0 0 auto!important;flex-direction:column!important;
+  width:min(100%,440px)!important;height:clamp(440px,62vh,560px)!important;
+  max-height:620px!important;margin:0 auto 14px!important;
+  overflow:hidden!important;border:1px solid rgba(143,232,255,.42)!important;
+  border-radius:16px!important;background:#07131d!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.34),0 0 24px rgba(39,174,220,.14)!important;
+}
+body#top .concierge-embed[hidden]{display:none!important}
+body#top .concierge-embed iframe{width:100%!important;min-height:0!important;flex:1 1 auto!important}
+body#top .reference-hero .hero-model-caption{position:relative!important;inset:auto!important;margin:0 auto!important}
+@media(max-width:700px){
+  body#top .reference-hero .hero-model-column{
+    width:100%!important;max-width:100%!important;min-height:0!important;max-height:none!important;
+    align-items:stretch!important;
+  }
+  body#top .reference-hero .hero-model-image{width:min(78vw,330px)!important;max-height:360px!important;align-self:center!important}
+  body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+    width:min(100%,360px)!important;max-width:360px!important;align-self:center!important;
+  }
+  body#top .concierge-embed{
+    width:100%!important;height:min(560px,68dvh)!important;min-height:420px!important;
+    max-height:560px!important;margin-bottom:16px!important;
+  }
+}
