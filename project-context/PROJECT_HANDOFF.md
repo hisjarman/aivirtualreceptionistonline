@@ -409,3 +409,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Desktop panel now uses a 760px minimum with an 88vh preferred height and 940px maximum. Tablet uses 760px; mobile uses 700px. The iframe is explicitly allowed to flex and fill the remaining panel height.
 - The Concierge Worker iframe URL, internal Worker UI, conversation endpoint, contextual form-sharing behavior, privacy exclusions, and Formspree form are unchanged. No Worker, D1, auth, billing, secrets or provider configuration changed.
 - Source-level validation confirms the new sizing overrides are appended after the existing responsive rules. Browser visual testing on desktop/mobile and live conversation testing remain outstanding; do not claim the larger panel is visually verified until checked in a browser.
+
+
+## Homepage Concierge window heading removal — 2026-11-11
+
+- Branch: `ux/remove-concierge-window-heading`, based on the current `main` branch.
+- Removed the embedded homepage Concierge window's visible “Star69AI Concierge” heading and the explanatory sentence beneath it.
+- Kept the close button, iframe, chat interface, conversation endpoint, and existing open/close behavior. The dialog now has an accessible “AI Concierge chat” label instead of referencing the removed heading.
+- Adjusted the compact header row so the close button remains aligned at the right edge.
+- No Concierge Worker, AI prompt, D1, authentication, billing, form, email, or provider configuration was changed.
+- Source-level validation: confirmed the removed heading and sentence are absent from the homepage markup and the dialog retains its close control and iframe. Browser visual verification and a live conversation test remain outstanding until the change is merged and published.
