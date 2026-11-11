@@ -13,3 +13,25 @@
 .discovery-assistant-privacy{flex:0 0 auto;margin:0;padding:9px 13px;background:#0b202d;color:#c2d5dd;font-size:10px;line-height:1.4;border-bottom:1px solid rgba(115,216,245,.16)}
 .discovery-assistant-panel iframe{display:block;flex:1 1 auto;width:100%;min-height:0;border:0;background:#07131d}
 @media(max-width:600px){.discovery-assistant-panel{right:8px;bottom:8px;width:calc(100vw - 16px);height:calc(100dvh - 16px);border-radius:14px}.discovery-assistant-toggle{width:100%;justify-content:center}}
+
+
+/* Discovery form readability pass: comfortable sizes and stronger contrast. */
+.form-panel .form-progress>div:first-child{font-size:11px!important;color:#40566a!important;letter-spacing:.08em!important;}
+.form-panel .form-title>span{font-size:11px!important;letter-spacing:.12em!important;}
+.form-panel .form-title h3{font-size:clamp(22px,2.2vw,26px)!important;line-height:1.25!important;}
+.form-panel .form-title p{font-size:14px!important;line-height:1.6!important;color:#52677a!important;}
+.form-panel label{font-size:14px!important;line-height:1.5!important;color:#243b50!important;font-weight:700!important;}
+.form-panel input:not([type=checkbox]),.form-panel textarea,.form-panel select{font-size:15px!important;line-height:1.5!important;color:#172b3d!important;padding:13px 14px!important;min-height:48px!important;border-color:#bdccd8!important;}
+.form-panel textarea{min-height:104px!important;}
+.form-panel input::placeholder,.form-panel textarea::placeholder{color:#687d8e!important;opacity:1!important;}
+.form-panel .discovery-assistant-tools p{font-size:13px!important;line-height:1.55!important;color:#d3e5ef!important;}
+.form-panel .discovery-assistant-toggle{font-size:14px!important;padding:12px 16px!important;}
+.form-panel .setup-invoice-note,.form-panel .privacy-disclosure,.form-panel .submit-note{font-size:13px!important;line-height:1.7!important;color:#344b5e!important;}
+.form-panel .privacy-disclosure strong,.form-panel .setup-invoice-note strong{font-size:14px!important;color:#1c3449!important;}
+.form-panel .privacy-disclosure p{font-size:13px!important;line-height:1.7!important;color:#40566a!important;}
+.form-panel .privacy-disclosure a{font-weight:700!important;text-decoration:underline!important;}
+.form-panel .consent{font-size:13px!important;line-height:1.6!important;color:#263e52!important;}
+.form-panel .consent input{width:18px!important;height:18px!important;flex:0 0 18px!important;margin-top:2px!important;}
+.form-panel .form-actions .button{font-size:14px!important;min-height:48px!important;}
+.form-panel .form-error,.form-panel .form-success p{font-size:14px!important;line-height:1.6!important;}
+@media(max-width:650px){.form-panel{padding:20px!important;}.form-panel label{font-size:14px!important;}.form-panel input:not([type=checkbox]),.form-panel textarea,.form-panel select{font-size:16px!important;}.form-panel .form-title h3{font-size:22px!important;}.form-panel .form-title p,.form-panel .privacy-disclosure p,.form-panel .setup-invoice-note,.form-panel .submit-note{font-size:14px!important;}}
