@@ -19,7 +19,7 @@
     <div class="hero-model-column">
       <div class="hero-model-glow" aria-hidden="true"></div>
       <img class="hero-model-image" src="./assets/Asistente%20virtual%20con%20headset%20futurista.png" alt="Star69AI wearing a futuristic headset" fetchpriority="high" decoding="async">
-      <div class="onboarding-speech" role="note" aria-label="Our AI receptionist says: We are welcoming new clients."><span class="onboarding-speech-text">We're welcoming new clients!</span></div>
+      <button class="onboarding-speech concierge-bubble-trigger" type="button" id="concierge-bubble-trigger" aria-label="Chat with the Star69AI Concierge" aria-haspopup="dialog" aria-controls="concierge-embed" aria-expanded="false"><span class="onboarding-speech-text">I can help you design a receptionist around the way your business works.</span><span class="concierge-bubble-hint">TAP TO CHAT ↗</span></button><section class="concierge-embed" id="concierge-embed" role="dialog" aria-modal="false" aria-labelledby="concierge-embed-title" hidden><div class="concierge-embed-head"><div><strong id="concierge-embed-title">Star69AI Concierge</strong><span>Ask how a managed AI receptionist could work for your business.</span></div><button class="concierge-embed-close" type="button" id="concierge-embed-close" aria-label="Close AI Concierge">×</button></div><iframe src="https://star69ai-concierge.hisjarman.workers.dev/" title="Chat with the Star69AI AI Concierge" loading="lazy" allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
       <div class="hero-model-caption"><span class="hero-live-dot"></span> YOUR AI RECEPTIONIST · ALWAYS ON</div>
     </div>
     <div class="hero-copy">
@@ -82,6 +82,23 @@
 <a class="home-path-card" href="./demos.html"><span>05 / EXPERIENCE</span><h3>Listen to demos</h3><p>Hear sample calls and explore the dashboard preview.</p><b>See demos ↗</b></a>
 <a class="home-path-card" href="./insights/"><span>06 / KNOWLEDGE</span><h3>Insights &amp; guides</h3><p>Practical research on AI receptionists, voice technology, pricing and missed calls.</p><b>Explore the guides ↗</b></a><a class="home-path-card" href="./challenge/"><span>07 / INTERACTIVE</span><h3>The Receptionist Architect</h3><p>Explore 45 AI receptionist scenarios across three difficulty levels, test your instincts and unlock a higher reward.</p><b>Take the AI challenge ↗</b></a><a class="home-path-card" href="./get-started.html"><span>08 / NEXT STEP</span><h3>Get started</h3><p>Tell us about your business so we can prepare a tailored demo.</p><b>Request your demo ↗</b></a>
 </div></div></section></main><footer class="footer site-footer"><div class="section-wrap footer-main"><div class="footer-brand-column"><a class="brand brand-footer" href="/" aria-label="Star69AI home"><img src="./assets/star69ai-logo.svg" alt="Star69AI — Smarter Calls. Bigger Opportunity." style="display:block;width:240px;max-width:100%;height:auto;object-fit:contain"></a><p class="footer-tagline">A professionally managed AI front desk that helps businesses answer, qualify and book calls—around the clock.</p><div class="footer-social"><span>CONNECT · AUTOMATE · GROW</span></div></div><nav class="footer-column" aria-label="Explore"><h2>Explore</h2><a href="./index.html#top">Home</a><a href="./how-it-works.html">How it works</a><a href="./industries.html">Industries</a><a href="./pricing.html">Pricing</a><a href="./demos.html">Demos</a></nav><nav class="footer-column" aria-label="Resources"><h2>Resources</h2><a href="./insights/">Insights &amp; guides</a><a href="./challenge/">The Receptionist Architect</a><a href="./blog/">Saved by the AI Receptionist! stories</a><a href="./faq.html">Frequently asked questions</a><a href="./trust-lab.html">AI Trust Lab</a><a href="./partners/">Partner program</a><a href="./get-started.html#contact-us">Support &amp; contact</a></nav><nav class="footer-column" aria-label="Policies"><h2>Policies</h2><a href="./privacy.html">Privacy notice</a><a href="./terms.html">Terms of service</a><a href="./ai-compliance.html">AI compliance</a><a href="./recording-notice.html">Recording notice</a><a href="./sms-terms.html">SMS terms</a></nav><div class="footer-contact"><h2>Let's talk</h2><p>Have a question or want to see what an AI receptionist could do for your business?</p><a class="footer-contact-link" href="./get-started.html#contact-us">Contact our team <span>↗</span></a><a class="footer-email" href="mailto:support@star69ai.com">support@star69ai.com</a></div></div><div class="section-wrap footer-bottom"><span>© <span id="year"></span> Star69AI.com. All rights reserved.</span><span class="footer-operator">A service operated by SIMIAPP CLOUD.</span><span class="footer-bottom-links"><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a></span></div><div class="section-wrap footer-disclaimer">The $99 one-time setup fee is invoiced separately. Monthly service, included minutes and any usage-based charges are confirmed in your selected plan. Features depend on the selected platform, integrations and configuration.</div></footer>
+
+<script>
+(() => {
+  const trigger = document.getElementById("concierge-bubble-trigger");
+  const panel = document.getElementById("concierge-embed");
+  const close = document.getElementById("concierge-embed-close");
+  if (!trigger || !panel || !close) return;
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    trigger.setAttribute("aria-expanded", String(open));
+    if (open) close.focus(); else trigger.focus();
+  };
+  trigger.addEventListener("click", () => setOpen(panel.hidden));
+  close.addEventListener("click", () => setOpen(false));
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !panel.hidden) setOpen(false); });
+})();
+</script>
 <script defer src="./app.js"></script><script defer src="./story-series.js"></script><script defer src="./experience.js"></script>
 <script>
 (() => {
