@@ -197,3 +197,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - PR #75 was retargeted to `main` but GitHub reported a content conflict because the Concierge Worker source was independently added on both branches. Its homepage/Worker changes were transplanted to `feature/concierge-chat-homepage-merge`, created from the post-PR-74 `main` commit, to preserve the full-width branded header and chat-only main frame while retaining the homepage click-to-chat implementation.
 - The replacement branch carries the current full-width Concierge Worker, homepage bubble/panel integration, responsive panel styles, and this handoff. PR #75 remains unmerged until the replacement PR is reviewed/merged.
 - Latest Worker deployment ID for the full-width header/chat-only frame: `a3517580524a4825aaa36d259e9f8641` (2026-11-11). Homepage GitHub Pages activation still requires merging the replacement PR.
+
+
+## AI-assisted discovery form coaching — implementation branch, 2026-11-11
+
+- New feature branch: `feature/ai-discovery-form-coach` (based on the post-PR-76 `main` commit).
+- Adds an optional AI Discovery Coach panel to `get-started.html`, using the existing `star69ai-concierge` Worker UI and chat endpoint.
+- The form page shares a limited allowlist of business/call-handling fields with the embedded Concierge: industry, service area, services, call volume, hours, caller tasks, FAQs, recording/transcription preference, outbound AI preference, SMS preference, phone setup and additional notes. It sends the active field label/value plus current step so the AI can offer contextual examples while the visitor types.
+- Contact name, email, phone, business name, website, human escalation contact and privacy-consent choice are excluded from the context payload. The UI explains what is shared and warns visitors not to enter sensitive/customer data.
+- Worker independently re-applies the field allowlist and length limits before adding the form context to the model prompt. Visitor-provided values are explicitly treated as untrusted data, not instructions.
+- The public form continues to submit natively to Formspree `https://formspree.io/f/mrppjqdb`; the AI helper does not submit the form or alter the user's answers.
+- This is an implementation branch only. No Worker deployment, Formspree configuration change, D1 change or merge to `main` has been performed. Test privacy behavior, mobile layout, contextual suggestions and form submission before merge/deploy.
