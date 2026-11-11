@@ -180,3 +180,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - Updated Concierge Worker deployed successfully to Cloudflare Worker `star69ai-concierge` on 2026-11-11 (deployment ID `50dc3138a93d4ce8b372ef044a0b912d`). The existing AI and D1 bindings were preserved; Cloudflare accepted the module upload with no validation errors.
 - GitHub changes are on `feature/concierge-hero-chat-launch`, based on the still-open PR #74 branch. The homepage iframe and styling are not live on GitHub Pages until the dependent PR is merged. No merge to `main` is performed.
 - Browser verification of the homepage iframe, live chat submission, and responsive layout remains required; the tool environment previously blocked direct requests to the Worker hostname.
+
+
+## Concierge full-width header and chat-only frame — 2026-11-11
+
+- Reworked the Concierge page so the Star69AI logo, Concierge title, descriptor, online status, and receptionist model share one full-width branded header. The model is positioned as a small visual at the upper-right of that header, not in a separate column or chat content area.
+- Removed the split model/chat workspace. The conversation history now fills the main frame below the banner, and the message composer remains anchored at the bottom of that chat frame.
+- Responsive header rules shrink the logo and model on mobile while preserving the full-height chat and composer.
+- Change committed to `feature/concierge-hero-chat-launch`; PR #75 remains open and depends on PR #74. No GitHub Pages merge performed.
