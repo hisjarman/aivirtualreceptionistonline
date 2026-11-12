@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14252d"><meta name="color-scheme" content="dark"><meta name="robots" content="noindex,nofollow">
+<title>Partner Center | Star69AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./partner-portal.css">
+</head>
+<body>
+<header class="pp-top"><a href="../" aria-label="Star69AI home"><img src="../assets/star69ai-logo.png" alt="Star69AI"></a><div class="pp-top-right"><a href="../partners/">Partner program</a><span id="pp-session">Checking sign-in…</span><div id="pp-user-button" hidden></div></div></header>
+<main class="pp-shell">
+<section class="pp-intro"><div><div class="pp-kicker">STAR69AI · PARTNER CENTER</div><h1>Your introductions.<br><em>Your recurring rewards.</em></h1><p>Track the businesses you introduce, see subscription commissions as they are earned, and access your personal referral link.</p></div><div class="pp-status" id="pp-status">Checking your partner account…</div></section>
+<section class="pp-auth" id="pp-auth"><div><h2 id="pp-auth-title">Sign in to your partner account</h2><p id="pp-auth-copy">Use the verified email address you provided with your approved partner application.</p></div><div class="pp-auth-actions" id="pp-auth-actions"><button id="pp-sign-in" class="pp-primary" type="button">Sign in</button><button id="pp-sign-up" class="pp-secondary" type="button">Create account</button></div></section>
+<section id="pp-not-approved" class="pp-panel" hidden><h2>Partner access is not active yet</h2><p>Your partner dashboard becomes available after your application is approved. Make sure you're signed in with the same verified email address used on your application.</p><a class="pp-link" href="../partners/#apply">View partner application ↗</a></section>
+<section id="pp-dashboard" hidden>
+<div class="pp-link-card"><div><div class="pp-kicker">YOUR PERSONAL REFERRAL LINK</div><p>Share this link with businesses that may need a managed AI receptionist.</p><div class="pp-link-row"><input id="pp-referral-link" readonly aria-label="Your referral link"><button id="pp-copy-link" type="button">Copy link</button></div><small id="pp-copy-status" aria-live="polite">Referrals are attributed for 90 days after a tracked click.</small></div><div class="pp-code"><span>PARTNER CODE</span><strong id="pp-code">—</strong></div></div>
+<div class="pp-stats">
+<article><span>TRACKED CLICKS</span><strong id="pp-clicks">0</strong></article>
+<article><span>REFERRED LEADS</span><strong id="pp-leads">0</strong></article>
+<article><span>PAYING CUSTOMERS</span><strong id="pp-customers">0</strong></article>
+<article><span>COMMISSION PENDING</span><strong id="pp-pending">$0.00</strong></article>
+<article><span>COMMISSION PAID</span><strong id="pp-paid">$0.00</strong></article>
+</div>
+<div class="pp-grid">
+<section class="pp-panel"><div class="pp-panel-head"><div><div class="pp-kicker">REFERRAL ACTIVITY</div><h2>Introduced businesses</h2></div><span id="pp-referral-count">0</span></div><div class="pp-table-wrap"><table><thead><tr><th>Business</th><th>Status</th><th>Referred</th></tr></thead><tbody id="pp-referrals"><tr><td colspan="3">No referrals recorded yet.</td></tr></tbody></table></div></section>
+<section class="pp-panel"><div class="pp-panel-head"><div><div class="pp-kicker">COMMISSION HISTORY</div><h2>Subscription rewards</h2></div></div><div class="pp-table-wrap"><table><thead><tr><th>Customer</th><th>Commission</th><th>Status</th></tr></thead><tbody id="pp-commissions"><tr><td colspan="3">No commissions recorded yet.</td></tr></tbody></table></div><p class="pp-note">Commissions are based on eligible subscription payments actually collected. Each commission is held for 30 days for payment validation. Payouts are reviewed monthly; the minimum payout balance is $50.</p></section>
+</div>
+<section class="pp-panel pp-tools"><div><div class="pp-kicker">PARTNER TOOLKIT</div><h2>Make the introduction easy</h2><p>Star69AI builds, configures, tests and maintains the receptionist. You introduce the opportunity; our team handles the technical work.</p></div><div class="pp-tool-links"><a href="../partners/#how">How the program works ↗</a><a href="../partners/#commission">Commission structure ↗</a><a href="mailto:support@star69ai.com?subject=Star69AI%20partner%20support">Partner support ↗</a></div></section>
+</section>
+</main>
+<script defer crossorigin="anonymous" src="https://clerk.star69ai.com/npm/@clerk/ui@1/dist/ui.browser.js"></script>
+<script defer crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsuc3RhcjY5YWkuY29tJA" src="https://clerk.star69ai.com/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
+<script defer src="./partner-portal.js"></script>
+</body></html>
