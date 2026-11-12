@@ -575,3 +575,16 @@ Known prior issue to recheck against current source: a portal request reported `
 - The partner dashboard reports the effective current commission percentage and counts currently active/trialing referred subscriptions as paying customers; lifetime conversion remains visible in referral activity.
 - The public application page now describes first-party Partner Center activation and no longer refers to manual enrollment in an external affiliate system.
 - PR #102 is open and currently reports mergeable. It remains unmerged. No production migration, Worker deployment, Stripe webhook configuration change or GitHub Pages publication has been performed.
+
+
+## Partner Center production activation — 2026-11-11
+
+- PR #102 was merged into `main` with squash merge commit `28d3e85228cbcc46fe157f5814ed04c04aeffb06`.
+- Production D1 migration `cloudflare/migrations/20261111_partner_attribution.sql` was applied successfully to the existing `avr-trust-lab` database (`6cf68b12-2aa8-4ed4-9f92-8a7824520d1a`). Verification confirmed `affiliate_applications.partner_code`, `avr_customers.affiliate_partner_id`, and all three `partner_clicks`, `partner_referrals`, and `partner_commissions` tables/indexes exist.
+- Before the migration, a D1 Time Travel bookmark was recorded: `000000c3-00000004-00005121-a4bb5bb1b8aac84fabc15375e2f5d714`. No existing customer or partner application rows were rewritten by the migration; it added schema only.
+- Updated `cloudflare/trust-lab-worker.js` was uploaded to the existing `avr-trust-lab-api` Worker using the content-only endpoint, preserving its existing settings/bindings. Cloudflare reported successful upload/deployment, version tag `e203a9fd00194096817ae0455c2599dc`, deployment ID `85b73614237a4e51864a9fdd213fa20e`, and entry point `worker.js`.
+- Runtime HTTP health check and browser sign-in/referral-flow testing could not be completed in this session; do not claim those tests passed. Cloudflare's API confirmed the Worker upload succeeded.
+- **Platform Worker deployment is intentionally blocked pending Stripe secrets.** The existing `avr-platform-api` settings currently have no `STRIPE_SECRET_KEY` or `STRIPE_WEBHOOK_SECRET` bindings, while the repository's platform Worker code requires both. Do not deploy `cloudflare/platform-worker.js` until both are added as Worker secrets in Cloudflare. Do not ask the user to paste secret values into chat.
+- After adding those two secrets, deploy the merged `cloudflare/platform-worker.js` to `avr-platform-api`, then confirm the existing Stripe webhook endpoint subscribes to `invoice.payment_succeeded`. Stripe webhook configuration has not been changed.
+- GitHub Pages is configured to publish from the repository's main branch; the merge is now in `main`. A live browser/page verification was not available during this session.
+- Systeme.io is not required for this partner program. Legacy `systeme_*` columns remain in the existing D1 table for backward compatibility but are not used by the new first-party tracking flow.
