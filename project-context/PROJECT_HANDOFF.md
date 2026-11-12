@@ -479,3 +479,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Rejected requests now return a short reference ID, HTTP provider status and sanitized provider error code. The client portal displays the reference and provider code so a support investigation can correlate the request with Worker logs; no provider response body, credentials, transcript or recipient address is exposed.
 - Resend domain status was checked through the connected Resend account on 2026-11-11: `star69ai.com` was verified and sending was enabled. This does not prove that the sender identity, recipient or each message payload is accepted.
 - Validation still required: JavaScript syntax checks, deploy the updated `avr-platform-api` Worker, then send call details twice to the same recipient and confirm both requests can be accepted. Inspect Worker logs using the displayed reference ID if Resend rejects a request. No production Worker deployment is performed by this branch/PR.
+
+## Candy-popsicle palette and readability refresh — 2026-11-12
+
+- Working branch: `design/candy-popsicle-palette-readability`, based on current `main`.
+- User clarified the desired brand mood: appetizing candy and ice-cream colors, especially a bright lime-popsicle green (not the prior dull/olive green), while making text easy to read.
+- Added a shared color foundation to `styles.css`: lime popsicle, strawberry, raspberry, orange sherbet, blueberry, vanilla cream, and deep plum/ink. Body copy and muted text use dark plum/berry neutrals for contrast; lime is reserved for accents and calls to action.
+- Applied a matching homepage treatment in `homepage-refresh.css`: warm vanilla/strawberry surfaces, rich plum navigation/footer, blueberry and berry accents, readable dark hero copy, and lime-popsicle action buttons.
+- Applied matching high-contrast candy accents to `portal.css`, keeping the client portal dark and professional with cream-white text, lime controls, strawberry/blueberry accents, and cream form fields.
+- This is a CSS-only proposal. No HTML structure, copy, forms, endpoints, authentication, billing, Worker code, or SEO metadata changed. No merge or production deployment has been performed.
+- Required QA before merge: inspect homepage, pricing, discovery form, and client portal at desktop/tablet/mobile sizes; verify contrast for normal and muted text, button states, form placeholders, navigation, footer, and status badges. Confirm no page-specific CSS overrides reintroduce low-contrast text or the previous green.
