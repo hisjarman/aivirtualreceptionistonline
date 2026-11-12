@@ -135,13 +135,14 @@ async function handlePartnerLead(request,env,origin){
     if(existingCustomer)return json({recorded:false},200,origin,env);
     const now=Date.now(),createdAt=new Date(now).toISOString(),expiresAt=new Date(now+90*86400000).toISOString();
     let clickId=String(p.clickId||"").trim(),click=null;
-    if(clickId)click=await env.DB.prepare("SELECT click_id FROM partner_clicks WHERE click_id=? AND affiliate_application_id=? AND expires_at>=?").bind(clickId,partner.id,createdAt).first();
+    if(clickId)click=await env.DB.prepare("SELECT click_id,expires_at FROM partner_clicks WHERE click_id=? AND affiliate_application_id=? AND expires_at>=?").bind(clickId,partner.id,createdAt).first();
     if(!click){
       clickId=crypto.randomUUID();
       await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,ip_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?)").bind(clickId,partner.id,String(p.landingPath||"/get-started.html").slice(0,300),null,ipHash,createdAt,expiresAt).run();
     }
     const leadName=String(p.name||"").trim().slice(0,120)||null,businessName=String(p.business||"").trim().slice(0,160)||null;
-    await env.DB.prepare("INSERT OR IGNORE INTO partner_referrals(id,affiliate_application_id,click_id,lead_email,lead_name,business_name,ip_hash,lead_status,created_at,attribution_expires_at) VALUES(?,?,?,?,?,?,?,'lead',?,?)").bind(crypto.randomUUID(),partner.id,clickId,email,leadName,businessName,ipHash,createdAt,expiresAt).run();
+    const attributionExpiresAt=click?.expires_at||expiresAt;
+    await env.DB.prepare("INSERT OR IGNORE INTO partner_referrals(id,affiliate_application_id,click_id,lead_email,lead_name,business_name,ip_hash,lead_status,created_at,attribution_expires_at) VALUES(?,?,?,?,?,?,?,'lead',?,?)").bind(crypto.randomUUID(),partner.id,clickId,email,leadName,businessName,ipHash,createdAt,attributionExpiresAt).run();
     return json({recorded:true},201,origin,env);
   }catch(e){console.error("partner_lead_capture_failed",e?.message||e);return json({recorded:false,error:"partner_tracking_unavailable"},503,origin,env);}
 }
