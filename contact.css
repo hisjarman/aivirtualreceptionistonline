@@ -38,3 +38,87 @@
 .form-panel .privacy-disclosure a{color:#075b86!important}
 .form-panel .form-actions .button-quiet{background:#edf3f7!important;color:#27445b!important;border:1px solid #c7d6e1!important}
 @media(max-width:650px){.form-panel .needs-grid{grid-template-columns:1fr}.form-panel .needs-fieldset{padding:13px}.form-panel .need-option{padding:11px}.form-panel .needs-fieldset legend{font-size:13px}.form-panel .needs-fieldset legend span{display:block;margin-top:2px}}
+
+
+/* Contact section contrast repair — align with the current light Star69AI site theme. */
+.contact-section{
+  background:#f3f8fb!important;
+  color:#24384a!important;
+}
+.contact-section .section-kicker{
+  color:#4d7f12!important;
+}
+.contact-section h2{
+  color:#14283d!important;
+}
+.contact-section h2 em{
+  color:#548d12!important;
+  font-style:normal;
+}
+.contact-section p{
+  color:#52677a!important;
+}
+.contact-section .contact-email-card,
+.contact-section .contact-form-card{
+  background:#fff!important;
+  border:1px solid #d8e5ed!important;
+  box-shadow:0 12px 32px rgba(20,55,82,.07);
+  color:#24384a!important;
+}
+.contact-section .contact-email-card>span{
+  display:block;
+  color:#52677a!important;
+  font:700 10px 'DM Mono',monospace;
+  letter-spacing:.14em;
+}
+.contact-section .contact-email-card a{
+  color:#0878bd!important;
+  overflow-wrap:anywhere;
+}
+.contact-section .contact-email-card small,
+.contact-section .contact-form-card form>small{
+  color:#5d7182!important;
+  line-height:1.65;
+}
+.contact-section .contact-form-card h3{
+  color:#14283d!important;
+}
+.contact-section .contact-form-card label{
+  color:#263d50!important;
+}
+.contact-section .contact-form-card label small{
+  color:#5d7182!important;
+  line-height:1.55;
+}
+.contact-section .contact-form-card input:not([type=checkbox]),
+.contact-section .contact-form-card textarea{
+  background:#fff!important;
+  color:#172b3d!important;
+  border:1px solid #b9cad7!important;
+}
+.contact-section .contact-form-card input::placeholder,
+.contact-section .contact-form-card textarea::placeholder{
+  color:#64798b!important;
+  opacity:1;
+}
+.contact-section .contact-form-card input:focus,
+.contact-section .contact-form-card textarea:focus{
+  border-color:#168fe0!important;
+  box-shadow:0 0 0 3px rgba(22,143,224,.14)!important;
+  outline:none;
+}
+.contact-section .contact-form-card .contact-status{
+  color:#286a13!important;
+}
+.contact-section .contact-form-card .meeting-option b{
+  color:#263d50!important;
+}
+.contact-section .contact-form-card .meeting-option small{
+  color:#5d7182!important;
+}
+@media(max-width:760px){
+  .contact-section{padding:58px 0!important}
+  .contact-section .contact-grid{gap:22px}
+  .contact-section .contact-email-card,
+  .contact-section .contact-form-card{padding:20px}
+}
