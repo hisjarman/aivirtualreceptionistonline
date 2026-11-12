@@ -17,3 +17,5 @@
 .pa-table-wrap button{padding:8px 10px;border:1px solid #70e1cb;border-radius:7px;background:#70e1cb;color:#142b32;font:700 10px 'DM Sans',sans-serif;cursor:pointer}
 .pa-table-wrap button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:750px){.pa-ledger-head{align-items:flex-start;flex-direction:column}.pa-ledger-head button{width:100%}}
+
+.pa-table-wrap button.pa-reverse{margin-left:5px;border:1px solid rgba(255,164,140,.45);background:rgba(145,65,53,.14);color:#ffc2ad}
