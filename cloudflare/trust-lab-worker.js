@@ -159,7 +159,7 @@ async function handlePartnerDashboard(request,env,origin){
     }
     const [clicks,leadStats,commissionStats,referrals,commissions]=await Promise.all([
       env.DB.prepare("SELECT COUNT(*) AS total FROM partner_clicks WHERE affiliate_application_id=?").bind(partner.id).first(),
-      env.DB.prepare("SELECT COUNT(*) AS leads,SUM(CASE WHEN lead_status='converted' THEN 1 ELSE 0 END) AS customers FROM partner_referrals WHERE affiliate_application_id=?").bind(partner.id).first(),
+      env.DB.prepare("SELECT COUNT(*) AS leads,SUM(CASE WHEN r.lead_status='converted' AND c.subscription_status IN ('active','trialing') THEN 1 ELSE 0 END) AS customers FROM partner_referrals r LEFT JOIN avr_customers c ON c.id=r.customer_id WHERE r.affiliate_application_id=?").bind(partner.id).first(),
       env.DB.prepare("SELECT COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount_cents ELSE 0 END),0) AS pending,COALESCE(SUM(CASE WHEN status='paid' THEN commission_amount_cents ELSE 0 END),0) AS paid FROM partner_commissions WHERE affiliate_application_id=?").bind(partner.id).first(),
       env.DB.prepare("SELECT business_name AS businessName,lead_status AS status,created_at AS createdAt,converted_at AS convertedAt FROM partner_referrals WHERE affiliate_application_id=? ORDER BY created_at DESC LIMIT 100").bind(partner.id).all(),
       env.DB.prepare("SELECT c.commission_amount_cents AS commissionAmountCents,c.currency,c.status,c.validation_until AS validationUntil,c.created_at AS createdAt,cu.business_name AS businessName FROM partner_commissions c LEFT JOIN avr_customers cu ON cu.id=c.customer_id WHERE c.affiliate_application_id=? ORDER BY c.created_at DESC LIMIT 100").bind(partner.id).all()
