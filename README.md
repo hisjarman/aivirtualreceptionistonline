@@ -109,3 +109,12 @@ See [project context and handoff](project-context/PROJECT_HANDOFF.md) for the la
 ## Intellectual property
 
 This repository contains proprietary Star69AI software and original materials. See [LICENSE](LICENSE). Third-party libraries, frameworks, services and assets remain subject to their respective terms and licenses.
+
+
+## Partner program
+
+- Public applications: [Star69AI Partner Program](https://star69ai.com/partners/).
+- Partner self-service: [Partner Center](https://star69ai.com/partner-portal/).
+- Private administration: `/partners-admin.html`.
+- First-party referral tracking and commission accounting use Cloudflare Workers/D1 and Stripe; Systeme.io is not required.
+- The partner portal source and D1 migration are under review on `feature/star69ai-partner-portal`. Referral tracking and Stripe commission processing are not production-active until the PR is approved, the D1 migration is applied, both Workers are deployed, and signed webhook tests pass.
