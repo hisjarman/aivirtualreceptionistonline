@@ -639,3 +639,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - Added the article page, Insights index card and sitemap URL. The article uses the existing Insights template and stylesheet, Article and BreadcrumbList JSON-LD, canonical/Open Graph metadata, internal related-guide links and a Star69AI managed-service CTA.
 - Article body supplied by the 2026-11-12 daily automation; the recorded draft was approximately 802 words with a 143-character meta description. The published HTML has been formatted to the current site template.
 - GitHub Pages deployment and live HTTP availability must be checked separately; a successful commit is not proof of completed deployment.
+
+
+## Legal-readiness remediation — 2026-11-12
+
+- User requested a legal audit remediation and a PDF checklist of owner actions. This work is a website-content improvement, not legal advice or a legal certification.
+- Updated privacy.html: clarified operator identity as Solomon Jarman, individual sole proprietor under the Star69AI service brand; described SIMIAPP CLOUD cautiously as the current setup-fee invoice/payment name without representing that the fictitious-firm-name filing is complete; removed the stale conditional HelloAnswer processor reference; added Resend transactional/operational email disclosure, PayPal setup-fee processing, expanded Stripe payment disclosure, YouTube privacy-enhanced embedded video, and the optional Cloudflare Workers AI Discovery Coach data flow; strengthened privacy-request and international-processing wording.
+- Updated terms.html: clarified operator identity and the boundary between website inquiry and a paid order; stated that the written order must specify renewal/cancellation, billing and usage details before paid service begins; clarified that a discovery form does not authorize recurring charges; added a privacy/data-processing section and explicitly stated that these website terms are not a DPA or BAA.
+- Updated ai-compliance.html: clarified that outbound AI calling and automated SMS require separate written scope and verification of consent, identification, permitted hours and suppression/opt-out controls; added restrictions and additional review requirements for regulated/sensitive data and healthcare deployments; explicitly does not claim HIPAA certification/compliance.
+- Updated recording-notice.html and sms-terms.html: refreshed effective dates and strengthened the written-approval and activation safeguards for recording/transcription and SMS workflows.
+- Updated sitemap lastmod dates for all five legal pages.
+- These changes do not complete the user's external obligations: Nevada/Clark County registration and licensing, attorney review, signed customer agreement/DPA/BAA as applicable, vendor account terms, live consent/recording/SMS tests, retention/deletion settings, newsletter email compliance, partner agreement/disclosures, or tax/accounting review. See the companion owner-action PDF.
+- All five legal pages and sitemap are committed directly to main under the user's request to fix what can. Live GitHub Pages deployment and end-to-end behavior remain to be verified separately.
