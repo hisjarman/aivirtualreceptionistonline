@@ -558,3 +558,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - Partner commissions are calculated only from positive, non-proration subscription invoice lines. Setup fees, usage overage, phone-number rental, carrier charges and third-party pass-through items are excluded by the current implementation and public program terms.
 - The admin payout endpoint enforces both the 30-day validation hold and the $50 minimum aggregate eligible balance. Administrators can record payout references and manually reverse commissions for refunds, chargebacks or accounting corrections.
 - The partner approval action now creates the partner code/referral link and sends a branded email with the Partner Center sign-in URL. The partner must use the same verified email address as the approved application.
+
+
+### Partner tracking privacy and anti-abuse safeguards — 2026-11-11
+
+- Public click capture is limited to 60 clicks per hashed network identifier per 10-minute window; lead capture is limited to 10 submitted leads per hashed network identifier per hour. The tables retain a one-way hash, not a readable IP address.
+- A lead's customer-conversion deadline is tied to the original qualifying click's `expires_at`, not reset for another 90 days when the form is submitted.
+- Repeated visits to a referral link are counted as clicks. A normalized email can be attributed only once (first recorded lead wins); existing Star69AI customers are excluded.
+- The Partner Center's paying-customer count includes only referred customers whose subscription status is currently active or trialing. Lifetime converted leads remain visible in the referral activity list.
+- The admin-assigned founding, growth and premier commission tiers are honored; automatic active-customer thresholds can raise the rate to 25% at 5 active referrals and 30% at 15.
