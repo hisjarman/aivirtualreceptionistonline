@@ -39,3 +39,7 @@
 .ta-locked{display:block;margin-top:20px;border-color:rgba(255,164,140,.3)}
 .ta-footnote{margin-top:28px;color:#81999d;font-size:11px;line-height:1.7}
 @media(max-width:700px){.ta-heading,.ta-toolbar{align-items:flex-start;flex-direction:column}.ta-auth{align-items:flex-start;flex-direction:column}.ta-stats{width:100%}.ta-stat{flex:1;min-width:0}.ta-controls{width:100%}.ta-controls select{flex:1;min-width:0}}
+
+/* Star69AI supplied horizontal logo in partner admin header */
+.trust-admin-body .brand-logo{display:block;width:190px;max-width:34vw;height:auto;max-height:48px;object-fit:contain;object-position:left center}
+@media(max-width:700px){.trust-admin-body .brand-logo{width:150px;max-width:42vw;max-height:42px}}
