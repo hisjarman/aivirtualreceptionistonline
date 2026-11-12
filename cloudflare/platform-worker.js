@@ -252,16 +252,17 @@ async function route(req,env){
    const plain=["Star69AI.com — Call details","Business: "+(c.business_name||"Your business"),"Caller: "+(call.from_number||"Unknown"),"Business line: "+(call.to_number||"Unknown"),"Date/time: "+date,"Direction: "+(call.direction||"Unknown"),"Status: "+(call.call_status||"Unknown"),"Duration: "+duration,"Sentiment: "+(call.user_sentiment||"Unknown"),"Disconnection: "+(call.disconnection_reason||"Unknown"),"","Summary:",call.call_summary||"No summary available.","","Transcript:",call.transcript||"No transcript available."].join("\n");
    const html="<div style=\"font-family:Arial,sans-serif;max-width:680px;margin:auto;color:#20343b\"><h2>Call details</h2><p><b>Business:</b> "+esc(c.business_name)+"</p><p><b>Caller:</b> "+esc(call.from_number)+"<br><b>Business line:</b> "+esc(call.to_number)+"<br><b>Date/time:</b> "+esc(date)+"<br><b>Direction:</b> "+esc(call.direction)+"<br><b>Status:</b> "+esc(call.call_status)+"<br><b>Duration:</b> "+esc(duration)+"<br><b>Sentiment:</b> "+esc(call.user_sentiment)+"</p><h3>Call summary</h3><p>"+esc(call.call_summary||"No summary available.")+"</p><h3>Transcript</h3><pre style=\"white-space:pre-wrap;font:14px/1.5 Arial,sans-serif;background:#f4f7f7;padding:16px;border-radius:8px\">"+esc(call.transcript||"No transcript available.")+"</pre><p style=\"font-size:12px;color:#68777c\">Sent securely from your Star69AI client portal.</p></div>";
    const emailPayload=JSON.stringify({from:resendFrom(env),to:[to],subject,html:brandEmail(html),text:plain});
-   const idempotencyKey="avr-call-details/"+call.call_id+"/"+to;
-   let sent=null,result={};
+   const idempotencyKey="avr-call-details/"+crypto.randomUUID();
+   const referenceId=crypto.randomUUID().slice(0,8).toUpperCase();
+   let sent=null,result={},providerCode="unknown";
    for(let attempt=0;attempt<2;attempt++){
     try{
      sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":idempotencyKey},body:emailPayload});
      result=await sent.json().catch(()=>({}));
      if(sent.ok)break;
      const retryable=sent.status===429||sent.status>=500;
-     const providerCode=String(result?.name||result?.code||result?.type||"unknown").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,60);
-     console.error("manual_call_email_resend_rejected",{status:sent.status,providerCode,attempt:attempt+1});
+     providerCode=String(result?.name||result?.code||result?.type||"unknown").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,60);
+     console.error("manual_call_email_resend_rejected",{referenceId,status:sent.status,providerCode,attempt:attempt+1});
      if(retryable&&attempt===0){await new Promise(resolve=>setTimeout(resolve,350));continue}
      break;
     }catch(error){
@@ -273,10 +274,9 @@ async function route(req,env){
    }
    if(!sent?.ok){
     const status=Number(sent?.status||0);
-    if(status===401||status===403)throw Error("email_sender_not_configured_check_resend");
-    if(status===429)throw Error("email_provider_rate_limited_try_again");
-    if(status>=500||status===0)throw Error("email_provider_temporarily_unavailable_try_again");
-    throw Error("email_provider_rejected_request_contact_support");
+    const error=status===401||status===403?"email_sender_not_configured_check_resend":status===429?"email_provider_rate_limited_try_again":status>=500||status===0?"email_provider_temporarily_unavailable_try_again":"email_provider_rejected_request_contact_support";
+    console.error("manual_call_email_failed",{referenceId,status,providerCode});
+    return json({error,referenceId,providerStatus:status,providerCode},status>=400&&status<600?status:502,origin,env);
    }
    return json({sent:true,emailId:result.id||null},200,origin,env);
   }

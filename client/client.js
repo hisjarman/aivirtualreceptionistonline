@@ -3,7 +3,7 @@
  const $=s=>document.querySelector(s);
  let clerk=null,customer=null,loading=false;
  function note(t,e=false){const n=$("#notice");n.textContent=t;n.classList.remove("hidden","error");if(e)n.classList.add("error")}
- async function api(path,opts={}){const token=await clerk.session?.getToken();if(!token)throw Error("Please sign in again.");const r=await fetch(API+path,{...opts,headers:{Accept:"application/json",...(opts.body?{"Content-Type":"application/json"}:{}),Authorization:"Bearer "+token,...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed ("+r.status+")");return d}
+ async function api(path,opts={}){const token=await clerk.session?.getToken();if(!token)throw Error("Please sign in again.");const r=await fetch(API+path,{...opts,headers:{Accept:"application/json",...(opts.body?{"Content-Type":"application/json"}:{}),Authorization:"Bearer "+token,...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok){const error=new Error(d.error||"Request failed ("+r.status+")");error.referenceId=d.referenceId||null;error.providerCode=d.providerCode||null;error.providerStatus=d.providerStatus||r.status;throw error}return d}
  function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
  function fmtDate(v){if(!v)return "—";const n=Number(v);const d=new Date(Number.isFinite(n)?(n>1e12?n:n*1000):v);return Number.isNaN(d.getTime())?"—":d.toLocaleString()}
  function safeHttps(v){try{const u=new URL(v);return u.protocol==="https:"?u.href:""}catch{return ""}}
@@ -51,7 +51,7 @@
      email_provider_temporarily_unavailable_try_again:"The email service could not confirm delivery. Please wait a moment and try again.",
      email_provider_rejected_request_contact_support:"The email service rejected this request. Please contact support so we can investigate."
     };
-    status.textContent=emailErrors[err.message]||err.message;button.disabled=false
+    status.textContent=(emailErrors[err.message]||err.message)+(err.referenceId?" Reference: "+err.referenceId:"")+(err.providerCode?" (provider code: "+err.providerCode+")":"");button.disabled=false
    }
   }));
  }
