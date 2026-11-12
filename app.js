@@ -263,6 +263,11 @@ form.addEventListener("submit", async event => {
   if (attribution?.partnerCode) {
     hiddenFields.partner_code = attribution.partnerCode;
     hiddenFields.partner_click_id = attribution.clickId || "";
+    for (const [name,value] of [["partner_code",hiddenFields.partner_code],["partner_click_id",hiddenFields.partner_click_id]]) {
+      let input=form.querySelector('input[type="hidden"][name="'+name+'"]');
+      if(!input){input=document.createElement("input");input.type="hidden";input.name=name;form.appendChild(input);}
+      input.value=value;
+    }
   }
   try { await capturePartnerLead(payload); } catch {}
   HTMLFormElement.prototype.submit.call(form);
