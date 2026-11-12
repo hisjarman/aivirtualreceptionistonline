@@ -432,3 +432,43 @@ body :where(.section,.capabilities,.pricing-section,.faq-section,.onboard-sectio
 body :where(.section,.capabilities,.pricing-section,.faq-section,.onboard-section,.managed-section,.dashboard-quick-preview,.story-promo,.home-paths,.form-panel,.price-card,.cap-card) :where(a:not(.button),.text-link,.price-cta){color:var(--avr-sky-on-light)!important}
 body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid #168fe0!important;outline-offset:3px!important}
 ::selection{background:#b8f34b;color:#102235}
+
+
+/* Star69AI candy-shop palette + readability foundation — 2026-11-12 */
+:root{
+  --candy-lime:#45C957;       /* watermelon-rind green */
+  --candy-strawberry:#ff6f91;
+  --candy-raspberry:#d94378;
+  --candy-orange:#ffad68;
+  --candy-blueberry:#625bd6;
+  --candy-vanilla:#fff9ed;
+  --candy-cream:#f6ead7;
+  --candy-plum:#2d1b35;
+  --candy-ink:#302037;
+  --candy-muted:#66566c;
+  --candy-border:#eadccf;
+  --ink:var(--candy-ink);
+  --muted:var(--candy-muted);
+  --teal:var(--candy-lime);
+  --teal2:#2FA947;
+  --soft:var(--candy-vanilla);
+}
+html{background:var(--candy-vanilla)}
+body{color:var(--candy-ink);background:var(--candy-vanilla)}
+p,li,dd,dt,label,legend,.muted,.subtle,.helper-text,.form-hint,.section-copy,.feature-copy,.card-copy{color:var(--candy-ink)}
+small,.text-muted,.muted,.eyebrow-copy,.field-help{color:var(--candy-muted)}
+::placeholder{color:#786a7d!important;opacity:1}
+input,select,textarea{color:var(--candy-ink)}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--candy-blueberry);outline-offset:3px}
+a:not(.button):not(.btn){color:var(--candy-raspberry)}
+a:not(.button):not(.btn):hover{color:#a9275b}
+.button,.btn,button.button,button.btn{background:var(--candy-lime);border-color:var(--candy-lime);color:var(--candy-plum);font-weight:800;box-shadow:0 8px 20px rgba(95,75,35,.12)}
+.button:hover,.btn:hover,button.button:hover,button.btn:hover{background:#A5F0A5;border-color:#A5F0A5;color:var(--candy-plum);transform:translateY(-1px)}
+.card,.panel,.surface,.form-card,.feature-card,.pricing-card,.step-card{border-color:var(--candy-border)}
+hr{border-color:var(--candy-border)}
+.badge,.pill,.tag{background:#fce3ec;color:#7b2448;border-color:#f4c4d5}
+.status-dot,.accent-dot{background:var(--candy-lime)}
+/* Keep dark brand areas rich and legible; use candy colors as accents, never body-copy colors. */
+.topbar,.site-header,.reference-topbar{background:var(--candy-plum);color:var(--candy-vanilla);border-color:#49324e}
+.topbar a,.site-header a,.reference-topbar a{color:var(--candy-vanilla)}
+.topbar a:hover,.site-header a:hover,.reference-topbar a:hover{color:var(--candy-lime)}

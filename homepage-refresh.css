@@ -1039,3 +1039,27 @@ body#top .reference-hero .hero-lead-panel{display:none!important}
  body#top .conversation-form-card .hero-lead-form{grid-template-columns:1fr}
  body#top .conversation-form-card .hero-lead-form label{grid-column:1/-1}
 }
+
+
+/* Homepage candy palette: vanilla cream, berry, blueberry and watermelon-green accents. */
+body#top{background:var(--candy-vanilla)!important;color:var(--candy-ink)!important}
+body#top .reference-topbar{background:rgba(45,27,53,.97)!important;border-bottom:1px solid #513956!important;color:var(--candy-vanilla)!important}
+body#top .reference-brand,body#top .reference-nav a,body#top .global-language-menu{color:var(--candy-vanilla)!important}
+body#top .reference-nav a:hover,body#top .reference-nav a.active{color:var(--candy-lime)!important}
+body#top .reference-hero{background:radial-gradient(ellipse at 78% 42%,rgba(255,111,145,.20),transparent 34%),linear-gradient(112deg,#fff9ed 0%,#fff4e9 52%,#f4e9ff 100%)!important;color:var(--candy-ink)!important}
+body#top .reference-hero h1,body#top .reference-hero h2,body#top .reference-hero h3,body#top .reference-hero p,body#top .reference-hero li{color:var(--candy-ink)!important;text-shadow:none!important}
+body#top .reference-hero .eyebrow,body#top .reference-hero .hero-kicker{color:#8d315a!important}
+body#top .reference-hero strong,body#top .reference-hero .highlight{color:#a52d61!important}
+body#top .reference-hero .button,body#top .reference-hero .btn{background:var(--candy-lime)!important;color:var(--candy-plum)!important;border-color:var(--candy-lime)!important}
+body#top .reference-hero .hero-art img{filter:saturate(1.08) contrast(1.03) drop-shadow(0 16px 36px rgba(98,91,214,.16))}
+body#top .conversation-section,body#top .demo-conversation,body#top .discovery-section{background:linear-gradient(135deg,#fff9ed,#fff0f3)!important;color:var(--candy-ink)!important}
+body#top .conversation-section h1,body#top .conversation-section h2,body#top .conversation-section p,body#top .demo-conversation h2,body#top .demo-conversation p,body#top .discovery-section h2,body#top .discovery-section p{color:var(--candy-ink)!important}
+body#top .conversation-section label,body#top .discovery-section label{color:var(--candy-plum)!important}
+body#top .conversation-section input,body#top .conversation-section select,body#top .conversation-section textarea,body#top .discovery-section input,body#top .discovery-section select,body#top .discovery-section textarea{background:#fff!important;color:var(--candy-ink)!important;border:1px solid #d9c8d8!important}
+body#top .conversation-section input::placeholder,body#top .conversation-section textarea::placeholder{color:#786a7d!important}
+body#top .reference-hero .button:hover,body#top .conversation-section .button:hover{background:#A5F0A5!important}
+body#top .section-wrap h2,body#top main h2,body#top main h3{color:var(--candy-plum)}
+body#top main p,body#top main li{color:var(--candy-ink)}
+body#top .reference-footer,body#top footer{background:var(--candy-plum)!important;color:var(--candy-vanilla)!important}
+body#top footer p,body#top footer li,body#top footer small{color:#f5eaf1!important}
+body#top footer a{color:var(--candy-lime)!important}
