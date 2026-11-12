@@ -1,0 +1,32 @@
+name: Legal readability checks
+
+on:
+  pull_request:
+    paths:
+      - "*.html"
+      - "legal.css"
+      - "scripts/check-legal-pages.mjs"
+      - ".github/workflows/legal-readability.yml"
+  push:
+    branches: [main]
+    paths:
+      - "*.html"
+      - "legal.css"
+      - "scripts/check-legal-pages.mjs"
+      - ".github/workflows/legal-readability.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  legal-readability:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate shared legal page standards
+        run: node scripts/check-legal-pages.mjs

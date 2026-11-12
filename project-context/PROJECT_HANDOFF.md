@@ -653,3 +653,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - All five legal pages and sitemap are committed directly to main under the user's request to fix what can. Live GitHub Pages deployment and end-to-end behavior remain to be verified separately.
 
 - Follow-up verification on 2026-11-12 corrected the Terms page section numbering and inserted the explicit privacy/data-processing section (section 8); cancellation, renewal, refunds, export and termination details must be stated in the customer agreement before paid service begins.
+
+
+\n## Permanent design, readability and content standards — 2026-11-12
+
+- Added `docs/STAR69AI_DESIGN_CONTENT_STANDARDS.md` as the required source of truth for typography, color/contrast, spacing, responsive behavior, forms, legal documents, content accuracy, CSS hygiene and the pre-publish quality gate.
+- Added a shared `legal.css` stylesheet and consistent navigation/footer to the five public legal documents. The stylesheet explicitly gives legal pages a dark reading surface because the shared site stylesheet sets a white body background; the previous pale legal text could therefore inherit a low-contrast light-on-white combination.
+- Standardized legal body and list text at 16px, heading hierarchy, link contrast/underline, focus visibility, callout styling, page width and mobile layout.
+- This is a visual and editorial consistency pass only. It does not constitute legal advice, attorney review, a legal certification, or verification of live consent/provider behavior. Preserve the documented owner actions and customer-agreement requirements.
+- Work is on branch `quality/readability-and-legal-standards-2026-11-12`; do not merge until the user reviews and approves.
