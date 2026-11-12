@@ -523,3 +523,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Updated the private partner applications admin header and public partner-program header to use the canonical horizontal Star69AI logo at `assets/star69ai-logo.png` instead of the retired text wordmark.
 - Updated the partner admin document title from the previous brand name to `Partner Applications | Star69AI`.
 - Added responsive logo sizing in the partner admin and public partner page stylesheets. No partner application, authorization, commission, API or enrollment behavior was changed.
+
+
+## Align admin sign-in with production Clerk — 2026-11-12
+
+- Root cause: the private Partner Admin, Trust Lab Admin and Newsletter Admin pages still loaded the retired Clerk development instance `aware-pegasus-8939.clerk.accounts.dev` and its `pk_test` publishable key. The customer portal at `/client/` and main agency console at `/admin/` already use the production Clerk instance.
+- Updated all three remaining admin HTML entry points to load Clerk JS/UI from `https://clerk.star69ai.com` and use the same production publishable key as the working client portal. No secret key or private credential was exposed or changed.
+- Inspected Cloudflare Worker configuration: both `avr-platform-api` and `avr-trust-lab-api` already have the non-secret `CLERK_ISSUER` set to `https://clerk.star69ai.com`. No Worker code, issuer variable, secrets, D1 data, authorization allowlist or user records were changed.
+- Existing client/agency admin pages were left unchanged. The partner, Trust Lab and newsletter admin JavaScript continues to use the existing Clerk session and server-side authorization checks.
+- Source-level validation: all three target HTML pages must now reference the production Clerk domain and live publishable key, with no remaining `aware-pegasus-8939` or `pk_test` references in those pages. A browser sign-in/session test and authorized admin API request are still required after GitHub Pages publishes the merge.
+- Changes are proposed on `fix/admin-clerk-production-instance`; do not merge until explicitly approved.
