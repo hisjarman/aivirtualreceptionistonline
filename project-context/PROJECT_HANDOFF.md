@@ -550,3 +550,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - Stripe webhook configuration must include `invoice.payment_succeeded` in addition to the existing checkout, subscription and payment-failure events. Confirm the live webhook endpoint and test invoices before advertising automatic commission crediting as active.
 - Public privacy copy now explains partner referral attribution. The partner application admin no longer exposes Systeme.io enrollment fields; approving a partner generates a referral code/link and sends a branded Partner Center approval email.
 - Validation still required before production: inspect the complete PR diff; run JavaScript syntax checks for both Workers and browser scripts; apply the migration to a non-production copy or approved production D1 change window; test click capture, 90-day attribution, first-touch duplicate handling, Clerk partner/admin access isolation, customer matching, Stripe signed webhook idempotency, non-subscription/proration exclusion, tier thresholds, 30-day hold and manual payout. Deploy Trust Lab and platform Workers separately only after migration and approval. Browser QA of the Partner Center and admin ledger is also pending.
+
+
+### Partner ledger accounting refinements — 2026-11-11
+
+- Referral records distinguish `lead`, `customer` (Star69AI customer record created), and `converted` (a qualifying Stripe subscription invoice has been paid). The partner-facing paying-customer count includes only the final converted state.
+- Partner commissions are calculated only from positive, non-proration subscription invoice lines. Setup fees, usage overage, phone-number rental, carrier charges and third-party pass-through items are excluded by the current implementation and public program terms.
+- The admin payout endpoint enforces both the 30-day validation hold and the $50 minimum aggregate eligible balance. Administrators can record payout references and manually reverse commissions for refunds, chargebacks or accounting corrections.
+- The partner approval action now creates the partner code/referral link and sends a branded email with the Partner Center sign-in URL. The partner must use the same verified email address as the approved application.
