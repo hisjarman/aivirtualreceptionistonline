@@ -588,3 +588,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - After adding those two secrets, deploy the merged `cloudflare/platform-worker.js` to `avr-platform-api`, then confirm the existing Stripe webhook endpoint subscribes to `invoice.payment_succeeded`. Stripe webhook configuration has not been changed.
 - GitHub Pages is configured to publish from the repository's main branch; the merge is now in `main`. A live browser/page verification was not available during this session.
 - Systeme.io is not required for this partner program. Legacy `systeme_*` columns remain in the existing D1 table for backward compatibility but are not used by the new first-party tracking flow.
+
+
+## Platform Worker Stripe activation — 2026-11-12
+
+- User confirmed the two required Stripe secrets have now been configured on Cloudflare Worker `avr-platform-api`.
+- Before deployment, Cloudflare Worker settings were inspected by binding name/type only. Both `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` were present as `secret_text` bindings. Secret values were never read or exposed.
+- Deployed the current merged `cloudflare/platform-worker.js` from `main` to the existing `avr-platform-api` Worker through the content-only upload endpoint, preserving existing Worker settings and bindings.
+- Cloudflare confirmed successful deployment on 2026-11-12: deployment ID `b4bd3b1d80584e549bbf5039a4832e73`, version tag `2cc622db0c924398aedca6dffb1c63c7`, entry point `worker.js`.
+- Post-deployment settings inspection confirmed both Stripe secrets remain configured as secret bindings, alongside the existing Clerk, D1, Resend and Retell bindings.
+- Runtime health endpoint browser request could not be verified in this environment (the request tool returned an access error). Do not claim runtime health or end-to-end billing/webhook tests passed.
+- Stripe webhook event configuration has not been inspected or changed because no Stripe account connector is available in this session. In Stripe Dashboard, verify the endpoint `https://avr-platform-api.hisjarman.workers.dev/webhooks/stripe` is subscribed to `invoice.payment_succeeded` (as well as the pre-existing required events). Then send a Stripe test event/test invoice and confirm the Worker records the event and partner commission correctly before relying on production commission automation.
