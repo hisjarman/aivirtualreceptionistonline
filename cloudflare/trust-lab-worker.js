@@ -223,13 +223,13 @@ async function handleAdmin(request,env,origin,path){
       if(status!==undefined&&!["pending","approved","rejected"].includes(status))return json({error:"invalid_application_status"},400,origin,env);
       if(tier!==undefined&&!["standard","founding","growth","premier"].includes(tier))return json({error:"invalid_commission_tier"},400,origin,env);
       const note=p.adminNote===undefined?null:String(p.adminNote).slice(0,2000);
-      const customUrl=p.referralUrl===undefined?null:String(p.referralUrl).trim().slice(0,500);
+      
       const found=await env.DB.prepare("SELECT id,name,email,application_status,partner_code,referral_url FROM affiliate_applications WHERE id=?").bind(partnerMatch[1]).first();
       if(!found)return json({error:"application_not_found"},404,origin,env);
       const nextStatus=status||found.application_status;
       const code=nextStatus==="approved"?(found.partner_code||("S69"+crypto.randomUUID().replace(/-/g,"").slice(0,9)).toUpperCase()):found.partner_code;
       const generatedUrl=code?"https://star69ai.com/get-started.html?ref="+code:null;
-      const referralUrl=customUrl||found.referral_url||generatedUrl;
+      const referralUrl=generatedUrl||found.referral_url;
       await env.DB.prepare("UPDATE affiliate_applications SET application_status=?,commission_tier=COALESCE(?,commission_tier),partner_code=COALESCE(partner_code,?),referral_url=COALESCE(NULLIF(? ,''),referral_url),admin_note=COALESCE(?,admin_note),updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(nextStatus,tier||null,code,referralUrl||"",note,partnerMatch[1]).run();
       let notificationSent=false;
       if(nextStatus==="approved"&&found.application_status!=="approved"){
