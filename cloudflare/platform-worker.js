@@ -59,7 +59,7 @@ async function stripeWebhook(req,env){const raw=await req.text(),sig=req.headers
    if(partner){
     const active=await env.DB.prepare("SELECT COUNT(DISTINCT r.customer_id) AS total FROM partner_referrals r JOIN avr_customers c ON c.id=r.customer_id WHERE r.affiliate_application_id=? AND r.lead_status='converted' AND c.subscription_status IN ('active','trialing')").bind(partnerId).first();
     const activeCount=Number(active?.total||0);
-    const rate=partner.commission_tier==="founding"?0.25:activeCount>=15?0.30:activeCount>=5?0.25:0.20;
+    const assignedRate=partner.commission_tier==="founding"||partner.commission_tier==="growth"?0.25:partner.commission_tier==="premier"?0.30:0.20;const thresholdRate=activeCount>=15?0.30:activeCount>=5?0.25:0.20;const rate=Math.max(assignedRate,thresholdRate);
     const commissionCents=Math.round(commissionableCents*rate);
     const subscriptionId=o.subscription||o.parent?.subscription_details?.subscription||null;
     const validationUntil=new Date(Date.parse(paidAt)+30*86400000).toISOString();
