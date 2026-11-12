@@ -10,11 +10,13 @@ CREATE TABLE IF NOT EXISTS partner_clicks (
   affiliate_application_id TEXT NOT NULL,
   landing_path TEXT,
   referrer_domain TEXT,
+  ip_hash TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   expires_at TEXT NOT NULL,
   FOREIGN KEY (affiliate_application_id) REFERENCES affiliate_applications(id)
 );
 CREATE INDEX IF NOT EXISTS partner_clicks_partner_date_idx ON partner_clicks(affiliate_application_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS partner_clicks_ip_date_idx ON partner_clicks(ip_hash, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS partner_referrals (
   id TEXT PRIMARY KEY,
@@ -23,6 +25,7 @@ CREATE TABLE IF NOT EXISTS partner_referrals (
   lead_email TEXT NOT NULL,
   lead_name TEXT,
   business_name TEXT,
+  ip_hash TEXT,
   lead_status TEXT NOT NULL DEFAULT 'lead' CHECK (lead_status IN ('lead','customer','converted','unqualified')),
   customer_id TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
@@ -35,6 +38,7 @@ CREATE TABLE IF NOT EXISTS partner_referrals (
 CREATE UNIQUE INDEX IF NOT EXISTS partner_referrals_email_uq ON partner_referrals(lower(lead_email));
 CREATE INDEX IF NOT EXISTS partner_referrals_partner_date_idx ON partner_referrals(affiliate_application_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS partner_referrals_customer_idx ON partner_referrals(customer_id);
+CREATE INDEX IF NOT EXISTS partner_referrals_ip_date_idx ON partner_referrals(ip_hash, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS partner_commissions (
   id TEXT PRIMARY KEY,
