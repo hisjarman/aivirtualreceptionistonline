@@ -46,11 +46,22 @@ async function capturePartnerLead(payload) {
 window.star69aiCapturePartnerLead=capturePartnerLead;
 window.star69aiGetPartnerAttribution=()=>readPartnerAttribution();
 document.querySelectorAll('form[action*="formspree.io/f/mrppjqdb"]:not(#intake-form)').forEach(partnerForm=>{
-  partnerForm.addEventListener("submit",event=>{
+  partnerForm.addEventListener("submit",async event=>{
     event.preventDefault();
     const data=new FormData(partnerForm),payload={name:data.get("name"),email:data.get("email"),business:data.get("business")};
     const button=partnerForm.querySelector('button[type="submit"]');if(button)button.disabled=true;
-    capturePartnerLead(payload).catch(()=>false).finally(()=>HTMLFormElement.prototype.submit.call(partnerForm));
+    try{
+      const attribution=await partnerAttributionReady;
+      if(attribution?.partnerCode){
+        for(const [name,value] of [["partner_code",attribution.partnerCode],["partner_click_id",attribution.clickId||""]]){
+          let input=partnerForm.querySelector('input[type="hidden"][name="'+name+'"]');
+          if(!input){input=document.createElement("input");input.type="hidden";input.name=name;partnerForm.appendChild(input);}
+          input.value=value;
+        }
+      }
+      await capturePartnerLead(payload);
+    }catch{}
+    HTMLFormElement.prototype.submit.call(partnerForm);
   });
 });
 
