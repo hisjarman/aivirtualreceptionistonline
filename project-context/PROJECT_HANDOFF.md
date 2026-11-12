@@ -651,3 +651,5 @@ Known prior issue to recheck against current source: a portal request reported `
 - Updated sitemap lastmod dates for all five legal pages.
 - These changes do not complete the user's external obligations: Nevada/Clark County registration and licensing, attorney review, signed customer agreement/DPA/BAA as applicable, vendor account terms, live consent/recording/SMS tests, retention/deletion settings, newsletter email compliance, partner agreement/disclosures, or tax/accounting review. See the companion owner-action PDF.
 - All five legal pages and sitemap are committed directly to main under the user's request to fix what can. Live GitHub Pages deployment and end-to-end behavior remain to be verified separately.
+
+- Follow-up verification on 2026-11-12 corrected the Terms page section numbering and inserted the explicit privacy/data-processing section (section 8); cancellation, renewal, refunds, export and termination details must be stated in the customer agreement before paid service begins.
