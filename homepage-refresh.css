@@ -1057,7 +1057,7 @@ body#top .conversation-section h1,body#top .conversation-section h2,body#top .co
 body#top .conversation-section label,body#top .discovery-section label{color:var(--candy-plum)!important}
 body#top .conversation-section input,body#top .conversation-section select,body#top .conversation-section textarea,body#top .discovery-section input,body#top .discovery-section select,body#top .discovery-section textarea{background:#fff!important;color:var(--candy-ink)!important;border:1px solid #d9c8d8!important}
 body#top .conversation-section input::placeholder,body#top .conversation-section textarea::placeholder{color:#786a7d!important}
-body#top .reference-hero .button:hover,body#top .conversation-section .button:hover{background:#dcf99b!important}
+body#top .reference-hero .button:hover,body#top .conversation-section .button:hover{background:#A5F0A5!important}
 body#top .section-wrap h2,body#top main h2,body#top main h3{color:var(--candy-plum)}
 body#top main p,body#top main li{color:var(--candy-ink)}
 body#top .reference-footer,body#top footer{background:var(--candy-plum)!important;color:var(--candy-vanilla)!important}
