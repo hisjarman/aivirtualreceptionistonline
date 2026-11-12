@@ -627,3 +627,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - Applied `cloudflare/migrations/20261112_partner_payout_preferences.sql` to the existing `avr-trust-lab` D1 database (`6cf68b12-2aa8-4ed4-9f92-8a7824520d1a`). Verified that `payout_method`, `paypal_email`, and `payout_updated_at` now exist.
 - Deployed the merged `main` version of `cloudflare/trust-lab-worker.js` to the existing `avr-trust-lab-api` Worker using the content-only upload endpoint, preserving Worker settings and bindings. Cloudflare deployment ID: `4dab0d53-ca6b-4a8d-9ad4-1835a96ebb46`; version: `409bd722-8894-4751-996b-4a1939b73a5d`.
 - Verified the deployed Worker source includes both the `handlePartnerPayoutPreferences` handler and the `PATCH /api/partners/payout-preferences` route. Live authenticated save testing was not performed because this session cannot authenticate as the partner; do not claim an end-to-end browser save test passed.
+
+
+## Daily Insights publication — 2026-11-12
+
+- Published directly to `main` with the user's explicit authorization to bypass pull-request approval for daily editorial articles.
+- Article: **How Dental Practices Can Reduce Appointment No-Shows Without Overloading the Front Desk**
+- URL: `https://star69ai.com/insights/dental-practice-appointment-no-shows.html`
+- Slug: `dental-practice-appointment-no-shows`
+- Target industry: Dental practices; primary SEO keyword: `Reduce dental appointment no-shows`.
+- Added the article page, Insights index card and sitemap URL. The article uses the existing Insights template and stylesheet, Article and BreadcrumbList JSON-LD, canonical/Open Graph metadata, internal related-guide links and a Star69AI managed-service CTA.
+- Article body supplied by the 2026-11-12 daily automation; the recorded draft was approximately 802 words with a 143-character meta description. The published HTML has been formatted to the current site template.
+- GitHub Pages deployment and live HTTP availability must be checked separately; a successful commit is not proof of completed deployment.
