@@ -479,3 +479,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - Rejected requests now return a short reference ID, HTTP provider status and sanitized provider error code. The client portal displays the reference and provider code so a support investigation can correlate the request with Worker logs; no provider response body, credentials, transcript or recipient address is exposed.
 - Resend domain status was checked through the connected Resend account on 2026-11-11: `star69ai.com` was verified and sending was enabled. This does not prove that the sender identity, recipient or each message payload is accepted.
 - Validation still required: JavaScript syntax checks, deploy the updated `avr-platform-api` Worker, then send call details twice to the same recipient and confirm both requests can be accepted. Inspect Worker logs using the displayed reference ID if Resend rejects a request. No production Worker deployment is performed by this branch/PR.
+
+## Client call-details email fix deployed — 2026-11-12
+
+- PR #94 was squash-merged into `main` as `92fb161e359894cc7035d31c63d59a93fb707272`.
+- Deployed the merged `cloudflare/platform-worker.js` source to Cloudflare Worker `avr-platform-api` using the content-only upload endpoint, preserving Worker configuration and bindings.
+- Cloudflare confirmed successful upload and automatic 100% deployment. Deployment ID: `6f2593c6-1dd0-469f-9893-9909f5570896`; version ID: `cd56b3f2-51c2-4a8d-88e6-98f2a9133b62`.
+- Post-deployment settings inspection confirmed the existing `CLERK_SECRET_KEY`, `RESEND_API_KEY`, `RETELL_API_KEY`, D1 binding, and `RESEND_FROM_EMAIL=hello@star69ai.com` remain configured.
+- Live HTTP health check was blocked by the tool network policy (403); Cloudflare deployment APIs confirmed the active 100% rollout.
+- Remaining validation: sign in to the client portal, use Call Activity → Email details twice for the same call and recipient, confirm both sends, and capture the displayed reference/provider code if Resend rejects either request. No authenticated browser session or suitable test call was available during deployment, so live email delivery is not yet verified.
