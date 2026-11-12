@@ -436,7 +436,7 @@ body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px so
 
 /* Star69AI candy-shop palette + readability foundation — 2026-11-12 */
 :root{
-  --candy-lime:#c8f15b;       /* bright lime popsicle */
+  --candy-lime:#45C957;       /* watermelon-rind green */
   --candy-strawberry:#ff6f91;
   --candy-raspberry:#d94378;
   --candy-orange:#ffad68;
@@ -450,7 +450,7 @@ body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px so
   --ink:var(--candy-ink);
   --muted:var(--candy-muted);
   --teal:var(--candy-lime);
-  --teal2:#9bcf32;
+  --teal2:#2FA947;
   --soft:var(--candy-vanilla);
 }
 html{background:var(--candy-vanilla)}
@@ -463,7 +463,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{out
 a:not(.button):not(.btn){color:var(--candy-raspberry)}
 a:not(.button):not(.btn):hover{color:#a9275b}
 .button,.btn,button.button,button.btn{background:var(--candy-lime);border-color:var(--candy-lime);color:var(--candy-plum);font-weight:800;box-shadow:0 8px 20px rgba(95,75,35,.12)}
-.button:hover,.btn:hover,button.button:hover,button.btn:hover{background:#d8f98a;border-color:#d8f98a;color:var(--candy-plum);transform:translateY(-1px)}
+.button:hover,.btn:hover,button.button:hover,button.btn:hover{background:#A5F0A5;border-color:#A5F0A5;color:var(--candy-plum);transform:translateY(-1px)}
 .card,.panel,.surface,.form-card,.feature-card,.pricing-card,.step-card{border-color:var(--candy-border)}
 hr{border-color:var(--candy-border)}
 .badge,.pill,.tag{background:#fce3ec;color:#7b2448;border-color:#f4c4d5}
