@@ -110,10 +110,13 @@ async function handlePartnerClick(request,env,origin){
   try{
     const partner=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE partner_code=? AND application_status='approved'").bind(code).first();
     if(!partner)return json({error:"partner_not_found"},404,origin,env);
+    const ipHash=await hashIp(request.headers.get("CF-Connecting-IP"),env.CLERK_SECRET_KEY),since=new Date(Date.now()-10*60000).toISOString();
+    const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM partner_clicks WHERE ip_hash=? AND created_at>=?").bind(ipHash,since).first();
+    if(Number(recent?.total||0)>=60)return json({error:"partner_click_rate_limit"},429,origin,env);
     const clickId=crypto.randomUUID(),now=Date.now(),createdAt=new Date(now).toISOString(),expiresAt=new Date(now+90*86400000).toISOString();
     const landingPath=String(p.landingPath||"/").slice(0,300),referrer=String(p.referrer||"").slice(0,500);
     let referrerDomain=null;try{referrerDomain=referrer?new URL(referrer).hostname.slice(0,180):null;}catch{}
-    await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,created_at,expires_at) VALUES(?,?,?,?,?,?)").bind(clickId,partner.id,landingPath,referrerDomain,createdAt,expiresAt).run();
+    await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,ip_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?)").bind(clickId,partner.id,landingPath,referrerDomain,ipHash,createdAt,expiresAt).run();
     return json({tracked:true,clickId,partnerCode:code,expiresAt},201,origin,env);
   }catch(e){console.error("partner_click_failed",e?.message||e);return json({error:"partner_tracking_unavailable"},503,origin,env);}
 }
@@ -125,6 +128,9 @@ async function handlePartnerLead(request,env,origin){
   try{
     const partner=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE partner_code=? AND application_status='approved'").bind(code).first();
     if(!partner)return json({recorded:false},200,origin,env);
+    const ipHash=await hashIp(request.headers.get("CF-Connecting-IP"),env.CLERK_SECRET_KEY),since=new Date(Date.now()-3600000).toISOString();
+    const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM partner_referrals WHERE ip_hash=? AND created_at>=?").bind(ipHash,since).first();
+    if(Number(recent?.total||0)>=10)return json({error:"partner_lead_rate_limit"},429,origin,env);
     const existingCustomer=await env.DB.prepare("SELECT id FROM avr_customers WHERE lower(email)=? LIMIT 1").bind(email).first();
     if(existingCustomer)return json({recorded:false},200,origin,env);
     const now=Date.now(),createdAt=new Date(now).toISOString(),expiresAt=new Date(now+90*86400000).toISOString();
@@ -132,10 +138,10 @@ async function handlePartnerLead(request,env,origin){
     if(clickId)click=await env.DB.prepare("SELECT click_id FROM partner_clicks WHERE click_id=? AND affiliate_application_id=? AND expires_at>=?").bind(clickId,partner.id,createdAt).first();
     if(!click){
       clickId=crypto.randomUUID();
-      await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,created_at,expires_at) VALUES(?,?,?,?,?,?)").bind(clickId,partner.id,String(p.landingPath||"/get-started.html").slice(0,300),null,createdAt,expiresAt).run();
+      await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,ip_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?)").bind(clickId,partner.id,String(p.landingPath||"/get-started.html").slice(0,300),null,ipHash,createdAt,expiresAt).run();
     }
     const leadName=String(p.name||"").trim().slice(0,120)||null,businessName=String(p.business||"").trim().slice(0,160)||null;
-    await env.DB.prepare("INSERT OR IGNORE INTO partner_referrals(id,affiliate_application_id,click_id,lead_email,lead_name,business_name,lead_status,created_at,attribution_expires_at) VALUES(?,?,?,?,?,?,'lead',?,?)").bind(crypto.randomUUID(),partner.id,clickId,email,leadName,businessName,createdAt,expiresAt).run();
+    await env.DB.prepare("INSERT OR IGNORE INTO partner_referrals(id,affiliate_application_id,click_id,lead_email,lead_name,business_name,ip_hash,lead_status,created_at,attribution_expires_at) VALUES(?,?,?,?,?,?,?,'lead',?,?)").bind(crypto.randomUUID(),partner.id,clickId,email,leadName,businessName,ipHash,createdAt,expiresAt).run();
     return json({recorded:true},201,origin,env);
   }catch(e){console.error("partner_lead_capture_failed",e?.message||e);return json({recorded:false,error:"partner_tracking_unavailable"},503,origin,env);}
 }
