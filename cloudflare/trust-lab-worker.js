@@ -149,13 +149,13 @@ async function handlePartnerLead(request,env,origin){
 async function handlePartnerDashboard(request,env,origin){
   let user;try{user=await getVerifiedUser(request,env);}catch(e){return authError(e,origin,env);}
   try{
-    let partner=await env.DB.prepare("SELECT id,name,email,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,created_at AS joinedAt FROM affiliate_applications WHERE lower(email)=? AND application_status='approved' ORDER BY updated_at DESC LIMIT 1").bind(user.email).first();
+    let partner=await env.DB.prepare("SELECT id,name,email,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,payout_method AS payoutMethod,paypal_email AS paypalEmail,payout_updated_at AS payoutUpdatedAt,created_at AS joinedAt FROM affiliate_applications WHERE lower(email)=? AND application_status='approved' ORDER BY updated_at DESC LIMIT 1").bind(user.email).first();
     if(!partner)return json({error:"partner_approval_required"},403,origin,env);
     const partnerCode=partner.partnerCode||("S69"+crypto.randomUUID().replace(/-/g,"").slice(0,9)).toUpperCase();
     const partnerLink="https://star69ai.com/get-started.html?ref="+partnerCode;
     if(!partner.partnerCode||partner.referralUrl!==partnerLink){
       await env.DB.prepare("UPDATE affiliate_applications SET partner_code=COALESCE(partner_code,?),referral_url=?,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(partnerCode,partnerLink,partner.id).run();
-      partner=await env.DB.prepare("SELECT id,name,email,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,created_at AS joinedAt FROM affiliate_applications WHERE id=?").bind(partner.id).first();
+      partner=await env.DB.prepare("SELECT id,name,email,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,payout_method AS payoutMethod,paypal_email AS paypalEmail,payout_updated_at AS payoutUpdatedAt,created_at AS joinedAt FROM affiliate_applications WHERE id=?").bind(partner.id).first();
     }
     const [clicks,leadStats,commissionStats,referrals,commissions]=await Promise.all([
       env.DB.prepare("SELECT COUNT(*) AS total FROM partner_clicks WHERE affiliate_application_id=?").bind(partner.id).first(),
@@ -168,6 +168,22 @@ async function handlePartnerDashboard(request,env,origin){
     partner.currentRate=Math.max(assignedRate,thresholdRate);
     return json({partner,stats:{clicks:Number(clicks?.total||0),leads:Number(leadStats?.leads||0),customers:activeReferrals,pendingCents:Number(commissionStats?.pending||0),paidCents:Number(commissionStats?.paid||0)},referrals:referrals.results||[],commissions:commissions.results||[]},200,origin,env);
   }catch(e){console.error("partner_dashboard_failed",e?.message||e);return json({error:"partner_dashboard_unavailable"},503,origin,env);}
+}
+
+async function handlePartnerPayoutPreferences(request,env,origin){
+  let user;try{user=await getVerifiedUser(request,env);}catch(e){return authError(e,origin,env);}
+  let p;try{const raw=await request.text();if(raw.length>2000)return json({error:"request_too_large"},413,origin,env);p=JSON.parse(raw);}catch{return json({error:"invalid_json"},400,origin,env);}
+  const method=String(p.payoutMethod||"paypal").trim().toLowerCase();
+  const paypalEmail=String(p.paypalEmail||"").trim().toLowerCase();
+  if(method!=="paypal")return json({error:"unsupported_payout_method"},400,origin,env);
+  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(paypalEmail)||paypalEmail.length>254)return json({error:"valid_paypal_email_required"},400,origin,env);
+  try{
+    const partner=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE lower(email)=? AND application_status='approved' ORDER BY updated_at DESC LIMIT 1").bind(user.email).first();
+    if(!partner)return json({error:"partner_approval_required"},403,origin,env);
+    const now=new Date().toISOString();
+    await env.DB.prepare("UPDATE affiliate_applications SET payout_method='paypal',paypal_email=?,payout_updated_at=?,updated_at=? WHERE id=?").bind(paypalEmail,now,now,partner.id).run();
+    return json({updated:true,payoutMethod:"paypal",paypalEmail,payoutUpdatedAt:now},200,origin,env);
+  }catch(e){console.error("partner_payout_preferences_failed",e?.message||e);return json({error:"payout_preferences_unavailable"},503,origin,env);}
 }
 
 async function handleNewsletterSubscribe(request,env,origin){
@@ -207,7 +223,7 @@ async function handleAdmin(request,env,origin,path){
     if(request.method==="GET"&&path==="/api/admin/partners/ledger"){
       const [referrals,commissions,summary]=await Promise.all([
         env.DB.prepare("SELECT r.id,r.lead_name AS leadName,r.lead_email AS leadEmail,r.business_name AS businessName,r.lead_status AS status,r.created_at AS createdAt,r.converted_at AS convertedAt,a.id AS partnerId,a.name AS partnerName,a.email AS partnerEmail,c.id AS customerId FROM partner_referrals r JOIN affiliate_applications a ON a.id=r.affiliate_application_id LEFT JOIN avr_customers c ON c.id=r.customer_id ORDER BY r.created_at DESC LIMIT 500").all(),
-        env.DB.prepare("SELECT x.id,x.affiliate_application_id AS partnerId,a.name AS partnerName,a.email AS partnerEmail,x.customer_id AS customerId,c.business_name AS businessName,x.stripe_invoice_id AS invoiceId,x.invoice_amount_cents AS invoiceAmountCents,x.commission_rate AS commissionRate,x.commission_amount_cents AS commissionAmountCents,x.currency,x.status,x.validation_until AS validationUntil,x.paid_at AS paidAt,x.payout_reference AS payoutReference,x.created_at AS createdAt FROM partner_commissions x JOIN affiliate_applications a ON a.id=x.affiliate_application_id LEFT JOIN avr_customers c ON c.id=x.customer_id ORDER BY x.created_at DESC LIMIT 500").all(),
+        env.DB.prepare("SELECT x.id,x.affiliate_application_id AS partnerId,a.name AS partnerName,a.email AS partnerEmail,a.payout_method AS payoutMethod,a.paypal_email AS paypalEmail,x.customer_id AS customerId,c.business_name AS businessName,x.stripe_invoice_id AS invoiceId,x.invoice_amount_cents AS invoiceAmountCents,x.commission_rate AS commissionRate,x.commission_amount_cents AS commissionAmountCents,x.currency,x.status,x.validation_until AS validationUntil,x.paid_at AS paidAt,x.payout_reference AS payoutReference,x.created_at AS createdAt FROM partner_commissions x JOIN affiliate_applications a ON a.id=x.affiliate_application_id LEFT JOIN avr_customers c ON c.id=x.customer_id ORDER BY x.created_at DESC LIMIT 500").all(),
         env.DB.prepare("SELECT (SELECT COUNT(*) FROM partner_clicks) AS clicks,(SELECT COUNT(*) FROM partner_referrals) AS leads,(SELECT COUNT(*) FROM partner_referrals WHERE lead_status='converted') AS customers,(SELECT COALESCE(SUM(commission_amount_cents),0) FROM partner_commissions WHERE status='pending') AS pendingCents,(SELECT COALESCE(SUM(commission_amount_cents),0) FROM partner_commissions WHERE status='paid') AS paidCents").first()
       ]);
       return json({referrals:referrals.results||[],commissions:commissions.results||[],summary},200,origin,env);
@@ -282,6 +298,7 @@ export default {
     if(request.method==="POST"&&url.pathname==="/api/partners/click")return handlePartnerClick(request,env,origin);
     if(request.method==="POST"&&url.pathname==="/api/partners/lead")return handlePartnerLead(request,env,origin);
     if(request.method==="GET"&&url.pathname==="/api/partners/dashboard")return handlePartnerDashboard(request,env,origin);
+    if(request.method==="PATCH"&&url.pathname==="/api/partners/payout-preferences")return handlePartnerPayoutPreferences(request,env,origin);
     if(request.method==="POST"&&url.pathname==="/api/newsletter/subscribe")return handleNewsletterSubscribe(request,env,origin);
     if(request.method==="GET"&&url.pathname==="/api/newsletter/unsubscribe")return handleNewsletterUnsubscribe(request,env,url);
     if(request.method==="GET"&&url.pathname==="/api/trust-lab/wall"){
