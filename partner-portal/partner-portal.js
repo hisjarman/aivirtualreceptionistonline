@@ -7,7 +7,7 @@
  function cell(text){const td=document.createElement("td");td.textContent=text||"—";return td;}
  function emptyRow(body,cols,message){const tr=document.createElement("tr"),td=cell(message);td.colSpan=cols;td.className="pp-empty";tr.append(td);body.replaceChildren(tr);}
  function render(data){
-  $("#pp-status").textContent="PARTNER ACCOUNT · "+(data.partner.commissionTier||"standard").toUpperCase();
+  $("#pp-status").textContent="PARTNER ACCOUNT · "+Math.round(Number(data.partner.currentRate||0.20)*100)+"% CURRENT COMMISSION RATE";
   $("#pp-code").textContent=data.partner.partnerCode;
   $("#pp-referral-link").value=data.partner.referralUrl;
   $("#pp-clicks").textContent=Number(data.stats.clicks||0).toLocaleString();
