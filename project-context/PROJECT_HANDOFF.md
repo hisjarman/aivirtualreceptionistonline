@@ -507,3 +507,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - Existing manual chat, suggestion parsing, origin validation, field allowlist, exact dropdown-value checks, privacy exclusions, Formspree endpoint, and Worker rate limit remain unchanged.
 - Source validation required: embedded script syntax, automatic field allowlist, one-request-per-field behavior, stale-response suppression, existing manual chat, and one-click message flow. Live AI inference and browser interaction still require production deployment and end-to-end testing.
 - This change is source-only until the Worker is separately deployed. Do not claim automatic suggestions are live until the Worker deployment and a real discovery-form interaction are verified.
+
+
+## Concierge Worker deployment validation correction — 2026-11-11
+
+- PR #97 was merged into main (merge commit 23ad27db9df7456e87e4d2e1731b8558928f15b8). The first production upload attempt was rejected by Cloudflare validation with a JavaScript syntax error in the existing system-prompt string, before any deployment occurred.
+- Root cause: the repository's system-prompt example for the machine-readable suggestion marker contained raw double quotes inside a double-quoted JavaScript string. The previously deployed Worker did not include that newer parser/prompt block, so this source defect had not prevented the earlier deployment.
+- This follow-up escapes the JSON example's double quotes within the JavaScript string. No runtime behavior, prompt semantics, bindings, or secrets are changed.
+- Required validation: parse the complete Worker module and its embedded Concierge browser script before attempting another production upload.
+- No Worker upload or deployment was successful during the rejected attempt; the previously active production deployment remains unchanged.
