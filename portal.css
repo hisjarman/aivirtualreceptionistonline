@@ -177,13 +177,13 @@
 
 
 /* Client portal candy accents with strong, consistent text contrast. */
-:root{--portal-bg:#24172d;--portal-panel:#34223d;--portal-panel-2:#402a49;--portal-ink:#fff8ed;--portal-muted:#e4d6e5;--portal-accent:#c8f15b;--portal-pink:#ff7898;--portal-blueberry:#aaa4ff}
+:root{--portal-bg:#24172d;--portal-panel:#34223d;--portal-panel-2:#402a49;--portal-ink:#fff8ed;--portal-muted:#e4d6e5;--portal-accent:#45C957;--portal-pink:#ff7898;--portal-blueberry:#aaa4ff}
 html,body{background:#24172d!important;color:#fff8ed!important}
 body{background:radial-gradient(ellipse at 12% 0%,#49304f 0%,#24172d 58%)!important}
 p,li,label,small,th,td,.muted,.hint,.helper-text{color:#f1e7ef}
 small,.muted,.hint,.helper-text{color:#e4d6e5}
-a{color:#c8f15b}
-button,.button,.btn{background:#c8f15b!important;color:#24172d!important;border-color:#c8f15b!important;font-weight:800}
+a{color:#45C957}
+button,.button,.btn{background:#45C957!important;color:#24172d!important;border-color:#45C957!important;font-weight:800}
 input,select,textarea{background:#fff9ed!important;color:#302037!important;border-color:#d9c7d8!important}
 input::placeholder,textarea::placeholder{color:#786a7d!important;opacity:1}
 .card,.panel,.modal,.stat-card,.call-card{background:#34223d;border-color:#604765}
