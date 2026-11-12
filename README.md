@@ -104,7 +104,7 @@ Before onboarding paying customers, verify:
 - Automatic usage/overage billing is not enabled or advertised as automatic until the metering implementation is complete and tested.
 - The Formspree demo form is tested with a real submission and the request is received by the intended inbox.
 
-See [project context and handoff](project-context/PROJECT_HANDOFF.md) for the latest implementation notes and open work.
+See [project context and handoff](project-context/PROJECT_HANDOFF.md) for the latest implementation notes and open work. All new pages and substantial edits must also follow [Star69AI Design, Readability & Content Standards](docs/STAR69AI_DESIGN_CONTENT_STANDARDS.md). The five public legal documents share `legal.css` for consistent, high-contrast presentation.
 
 ## Intellectual property
 
