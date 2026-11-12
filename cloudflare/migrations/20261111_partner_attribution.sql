@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS partner_referrals (
   lead_email TEXT NOT NULL,
   lead_name TEXT,
   business_name TEXT,
-  lead_status TEXT NOT NULL DEFAULT 'lead' CHECK (lead_status IN ('lead','converted','unqualified')),
+  lead_status TEXT NOT NULL DEFAULT 'lead' CHECK (lead_status IN ('lead','customer','converted','unqualified')),
   customer_id TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   converted_at TEXT,
