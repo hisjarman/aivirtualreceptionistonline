@@ -198,7 +198,7 @@ document.querySelectorAll("[data-plan]").forEach(link => {
 });
 
 // Formspree's normal HTML POST avoids browser CORS/fetch failures on mobile browsers.
-form.addEventListener("submit", event => {
+form.addEventListener("submit", async event => {
   event.preventDefault();
   if (!validateStep()) return;
 
@@ -259,6 +259,12 @@ form.addEventListener("submit", event => {
   form.method = "POST";
   form.action = "https://formspree.io/f/mrppjqdb";
   // Submit through the browser's native form navigation rather than fetch().
+  const attribution = readPartnerAttribution();
+  if (attribution?.partnerCode) {
+    hiddenFields.partner_code = attribution.partnerCode;
+    hiddenFields.partner_click_id = attribution.clickId || "";
+  }
+  try { await capturePartnerLead(payload); } catch {}
   HTMLFormElement.prototype.submit.call(form);
 });
 
