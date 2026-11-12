@@ -16,6 +16,16 @@
 <section id="pp-not-approved" class="pp-panel" hidden><h2>Partner access is not active yet</h2><p>Your partner dashboard becomes available after your application is approved. Make sure you're signed in with the same verified email address used on your application.</p><a class="pp-link" href="../partners/#apply">View partner application ↗</a></section>
 <section id="pp-dashboard" hidden>
 <div class="pp-link-card"><div><div class="pp-kicker">YOUR PERSONAL REFERRAL LINK</div><p>Share this link with businesses that may need a managed AI receptionist.</p><div class="pp-link-row"><input id="pp-referral-link" readonly aria-label="Your referral link"><button id="pp-copy-link" type="button">Copy link</button></div><small id="pp-copy-status" aria-live="polite">Referrals are attributed for 90 days after a tracked click.</small></div><div class="pp-code"><span>PARTNER CODE</span><strong id="pp-code">—</strong></div></div>
+<section class="pp-panel pp-payout" aria-labelledby="pp-payout-title">
+<div class="pp-panel-head"><div><div class="pp-kicker">PROFILE &amp; PAYOUT SETTINGS</div><h2 id="pp-payout-title">How you receive commissions</h2></div><span id="pp-payout-status">PAYPAL</span></div>
+<p>Keep your payout details current. Star69AI currently pays partners manually through PayPal after commissions clear the 30-day validation period and the $50 minimum is reached.</p>
+<form id="pp-payout-form" class="pp-payout-form">
+<label for="pp-payout-method">Payout method</label><select id="pp-payout-method" name="payoutMethod" disabled><option value="paypal">PayPal</option></select>
+<label for="pp-paypal-email">PayPal email address</label><input id="pp-paypal-email" name="paypalEmail" type="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
+<div class="pp-payout-actions"><button class="pp-primary" id="pp-save-payout" type="submit">Save payout details</button><span id="pp-payout-message" role="status" aria-live="polite"></span></div>
+<small>Use the email address associated with your PayPal account. You can update it here at any time. Stripe Connect and bank payouts are not currently available.</small>
+</form>
+</section>
 <div class="pp-stats">
 <article><span>TRACKED CLICKS</span><strong id="pp-clicks">0</strong></article>
 <article><span>REFERRED LEADS</span><strong id="pp-leads">0</strong></article>
