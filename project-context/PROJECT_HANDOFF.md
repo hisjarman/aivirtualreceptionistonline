@@ -489,3 +489,10 @@ Known prior issue to recheck against current source: a portal request reported `
 - Applied matching high-contrast candy accents to `portal.css`, keeping the client portal dark and professional with cream-white text, lime controls, strawberry/blueberry accents, and cream form fields.
 - This is a CSS-only proposal. No HTML structure, copy, forms, endpoints, authentication, billing, Worker code, or SEO metadata changed. No merge or production deployment has been performed.
 - Required QA before merge: inspect homepage, pricing, discovery form, and client portal at desktop/tablet/mobile sizes; verify contrast for normal and muted text, button states, form placeholders, navigation, footer, and status badges. Confirm no page-specific CSS overrides reintroduce low-contrast text or the previous green.
+
+
+## Watermelon-green palette refinement — 2026-11-12
+
+- Follow-up to the candy-popsicle palette proposal on PR #96: user clarified the signature accent should be watermelon green, not lemon/lime yellow-green.
+- Updated the shared palette and homepage/client-portal accent references to vivid watermelon-rind green (#45C957), with a deeper supporting green (#2FA947) and a lighter hover state (#A5F0A5). Strawberry, raspberry, orange sherbet, blueberry, vanilla and deep plum remain complementary colors.
+- This remains a CSS-only proposal on design/candy-popsicle-palette-readability; no merge, GitHub Pages publication, or browser visual QA has been performed.
