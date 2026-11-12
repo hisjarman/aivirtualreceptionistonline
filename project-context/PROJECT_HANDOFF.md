@@ -619,3 +619,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - This does not initiate payments or connect PayPal/Stripe. Payouts remain manual: the administrator sends payment outside Star69AI and records the payment reference in the ledger. Stripe Connect and bank payouts are not implemented.
 - Deployment requirements: apply the new migration to the existing `avr-trust-lab` D1 database, then deploy the updated `avr-trust-lab-api` Worker. GitHub Pages frontend changes are not live until the PR is merged and published.
 - Verification status: source-level review only; no live migration, Worker deployment, authenticated browser test, or real payout was performed. Do not claim the feature is live until these steps and tests are complete.
+
+
+## Partner payout profile production fix — 2026-11-12
+
+- Investigated the Partner Center PayPal payout save failure. The public frontend called `PATCH /api/partners/payout-preferences`, but the active `avr-trust-lab-api` Worker deployment still served the pre-feature source and returned the Worker catch-all `not_found` response. The production `affiliate_applications` table also lacked the payout preference columns.
+- Applied `cloudflare/migrations/20261112_partner_payout_preferences.sql` to the existing `avr-trust-lab` D1 database (`6cf68b12-2aa8-4ed4-9f92-8a7824520d1a`). Verified that `payout_method`, `paypal_email`, and `payout_updated_at` now exist.
+- Deployed the merged `main` version of `cloudflare/trust-lab-worker.js` to the existing `avr-trust-lab-api` Worker using the content-only upload endpoint, preserving Worker settings and bindings. Cloudflare deployment ID: `verification pending`; version: `verification pending`.
+- Verified the deployed Worker source includes both the `handlePartnerPayoutPreferences` handler and the `PATCH /api/partners/payout-preferences` route. Live authenticated save testing was not performed because this session cannot authenticate as the partner; do not claim an end-to-end browser save test passed.
