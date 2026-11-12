@@ -176,7 +176,7 @@ async function handlePartnerPayoutPreferences(request,env,origin){
   const method=String(p.payoutMethod||"paypal").trim().toLowerCase();
   const paypalEmail=String(p.paypalEmail||"").trim().toLowerCase();
   if(method!=="paypal")return json({error:"unsupported_payout_method"},400,origin,env);
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(paypalEmail)||paypalEmail.length>254)return json({error:"valid_paypal_email_required"},400,origin,env);
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(paypalEmail)||paypalEmail.length>254)return json({error:"valid_paypal_email_required"},400,origin,env);
   try{
     const partner=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE lower(email)=? AND application_status='approved' ORDER BY updated_at DESC LIMIT 1").bind(user.email).first();
     if(!partner)return json({error:"partner_approval_required"},403,origin,env);
