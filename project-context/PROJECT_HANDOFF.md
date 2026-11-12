@@ -607,3 +607,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - Added scoped overrides to `contact.css` so the contact section follows the site's light surface theme, with explicit high-contrast heading, kicker, paragraph, email-link, card, form-label, input, placeholder, focus and status colors.
 - Kept the existing contact copy, support email, form fields, submission behavior and contact layout intact; this is a visual/readability-only change.
 - Change is on branch `fix/contact-section-readability`. Not merged into `main`; production publication awaits review/approval. Browser visual QA remains to be performed.
+
+
+## Partner payout profile — implementation branch, 2026-11-12
+
+- Feature branch: `feature/partner-payout-profile` (based on `main`).
+- Partner Center now includes a **Profile & Payout Settings** panel. At launch, the only supported method is manual PayPal payout; the partner can save and update the PayPal account email.
+- Authenticated API endpoint: `PATCH /api/partners/payout-preferences` on `avr-trust-lab-api`. It derives the partner from the verified Clerk email and only updates the approved partner's own record. It validates and normalizes the PayPal email; it does not accept a partner ID from the browser.
+- New D1 migration: `cloudflare/migrations/20261112_partner_payout_preferences.sql` adds `payout_method`, `paypal_email`, and `payout_updated_at` to `affiliate_applications`.
+- Partner dashboard response includes payout preference fields. Admin commission ledger now displays the partner's PayPal payout email beside each commission.
+- This does not initiate payments or connect PayPal/Stripe. Payouts remain manual: the administrator sends payment outside Star69AI and records the payment reference in the ledger. Stripe Connect and bank payouts are not implemented.
+- Deployment requirements: apply the new migration to the existing `avr-trust-lab` D1 database, then deploy the updated `avr-trust-lab-api` Worker. GitHub Pages frontend changes are not live until the PR is merged and published.
+- Verification status: source-level review only; no live migration, Worker deployment, authenticated browser test, or real payout was performed. Do not claim the feature is live until these steps and tests are complete.
