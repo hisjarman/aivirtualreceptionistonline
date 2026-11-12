@@ -23,7 +23,7 @@
  async function loadLedger(){
   const refs=$("#pa-referral-rows"),commissions=$("#pa-commission-rows"),note=$("#pa-ledger-message");
   if(!refs||!commissions)return;
-  refs.innerHTML='<tr><td colspan="5">Loading referrals…</td></tr>';commissions.innerHTML='<tr><td colspan="6">Loading commissions…</td></tr>';if(note)note.hidden=true;
+  refs.innerHTML='<tr><td colspan="5">Loading referrals…</td></tr>';commissions.innerHTML='<tr><td colspan="7">Loading commissions…</td></tr>';if(note)note.hidden=true;
   try{
    const d=await api("/api/admin/partners/ledger"),sum=d.summary||{};
    $("#pa-ledger-clicks").textContent=Number(sum.clicks||0).toLocaleString();
@@ -35,10 +35,10 @@
    if(!(d.referrals||[]).length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=5;td.textContent="No referred businesses recorded yet.";tr.append(td);refs.append(tr);}
    (d.referrals||[]).forEach(item=>{const tr=document.createElement("tr");[item.partnerName,item.businessName||item.leadName,item.leadEmail,item.status,item.createdAt?new Date(item.createdAt).toLocaleDateString():"—"].forEach(value=>{const td=document.createElement("td");td.textContent=value||"—";tr.append(td);});refs.append(tr);});
    commissions.replaceChildren();
-   if(!(d.commissions||[]).length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=6;td.textContent="No subscription commissions recorded yet.";tr.append(td);commissions.append(tr);}
+   if(!(d.commissions||[]).length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=7;td.textContent="No subscription commissions recorded yet.";tr.append(td);commissions.append(tr);}
    (d.commissions||[]).forEach(item=>{
     const tr=document.createElement("tr");
-    [item.partnerName,item.businessName,ledgerMoney(item.commissionAmountCents,item.currency),item.status+(item.status==="pending"&&item.validationUntil?" · until "+new Date(item.validationUntil).toLocaleDateString():"")].forEach(value=>{const td=document.createElement("td");td.textContent=value||"—";tr.append(td);});
+    [item.partnerName,item.businessName,ledgerMoney(item.commissionAmountCents,item.currency),item.status+(item.status==="pending"&&item.validationUntil?" · until "+new Date(item.validationUntil).toLocaleDateString():""),item.payoutMethod==="paypal"&&item.paypalEmail?"PayPal · "+item.paypalEmail:"PayPal details not provided"].forEach(value=>{const td=document.createElement("td");td.textContent=value||"—";tr.append(td);});
     const refCell=document.createElement("td"),refInput=document.createElement("input");refInput.type="text";refInput.maxLength=160;refInput.placeholder="Payment reference";refInput.value=item.payoutReference||"";refCell.append(refInput);tr.append(refCell);
     const actionCell=document.createElement("td"),button=document.createElement("button");button.type="button";button.textContent=item.status==="pending"?"Mark paid":item.status==="paid"?"Paid":"Reversed";
     const holdActive=item.status==="pending"&&item.validationUntil&&new Date(item.validationUntil)>new Date();
