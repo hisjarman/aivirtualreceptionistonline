@@ -496,3 +496,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - Follow-up to the candy-popsicle palette proposal on PR #96: user clarified the signature accent should be watermelon green, not lemon/lime yellow-green.
 - Updated the shared palette and homepage/client-portal accent references to vivid watermelon-rind green (#45C957), with a deeper supporting green (#2FA947) and a lighter hover state (#A5F0A5). Strawberry, raspberry, orange sherbet, blueberry, vanilla and deep plum remain complementary colors.
 - This remains a CSS-only proposal on design/candy-popsicle-palette-readability; no merge, GitHub Pages publication, or browser visual QA has been performed.
+
+
+## Automatic AI Discovery Coach suggestions — 2026-11-11
+
+- Confirmed the existing Get Started form (app.js) already sends the active allowlisted field and selected business/call-handling answers to the embedded star69ai-concierge iframe using the exact production origin. The iframe already receives this context and the Worker already supports one-click suggestion responses during a manually started chat.
+- Root cause of the reported behavior: the deployed Concierge page only updated its contextual hint when form context arrived; it did not initiate an AI request. Suggestions were generated only after a visitor manually typed and sent a chat message.
+- Updated the Concierge page logic in cloudflare/concierge-worker.js to automatically request a tailored suggestion when a visitor focuses one of the seven free-text discovery fields: industry details, service area, services, business hours, call tasks, common questions, and additional notes.
+- Automatic suggestions are debounced briefly, generated once per field per iframe session, use the current allowlisted form context, and appear as assistant messages with the existing explicit “Use this suggestion” button. The visitor's form is never silently changed or submitted. Contact/identity fields and dropdowns do not trigger automatic AI suggestions.
+- Existing manual chat, suggestion parsing, origin validation, field allowlist, exact dropdown-value checks, privacy exclusions, Formspree endpoint, and Worker rate limit remain unchanged.
+- Source validation required: embedded script syntax, automatic field allowlist, one-request-per-field behavior, stale-response suppression, existing manual chat, and one-click message flow. Live AI inference and browser interaction still require production deployment and end-to-end testing.
+- This change is source-only until the Worker is separately deployed. Do not claim automatic suggestions are live until the Worker deployment and a real discovery-form interaction are verified.
