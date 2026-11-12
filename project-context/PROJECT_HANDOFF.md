@@ -516,3 +516,10 @@ Known prior issue to recheck against current source: a portal request reported `
 - This follow-up escapes the JSON example's double quotes within the JavaScript string. No runtime behavior, prompt semantics, bindings, or secrets are changed.
 - Required validation: parse the complete Worker module and its embedded Concierge browser script before attempting another production upload.
 - No Worker upload or deployment was successful during the rejected attempt; the previously active production deployment remains unchanged.
+
+
+## Partner header rebrand — 2026-11-12
+
+- Updated the private partner applications admin header and public partner-program header to use the canonical horizontal Star69AI logo at `assets/star69ai-logo.png` instead of the retired text wordmark.
+- Updated the partner admin document title from the previous brand name to `Partner Applications | Star69AI`.
+- Added responsive logo sizing in the partner admin and public partner page stylesheets. No partner application, authorization, commission, API or enrollment behavior was changed.
