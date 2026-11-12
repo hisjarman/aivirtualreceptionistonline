@@ -20,6 +20,7 @@ function writePartnerAttribution(value) {
 const partnerAttributionReady = (async () => {
   const incoming = String(new URLSearchParams(window.location.search).get("ref") || "").trim().toUpperCase();
   if (!/^[A-Z0-9]{6,16}$/.test(incoming)) return readPartnerAttribution();
+  const fallback={partnerCode:incoming,clickId:""};writePartnerAttribution(fallback);
   try {
     const response = await fetch(API_BASE + "/api/partners/click", {
       method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
@@ -30,18 +31,19 @@ const partnerAttributionReady = (async () => {
       const value={partnerCode:incoming,clickId:result.clickId};writePartnerAttribution(value);return value;
     }
   } catch {}
-  const fallback={partnerCode:incoming,clickId:""};writePartnerAttribution(fallback);return fallback;
+  return fallback;
 })();
 async function capturePartnerLead(payload) {
   const attribution=await Promise.race([partnerAttributionReady,new Promise(resolve=>setTimeout(()=>resolve(readPartnerAttribution()),1200))]);
   if(!attribution?.partnerCode||!String(payload.email||"").trim())return false;
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),1800);
   try {
-    const response=await fetch(API_BASE+"/api/partners/lead",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({
+    const response=await fetch(API_BASE+"/api/partners/lead",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},signal:controller.signal,body:JSON.stringify({
       partnerCode:attribution.partnerCode,clickId:attribution.clickId||"",name:String(payload.name||"").slice(0,120),
       email:String(payload.email||"").slice(0,254),business:String(payload.business||"").slice(0,160),landingPath:location.pathname
     })});
     return response.ok;
-  } catch { return false; }
+  } catch { return false; } finally { clearTimeout(timeout); }
 }
 window.star69aiCapturePartnerLead=capturePartnerLead;
 window.star69aiGetPartnerAttribution=()=>readPartnerAttribution();
@@ -51,7 +53,7 @@ document.querySelectorAll('form[action*="formspree.io/f/mrppjqdb"]:not(#intake-f
     const data=new FormData(partnerForm),payload={name:data.get("name"),email:data.get("email"),business:data.get("business")};
     const button=partnerForm.querySelector('button[type="submit"]');if(button)button.disabled=true;
     try{
-      const attribution=await partnerAttributionReady;
+      const attribution=await Promise.race([partnerAttributionReady,new Promise(resolve=>setTimeout(()=>resolve(readPartnerAttribution()),1200))]);
       if(attribution?.partnerCode){
         for(const [name,value] of [["partner_code",attribution.partnerCode],["partner_click_id",attribution.clickId||""]]){
           let input=partnerForm.querySelector('input[type="hidden"][name="'+name+'"]');
