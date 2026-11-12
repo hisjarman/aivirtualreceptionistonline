@@ -599,3 +599,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - Post-deployment settings inspection confirmed both Stripe secrets remain configured as secret bindings, alongside the existing Clerk, D1, Resend and Retell bindings.
 - Runtime health endpoint browser request could not be verified in this environment (the request tool returned an access error). Do not claim runtime health or end-to-end billing/webhook tests passed.
 - Stripe webhook event configuration has not been inspected or changed because no Stripe account connector is available in this session. In Stripe Dashboard, verify the endpoint `https://avr-platform-api.hisjarman.workers.dev/webhooks/stripe` is subscribed to `invoice.payment_succeeded` (as well as the pre-existing required events). Then send a Stripe test event/test invoice and confirm the Worker records the event and partner commission correctly before relying on production commission automation.
+
+
+## Contact section readability repair — 2026-11-12
+
+- Identified the contrast conflict on `get-started.html#contact-us`: the contact section retained a dark background and pale inherited text, while later site-wide theme rules force section headings to dark ink. The heading and section kicker therefore rendered with insufficient contrast.
+- Added scoped overrides to `contact.css` so the contact section follows the site's light surface theme, with explicit high-contrast heading, kicker, paragraph, email-link, card, form-label, input, placeholder, focus and status colors.
+- Kept the existing contact copy, support email, form fields, submission behavior and contact layout intact; this is a visual/readability-only change.
+- Change is on branch `fix/contact-section-readability`. Not merged into `main`; production publication awaits review/approval. Browser visual QA remains to be performed.
