@@ -9,6 +9,11 @@
  function render(data){
   $("#pp-status").textContent="PARTNER ACCOUNT · "+Math.round(Number(data.partner.currentRate||0.20)*100)+"% CURRENT COMMISSION RATE";
   $("#pp-code").textContent=data.partner.partnerCode;
+  $("#pp-payout-method").value=data.partner.payoutMethod||"paypal";
+  $("#pp-paypal-email").value=data.partner.paypalEmail||"";
+  $("#pp-payout-status").textContent=data.partner.paypalEmail?"PAYPAL DETAILS SAVED":"PAYPAL SETUP NEEDED";
+  $("#pp-payout-message").textContent=data.partner.payoutUpdatedAt?"Last updated "+new Date(data.partner.payoutUpdatedAt).toLocaleDateString():"Add your PayPal email to receive payouts.";
+
   $("#pp-referral-link").value=data.partner.referralUrl;
   $("#pp-clicks").textContent=Number(data.stats.clicks||0).toLocaleString();
   $("#pp-leads").textContent=Number(data.stats.leads||0).toLocaleString();
@@ -27,6 +32,18 @@
  function signedOut(){auth.hidden=false;dashboard.hidden=true;notApproved.hidden=true;actions.hidden=false;userButton.hidden=true;$("#pp-session").textContent="SIGNED OUT";if(mounted){clerk.unmountUserButton(userButton);mounted=false;}}
  function signedIn(){actions.hidden=true;userButton.hidden=false;$("#pp-session").textContent="SIGNED IN";if(!mounted){clerk.mountUserButton(userButton);mounted=true;}load();}
  $("#pp-sign-in").addEventListener("click",()=>clerk?.openSignIn());$("#pp-sign-up").addEventListener("click",()=>clerk?.openSignUp());
+ $("#pp-payout-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const button=$("#pp-save-payout"),message=$("#pp-payout-message"),email=$("#pp-paypal-email").value.trim();
+  button.disabled=true;button.textContent="Saving…";message.textContent="";
+  try{
+   const result=await api("/api/partners/payout-preferences",{method:"PATCH",body:JSON.stringify({payoutMethod:"paypal",paypalEmail:email})});
+   $("#pp-paypal-email").value=result.paypalEmail;
+   $("#pp-payout-status").textContent="PAYPAL DETAILS SAVED";
+   message.textContent="Payout details saved. Updated "+new Date(result.payoutUpdatedAt).toLocaleDateString()+".";
+  }catch(e){message.textContent=e.message==="valid_paypal_email_required"?"Enter a valid PayPal email address.":e.message||"Could not save payout details.";}
+  finally{button.disabled=false;button.textContent="Save payout details";}
+ });
  $("#pp-copy-link").addEventListener("click",async()=>{const value=$("#pp-referral-link").value;try{await navigator.clipboard.writeText(value);$("#pp-copy-status").textContent="Referral link copied."; }catch{$("#pp-referral-link").select();$("#pp-copy-status").textContent="Select and copy your referral link."; }});
  async function init(){try{if(!window.Clerk)throw new Error("Clerk did not load. Refresh and try again.");await window.Clerk.load({ui:{ClerkUI:window.__internal_ClerkUICtor}});clerk=window.Clerk;if(clerk.isSignedIn)signedIn();else signedOut();clerk.addListener(()=>clerk.isSignedIn?signedIn():signedOut());}catch(e){$("#pp-auth-title").textContent="Sign-in could not initialize";$("#pp-auth-copy").textContent=e.message||"Refresh and try again.";actions.hidden=true;}}
  init();
