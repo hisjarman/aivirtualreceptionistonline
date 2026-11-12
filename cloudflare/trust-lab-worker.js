@@ -126,8 +126,8 @@ async function handlePartnerLead(request,env,origin){
   const code=String(p.partnerCode||"").trim().toUpperCase(),email=String(p.email||"").trim().toLowerCase();
   if(!/^[A-Z0-9]{6,16}$/.test(code)||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)||email.length>254)return json({recorded:false},200,origin,env);
   try{
-    const partner=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE partner_code=? AND application_status='approved'").bind(code).first();
-    if(!partner)return json({recorded:false},200,origin,env);
+    const partner=await env.DB.prepare("SELECT id,email FROM affiliate_applications WHERE partner_code=? AND application_status='approved'").bind(code).first();
+    if(!partner||String(partner.email||"").trim().toLowerCase()===email)return json({recorded:false},200,origin,env);
     const ipHash=await hashIp(request.headers.get("CF-Connecting-IP"),env.CLERK_SECRET_KEY),since=new Date(Date.now()-3600000).toISOString();
     const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM partner_referrals WHERE ip_hash=? AND created_at>=?").bind(ipHash,since).first();
     if(Number(recent?.total||0)>=10)return json({error:"partner_lead_rate_limit"},429,origin,env);
