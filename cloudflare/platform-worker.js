@@ -57,7 +57,7 @@ async function stripeWebhook(req,env){const raw=await req.text(),sig=req.headers
    await env.DB.prepare("UPDATE partner_referrals SET lead_status='converted',customer_id=?,converted_at=COALESCE(converted_at,?) WHERE affiliate_application_id=? AND lower(lead_email)=lower(?)").bind(customer.id,paidAt,partnerId,customer.email).run();
    const partner=await env.DB.prepare("SELECT commission_tier FROM affiliate_applications WHERE id=? AND application_status='approved'").bind(partnerId).first();
    if(partner){
-    const active=await env.DB.prepare("SELECT COUNT(DISTINCT r.customer_id) AS total FROM partner_referrals r JOIN avr_customers c ON c.id=r.customer_id WHERE r.affiliate_application_id=? AND r.lead_status='converted' AND c.status='active' AND c.subscription_status IN ('active','trialing')").bind(partnerId).first();
+    const active=await env.DB.prepare("SELECT COUNT(DISTINCT r.customer_id) AS total FROM partner_referrals r JOIN avr_customers c ON c.id=r.customer_id WHERE r.affiliate_application_id=? AND r.lead_status='converted' AND c.subscription_status IN ('active','trialing')").bind(partnerId).first();
     const activeCount=Number(active?.total||0);
     const rate=partner.commission_tier==="founding"?0.25:activeCount>=15?0.30:activeCount>=5?0.25:0.20;
     const commissionCents=Math.round(commissionableCents*rate);
