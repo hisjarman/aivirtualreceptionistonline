@@ -15,13 +15,11 @@ function readPartnerAttribution() {
 }
 function writePartnerAttribution(value) {
   const expiresAt = Date.now() + 90 * 86400000;
-  document.cookie = PARTNER_COOKIE + "=" + encodeURIComponent(JSON.stringify({...value,expiresAt})) + "; Max-Age=7776000; Path=/; SameSite=Lax; Secure";
+  document.cookie = PARTNER_COOKIE + "=" + encodeURIComponent(JSON.stringify({...value,expiresAt})) + "; Max-Age=7776000; Path=/; Domain=.star69ai.com; SameSite=Lax; Secure";
 }
 const partnerAttributionReady = (async () => {
   const incoming = String(new URLSearchParams(window.location.search).get("ref") || "").trim().toUpperCase();
   if (!/^[A-Z0-9]{6,16}$/.test(incoming)) return readPartnerAttribution();
-  const current = readPartnerAttribution();
-  if (current?.partnerCode === incoming && current.clickId) return current;
   try {
     const response = await fetch(API_BASE + "/api/partners/click", {
       method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
