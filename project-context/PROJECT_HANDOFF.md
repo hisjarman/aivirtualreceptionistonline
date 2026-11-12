@@ -516,3 +516,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - This follow-up escapes the JSON example's double quotes within the JavaScript string. No runtime behavior, prompt semantics, bindings, or secrets are changed.
 - Required validation: parse the complete Worker module and its embedded Concierge browser script before attempting another production upload.
 - No Worker upload or deployment was successful during the rejected attempt; the previously active production deployment remains unchanged.
+
+
+## 2026-11-12 — Concierge Worker version 13 deployment
+
+- Merged PR #98 (`2565c8b9c0cf8a4a148999d88116c092a4aef011`) to correct the escaped JSON example in the Worker system-prompt JavaScript string. The change is in `cloudflare/concierge-worker.js`.
+- Deployed the merged `main` Worker source to Cloudflare Worker `star69ai-concierge`.
+- Cloudflare deployment: version 13, version ID `a4a6f65b-a8cd-4e61-aa82-35585833038b`; deployment ID `2c2ce06f-4a11-46a8-a6d9-b8a09b7724e7`; created 2026-11-12 01:04 UTC; traffic allocation verified at 100%.
+- Verified Worker settings after deployment: AI binding `AI` and D1 binding `DB` (database ID `6cf68b12-2aa8-4ed4-9f92-8a7824520d1a`) remain configured; compatibility date remains `2026-11-10`.
+- Source-level checks: deployed source includes the automatic suggestion handler and `star69ai-form-context` message listener; the prompt's JSON example is escaped and the previous syntax validation passes.
+- Runtime limitation: a direct request to the public `workers.dev` hostname from the Cloudflare execution environment was blocked with HTTP 403 by that environment's outbound-request policy. Therefore, the successful deployment and 100% traffic assignment are confirmed, but a live browser form interaction and live AI inference have not yet been verified. Next QA: open the production discovery form, focus an eligible free-text field (for example Services or Service Area), wait for the automatic suggestion, and verify the "Use this suggestion" action.
