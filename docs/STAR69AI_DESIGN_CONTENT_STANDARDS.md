@@ -127,7 +127,14 @@ A page or significant edit is not ready until all applicable checks pass:
 
 Do not mark a check as passed when it was not actually performed. Record browser/provider checks that remain outstanding.
 
-## 10. Change control
+## 10. Automated checks and review template
+
+- GitHub Actions runs `scripts/check-legal-pages.mjs` for legal-page and legal-stylesheet changes.
+- The check requires all five legal pages to load the shared stylesheet, use consistent navigation/footer, show an effective date and retain the legal cross-links.
+- Use `.github/pull_request_template.md` for the human review gate on all other readability, accessibility, responsive, content, SEO and regression checks.
+- Automated checks do not replace visual browser testing or attorney review.
+
+## 11. Change control
 
 - Read this standard, the root README and `project-context/PROJECT_HANDOFF.md` before substantial website changes.
 - Work on a dedicated branch and keep commits focused.
