@@ -45,7 +45,9 @@
     button.disabled=item.status!=="pending"||!!holdActive;
     if(holdActive)button.title="Validation hold ends "+new Date(item.validationUntil).toLocaleDateString();
     button.addEventListener("click",async()=>{button.disabled=true;button.textContent="Saving…";try{await api("/api/admin/partners/commissions/"+encodeURIComponent(item.id),{method:"PATCH",body:JSON.stringify({status:"paid",payoutReference:refInput.value.trim()})});await loadLedger();}catch(e){if(note){note.textContent=e.message||"Could not update commission.";note.hidden=false;note.classList.add("error");}button.disabled=false;button.textContent="Mark paid";}});
-    actionCell.append(button);tr.append(actionCell);commissions.append(tr);
+    actionCell.append(button);
+    if(item.status!=="reversed"){const reverse=document.createElement("button");reverse.type="button";reverse.textContent="Reverse";reverse.className="pa-reverse";reverse.addEventListener("click",async()=>{if(!window.confirm("Reverse this commission? Use this for refunds, chargebacks or an accounting correction."))return;reverse.disabled=true;try{await api("/api/admin/partners/commissions/"+encodeURIComponent(item.id),{method:"PATCH",body:JSON.stringify({status:"reversed",adminNote:"Manually reversed by administrator"})});await loadLedger();}catch(e){if(note){note.textContent=e.message||"Could not reverse commission.";note.hidden=false;note.classList.add("error");}reverse.disabled=false;}});actionCell.append(reverse);}
+    tr.append(actionCell);commissions.append(tr);
    });
   }catch(e){if(note){note.textContent=e.message||"Unable to load the partner ledger.";note.hidden=false;note.classList.add("error");}}
  }
