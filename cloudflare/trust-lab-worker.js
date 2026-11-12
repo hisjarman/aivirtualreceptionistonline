@@ -103,6 +103,73 @@ async function handlePartnerApplication(request,env,origin){
   try{const ipHash=await hashIp(request.headers.get('CF-Connecting-IP'),env.CLERK_SECRET_KEY),since=new Date(Date.now()-3600000).toISOString();const count=await env.DB.prepare('SELECT COUNT(*) AS total FROM affiliate_applications WHERE ip_hash=? AND created_at>=?').bind(ipHash,since).first();if(Number(count?.total||0)>=4)return json({error:'application_rate_limit'},429,origin,env);const existing=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE email=? AND application_status='pending' ORDER BY created_at DESC LIMIT 1").bind(email).first();if(existing)return json({received:true,duplicate:true,message:'Your application is already awaiting review.'},200,origin,env);const id=crypto.randomUUID();await env.DB.prepare('INSERT INTO affiliate_applications (id,name,email,website,promotion_method,audience,experience,notes,consent,ip_hash) VALUES (?,?,?,?,?,?,?,?,1,?)').bind(id,name,email,website,promotionMethod,audience,experience,notes,ipHash).run();const adminSent=await sendResend(env,{to:'support@star69ai.com',subject:'New affiliate partner application',replyTo:email,text:'Name: '+name+'\nEmail: '+email+'\nWebsite: '+(website||'Not provided')+'\nPromotion method: '+promotionMethod+'\nAudience: '+(audience||'Not provided')+'\n\n'+(experience||'')+'\n'+(notes||''),html:'<h2>New affiliate partner application</h2><p><b>Name:</b> '+escapeHtml(name)+'<br><b>Email:</b> '+escapeHtml(email)+'<br><b>Website:</b> '+escapeHtml(website||'Not provided')+'<br><b>Promotion method:</b> '+escapeHtml(promotionMethod)+'<br><b>Audience:</b> '+escapeHtml(audience||'Not provided')+'</p><p>'+escapeHtml(experience||'')+'<br>'+escapeHtml(notes||'')+'</p>'});const confirmationSent=await sendResend(env,{to:email,subject:'We received your partner application',text:'Hi '+name+',\n\nYour Star69AI.com partner application has been received and is awaiting manual review. We will contact you by email after review.',html:'<p>Hi '+escapeHtml(name)+',</p><p>Your Star69AI.com partner application has been received and is awaiting manual review. We will contact you by email after review.</p>'});return json({received:true,id,notificationSent:adminSent,confirmationSent,message:'Your partner application has been submitted for review.'},201,origin,env);}catch(e){console.error('affiliate_application_failed',e?.message||e);return json({error:'application_unavailable'},503,origin,env);}
 }
 
+async function handlePartnerClick(request,env,origin){
+  let p;try{const raw=await request.text();if(raw.length>3000)return json({error:"request_too_large"},413,origin,env);p=JSON.parse(raw);}catch{return json({error:"invalid_json"},400,origin,env);}
+  const code=String(p.partnerCode||p.code||"").trim().toUpperCase();
+  if(!/^[A-Z0-9]{6,16}$/.test(code))return json({error:"invalid_partner_code"},400,origin,env);
+  try{
+    const partner=await env.DB.prepare("SELECT id FROM affiliate_applications WHERE partner_code=? AND application_status='approved'").bind(code).first();
+    if(!partner)return json({error:"partner_not_found"},404,origin,env);
+    const ipHash=await hashIp(request.headers.get("CF-Connecting-IP"),env.CLERK_SECRET_KEY),since=new Date(Date.now()-10*60000).toISOString();
+    const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM partner_clicks WHERE ip_hash=? AND created_at>=?").bind(ipHash,since).first();
+    if(Number(recent?.total||0)>=60)return json({error:"partner_click_rate_limit"},429,origin,env);
+    const clickId=crypto.randomUUID(),now=Date.now(),createdAt=new Date(now).toISOString(),expiresAt=new Date(now+90*86400000).toISOString();
+    const landingPath=String(p.landingPath||"/").slice(0,300),referrer=String(p.referrer||"").slice(0,500);
+    let referrerDomain=null;try{referrerDomain=referrer?new URL(referrer).hostname.slice(0,180):null;}catch{}
+    await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,ip_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?)").bind(clickId,partner.id,landingPath,referrerDomain,ipHash,createdAt,expiresAt).run();
+    return json({tracked:true,clickId,partnerCode:code,expiresAt},201,origin,env);
+  }catch(e){console.error("partner_click_failed",e?.message||e);return json({error:"partner_tracking_unavailable"},503,origin,env);}
+}
+async function handlePartnerLead(request,env,origin){
+  let p;try{const raw=await request.text();if(raw.length>6000)return json({error:"lead_too_large"},413,origin,env);p=JSON.parse(raw);}catch{return json({error:"invalid_json"},400,origin,env);}
+  if(String(p.website||"").trim())return json({recorded:true},201,origin,env);
+  const code=String(p.partnerCode||"").trim().toUpperCase(),email=String(p.email||"").trim().toLowerCase();
+  if(!/^[A-Z0-9]{6,16}$/.test(code)||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)||email.length>254)return json({recorded:false},200,origin,env);
+  try{
+    const partner=await env.DB.prepare("SELECT id,email FROM affiliate_applications WHERE partner_code=? AND application_status='approved'").bind(code).first();
+    if(!partner||String(partner.email||"").trim().toLowerCase()===email)return json({recorded:false},200,origin,env);
+    const ipHash=await hashIp(request.headers.get("CF-Connecting-IP"),env.CLERK_SECRET_KEY),since=new Date(Date.now()-3600000).toISOString();
+    const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM partner_referrals WHERE ip_hash=? AND created_at>=?").bind(ipHash,since).first();
+    if(Number(recent?.total||0)>=10)return json({error:"partner_lead_rate_limit"},429,origin,env);
+    const existingCustomer=await env.DB.prepare("SELECT id FROM avr_customers WHERE lower(email)=? LIMIT 1").bind(email).first();
+    if(existingCustomer)return json({recorded:false},200,origin,env);
+    const now=Date.now(),createdAt=new Date(now).toISOString(),expiresAt=new Date(now+90*86400000).toISOString();
+    let clickId=String(p.clickId||"").trim(),click=null;
+    if(clickId)click=await env.DB.prepare("SELECT click_id,expires_at FROM partner_clicks WHERE click_id=? AND affiliate_application_id=? AND expires_at>=?").bind(clickId,partner.id,createdAt).first();
+    if(!click){
+      clickId=crypto.randomUUID();
+      await env.DB.prepare("INSERT INTO partner_clicks(click_id,affiliate_application_id,landing_path,referrer_domain,ip_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?)").bind(clickId,partner.id,String(p.landingPath||"/get-started.html").slice(0,300),null,ipHash,createdAt,expiresAt).run();
+    }
+    const leadName=String(p.name||"").trim().slice(0,120)||null,businessName=String(p.business||"").trim().slice(0,160)||null;
+    const attributionExpiresAt=click?.expires_at||expiresAt;
+    await env.DB.prepare("INSERT OR IGNORE INTO partner_referrals(id,affiliate_application_id,click_id,lead_email,lead_name,business_name,ip_hash,lead_status,created_at,attribution_expires_at) VALUES(?,?,?,?,?,?,?,'lead',?,?)").bind(crypto.randomUUID(),partner.id,clickId,email,leadName,businessName,ipHash,createdAt,attributionExpiresAt).run();
+    return json({recorded:true},201,origin,env);
+  }catch(e){console.error("partner_lead_capture_failed",e?.message||e);return json({recorded:false,error:"partner_tracking_unavailable"},503,origin,env);}
+}
+async function handlePartnerDashboard(request,env,origin){
+  let user;try{user=await getVerifiedUser(request,env);}catch(e){return authError(e,origin,env);}
+  try{
+    let partner=await env.DB.prepare("SELECT id,name,email,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,created_at AS joinedAt FROM affiliate_applications WHERE lower(email)=? AND application_status='approved' ORDER BY updated_at DESC LIMIT 1").bind(user.email).first();
+    if(!partner)return json({error:"partner_approval_required"},403,origin,env);
+    const partnerCode=partner.partnerCode||("S69"+crypto.randomUUID().replace(/-/g,"").slice(0,9)).toUpperCase();
+    const partnerLink="https://star69ai.com/get-started.html?ref="+partnerCode;
+    if(!partner.partnerCode||partner.referralUrl!==partnerLink){
+      await env.DB.prepare("UPDATE affiliate_applications SET partner_code=COALESCE(partner_code,?),referral_url=?,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(partnerCode,partnerLink,partner.id).run();
+      partner=await env.DB.prepare("SELECT id,name,email,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,created_at AS joinedAt FROM affiliate_applications WHERE id=?").bind(partner.id).first();
+    }
+    const [clicks,leadStats,commissionStats,referrals,commissions]=await Promise.all([
+      env.DB.prepare("SELECT COUNT(*) AS total FROM partner_clicks WHERE affiliate_application_id=?").bind(partner.id).first(),
+      env.DB.prepare("SELECT COUNT(*) AS leads,SUM(CASE WHEN r.lead_status='converted' AND c.subscription_status IN ('active','trialing') THEN 1 ELSE 0 END) AS customers FROM partner_referrals r LEFT JOIN avr_customers c ON c.id=r.customer_id WHERE r.affiliate_application_id=?").bind(partner.id).first(),
+      env.DB.prepare("SELECT COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount_cents ELSE 0 END),0) AS pending,COALESCE(SUM(CASE WHEN status='paid' THEN commission_amount_cents ELSE 0 END),0) AS paid FROM partner_commissions WHERE affiliate_application_id=?").bind(partner.id).first(),
+      env.DB.prepare("SELECT business_name AS businessName,lead_status AS status,created_at AS createdAt,converted_at AS convertedAt FROM partner_referrals WHERE affiliate_application_id=? ORDER BY created_at DESC LIMIT 100").bind(partner.id).all(),
+      env.DB.prepare("SELECT c.commission_amount_cents AS commissionAmountCents,c.currency,c.status,c.validation_until AS validationUntil,c.created_at AS createdAt,cu.business_name AS businessName FROM partner_commissions c LEFT JOIN avr_customers cu ON cu.id=c.customer_id WHERE c.affiliate_application_id=? ORDER BY c.created_at DESC LIMIT 100").bind(partner.id).all()
+    ]);
+    const activeReferrals=Number(leadStats?.customers||0),assignedRate=partner.commissionTier==="founding"||partner.commissionTier==="growth"?0.25:partner.commissionTier==="premier"?0.30:0.20,thresholdRate=activeReferrals>=15?0.30:activeReferrals>=5?0.25:0.20;
+    partner.currentRate=Math.max(assignedRate,thresholdRate);
+    return json({partner,stats:{clicks:Number(clicks?.total||0),leads:Number(leadStats?.leads||0),customers:activeReferrals,pendingCents:Number(commissionStats?.pending||0),paidCents:Number(commissionStats?.paid||0)},referrals:referrals.results||[],commissions:commissions.results||[]},200,origin,env);
+  }catch(e){console.error("partner_dashboard_failed",e?.message||e);return json({error:"partner_dashboard_unavailable"},503,origin,env);}
+}
+
 async function handleNewsletterSubscribe(request,env,origin){
   let p;try{const raw=await request.text();if(raw.length>4000)return json({error:"request_too_large"},413,origin,env);p=JSON.parse(raw);}catch{return json({error:"invalid_json"},400,origin,env);}
   if(String(p.website||"").trim())return json({subscribed:true},201,origin,env);
@@ -137,9 +204,48 @@ async function handleAdmin(request,env,origin,path){
   if(!admins.includes(user.email))return json({error:"admin_access_required"},403,origin,env);
   try{
 
-    if(request.method==='GET'&&path==='/api/admin/partners'){const f=new URL(request.url).searchParams.get('status')||'all';const s=['pending','approved','rejected'].includes(f)?f:'all';const cols='id,name,email,website AS businessWebsite,promotion_method AS promotionMethod,audience,experience,notes,application_status AS applicationStatus,commission_tier AS commissionTier,systeme_status AS systemeStatus,systeme_contact_id AS systemeContactId,systeme_affiliate_id AS systemeAffiliateId,referral_url AS referralUrl,admin_note AS adminNote,created_at AS createdAt,updated_at AS updatedAt';const q=s==='all'?'SELECT '+cols+' FROM affiliate_applications ORDER BY created_at DESC LIMIT 500':'SELECT '+cols+' FROM affiliate_applications WHERE application_status=? ORDER BY created_at DESC LIMIT 500';const r=s==='all'?await env.DB.prepare(q).all():await env.DB.prepare(q).bind(s).all();return json({applications:r.results||[],count:(r.results||[]).length},200,origin,env);}
+    if(request.method==="GET"&&path==="/api/admin/partners/ledger"){
+      const [referrals,commissions,summary]=await Promise.all([
+        env.DB.prepare("SELECT r.id,r.lead_name AS leadName,r.lead_email AS leadEmail,r.business_name AS businessName,r.lead_status AS status,r.created_at AS createdAt,r.converted_at AS convertedAt,a.id AS partnerId,a.name AS partnerName,a.email AS partnerEmail,c.id AS customerId FROM partner_referrals r JOIN affiliate_applications a ON a.id=r.affiliate_application_id LEFT JOIN avr_customers c ON c.id=r.customer_id ORDER BY r.created_at DESC LIMIT 500").all(),
+        env.DB.prepare("SELECT x.id,x.affiliate_application_id AS partnerId,a.name AS partnerName,a.email AS partnerEmail,x.customer_id AS customerId,c.business_name AS businessName,x.stripe_invoice_id AS invoiceId,x.invoice_amount_cents AS invoiceAmountCents,x.commission_rate AS commissionRate,x.commission_amount_cents AS commissionAmountCents,x.currency,x.status,x.validation_until AS validationUntil,x.paid_at AS paidAt,x.payout_reference AS payoutReference,x.created_at AS createdAt FROM partner_commissions x JOIN affiliate_applications a ON a.id=x.affiliate_application_id LEFT JOIN avr_customers c ON c.id=x.customer_id ORDER BY x.created_at DESC LIMIT 500").all(),
+        env.DB.prepare("SELECT (SELECT COUNT(*) FROM partner_clicks) AS clicks,(SELECT COUNT(*) FROM partner_referrals) AS leads,(SELECT COUNT(*) FROM partner_referrals WHERE lead_status='converted') AS customers,(SELECT COALESCE(SUM(commission_amount_cents),0) FROM partner_commissions WHERE status='pending') AS pendingCents,(SELECT COALESCE(SUM(commission_amount_cents),0) FROM partner_commissions WHERE status='paid') AS paidCents").first()
+      ]);
+      return json({referrals:referrals.results||[],commissions:commissions.results||[],summary},200,origin,env);
+    }
+    const commissionMatch=path.match(/^\/api\/admin\/partners\/commissions\/([a-f0-9-]{36})$/i);
+    if(request.method==="PATCH"&&commissionMatch){
+      let p;try{p=await request.json();}catch{return json({error:"invalid_json"},400,origin,env);}
+      const status=String(p.status||"");if(!["paid","reversed"].includes(status))return json({error:"invalid_commission_status"},400,origin,env);
+      const existing=await env.DB.prepare("SELECT id,affiliate_application_id,validation_until,status FROM partner_commissions WHERE id=?").bind(commissionMatch[1]).first();
+      if(!existing)return json({error:"commission_not_found"},404,origin,env);
+      const now=new Date().toISOString();
+      if(status==="paid"&&existing.validation_until>now)return json({error:"commission_validation_hold_active"},409,origin,env);
+      if(status==="paid"){const balance=await env.DB.prepare("SELECT COALESCE(SUM(commission_amount_cents),0) AS total FROM partner_commissions WHERE affiliate_application_id=? AND status='pending' AND validation_until<=?").bind(existing.affiliate_application_id,now).first();if(Number(balance?.total||0)<5000)return json({error:"minimum_payout_threshold_not_reached"},409,origin,env);}
+      await env.DB.prepare("UPDATE partner_commissions SET status=?,paid_at=CASE WHEN ?='paid' THEN ? ELSE paid_at END,payout_reference=COALESCE(?,payout_reference),admin_note=COALESCE(?,admin_note) WHERE id=?").bind(status,status,now,p.payoutReference===undefined?null:String(p.payoutReference).slice(0,160),p.adminNote===undefined?null:String(p.adminNote).slice(0,1000),commissionMatch[1]).run();
+      return json({updated:true,status},200,origin,env);
+    }
+    if(request.method==='GET'&&path==='/api/admin/partners'){const f=new URL(request.url).searchParams.get('status')||'all';const s=['pending','approved','rejected'].includes(f)?f:'all';const cols='id,name,email,website AS businessWebsite,promotion_method AS promotionMethod,audience,experience,notes,application_status AS applicationStatus,commission_tier AS commissionTier,partner_code AS partnerCode,referral_url AS referralUrl,admin_note AS adminNote,created_at AS createdAt,updated_at AS updatedAt';const q=s==='all'?'SELECT '+cols+' FROM affiliate_applications ORDER BY created_at DESC LIMIT 500':'SELECT '+cols+' FROM affiliate_applications WHERE application_status=? ORDER BY created_at DESC LIMIT 500';const r=s==='all'?await env.DB.prepare(q).all():await env.DB.prepare(q).bind(s).all();return json({applications:r.results||[],count:(r.results||[]).length},200,origin,env);}
     const partnerMatch=path.match(new RegExp("^/api/admin/partners/([a-f0-9-]{36})$","i"));
-    if(request.method==='PATCH'&&partnerMatch){let p;try{p=await request.json();}catch{return json({error:'invalid_json'},400,origin,env);}const a=p.applicationStatus,c=p.commissionTier,s=p.systemeStatus;if(a!==undefined&&!['pending','approved','rejected'].includes(a))return json({error:'invalid_application_status'},400,origin,env);if(c!==undefined&&!['standard','founding','growth','premier'].includes(c))return json({error:'invalid_commission_tier'},400,origin,env);if(s!==undefined&&!['not_added','added'].includes(s))return json({error:'invalid_systeme_status'},400,origin,env);const contact=p.systemeContactId===undefined?null:String(p.systemeContactId).slice(0,120),affiliate=p.systemeAffiliateId===undefined?null:String(p.systemeAffiliateId).slice(0,160),url=p.referralUrl===undefined?null:String(p.referralUrl).slice(0,500),note=p.adminNote===undefined?null:String(p.adminNote).slice(0,2000);const found=await env.DB.prepare('SELECT id FROM affiliate_applications WHERE id=?').bind(partnerMatch[1]).first();if(!found)return json({error:'application_not_found'},404,origin,env);await env.DB.prepare("UPDATE affiliate_applications SET application_status=COALESCE(?,application_status),commission_tier=COALESCE(?,commission_tier),systeme_status=COALESCE(?,systeme_status),systeme_contact_id=COALESCE(?,systeme_contact_id),systeme_affiliate_id=COALESCE(?,systeme_affiliate_id),referral_url=COALESCE(?,referral_url),admin_note=COALESCE(?,admin_note),updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(a||null,c||null,s||null,contact,affiliate,url,note,partnerMatch[1]).run();return json({updated:true},200,origin,env);}
+    if(request.method==="PATCH"&&partnerMatch){
+      let p;try{p=await request.json();}catch{return json({error:"invalid_json"},400,origin,env);}
+      const status=p.applicationStatus,tier=p.commissionTier;
+      if(status!==undefined&&!["pending","approved","rejected"].includes(status))return json({error:"invalid_application_status"},400,origin,env);
+      if(tier!==undefined&&!["standard","founding","growth","premier"].includes(tier))return json({error:"invalid_commission_tier"},400,origin,env);
+      const note=p.adminNote===undefined?null:String(p.adminNote).slice(0,2000);
+      
+      const found=await env.DB.prepare("SELECT id,name,email,application_status,partner_code,referral_url FROM affiliate_applications WHERE id=?").bind(partnerMatch[1]).first();
+      if(!found)return json({error:"application_not_found"},404,origin,env);
+      const nextStatus=status||found.application_status;
+      const code=nextStatus==="approved"?(found.partner_code||("S69"+crypto.randomUUID().replace(/-/g,"").slice(0,9)).toUpperCase()):found.partner_code;
+      const generatedUrl=code?"https://star69ai.com/get-started.html?ref="+code:null;
+      const referralUrl=generatedUrl||found.referral_url;
+      await env.DB.prepare("UPDATE affiliate_applications SET application_status=?,commission_tier=COALESCE(?,commission_tier),partner_code=COALESCE(partner_code,?),referral_url=COALESCE(NULLIF(? ,''),referral_url),admin_note=COALESCE(?,admin_note),updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(nextStatus,tier||null,code,referralUrl||"",note,partnerMatch[1]).run();
+      let notificationSent=false;
+      if(nextStatus==="approved"&&found.application_status!=="approved"){
+        notificationSent=await sendResend(env,{to:found.email,subject:"Your Star69AI partner application is approved",text:"Hi "+found.name+",\n\nYour Star69AI partner application has been approved. Sign in or create your account at https://star69ai.com/partner-portal/ using this verified email address. Your personal referral link is: "+referralUrl+"\\n\\nYour Partner Center shows tracked clicks, referred leads and eligible commissions. Commission credit begins only after a qualifying subscription payment is confirmed and the validation period has passed.\n\nStar69AI Partner Team",html:"<p>Hi "+escapeHtml(found.name)+",</p><p>Your Star69AI partner application has been approved.</p><p><a href=\"https://star69ai.com/partner-portal/\">Open your Partner Center</a> and sign in or create an account using this verified email address.</p><p>Your personal referral link: <a href=\""+escapeHtml(referralUrl)+"\">"+escapeHtml(referralUrl)+"</a></p><p>Your Partner Center shows tracked clicks, referred leads and eligible commissions. Commission credit begins only after a qualifying subscription payment is confirmed and the validation period has passed.</p>"});
+      }
+      return json({updated:true,partnerCode:code,referralUrl,notificationSent},200,origin,env);
+    }
     if(request.method==="GET"&&path==="/api/admin/newsletter/subscribers"){
       const statusFilter=new URL(request.url).searchParams.get("status")==="all"?"all":"subscribed";
       const q=statusFilter==="all"?"SELECT email,first_name AS firstName,status,created_at AS createdAt,updated_at AS updatedAt,unsubscribe_token AS unsubscribeToken FROM newsletter_subscribers ORDER BY created_at DESC LIMIT 1000":"SELECT email,first_name AS firstName,status,created_at AS createdAt,updated_at AS updatedAt,unsubscribe_token AS unsubscribeToken FROM newsletter_subscribers WHERE status='subscribed' ORDER BY created_at DESC LIMIT 1000";
@@ -173,6 +279,9 @@ export default {
     }
     if(request.method==="POST"&&url.pathname==="/api/contact")return handleContact(request,env,origin);
     if(request.method==="POST"&&url.pathname==="/api/partners/apply")return handlePartnerApplication(request,env,origin);
+    if(request.method==="POST"&&url.pathname==="/api/partners/click")return handlePartnerClick(request,env,origin);
+    if(request.method==="POST"&&url.pathname==="/api/partners/lead")return handlePartnerLead(request,env,origin);
+    if(request.method==="GET"&&url.pathname==="/api/partners/dashboard")return handlePartnerDashboard(request,env,origin);
     if(request.method==="POST"&&url.pathname==="/api/newsletter/subscribe")return handleNewsletterSubscribe(request,env,origin);
     if(request.method==="GET"&&url.pathname==="/api/newsletter/unsubscribe")return handleNewsletterUnsubscribe(request,env,url);
     if(request.method==="GET"&&url.pathname==="/api/trust-lab/wall"){

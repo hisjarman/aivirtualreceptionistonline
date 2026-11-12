@@ -533,3 +533,45 @@ Known prior issue to recheck against current source: a portal request reported `
 - Existing client/agency admin pages were left unchanged. The partner, Trust Lab and newsletter admin JavaScript continues to use the existing Clerk session and server-side authorization checks.
 - Source-level validation: all three target HTML pages must now reference the production Clerk domain and live publishable key, with no remaining `aware-pegasus-8939` or `pk_test` references in those pages. A browser sign-in/session test and authorized admin API request are still required after GitHub Pages publishes the merge.
 - Changes are proposed on `fix/admin-clerk-production-instance`; do not merge until explicitly approved.
+
+
+## First-party Star69AI partner portal and referral ledger — 2026-11-11
+
+- Working branch: `feature/star69ai-partner-portal`. This is a source-code proposal only; do not merge to `main`, apply the production D1 migration, or deploy either Worker until the user reviews and approves the PR.
+- Replaces the former Systeme.io-dependent partner enrollment notes with a first-party Star69AI workflow:
+  - Public applications remain at `/partners/`.
+  - Partner self-service login and dashboard: `/partner-portal/`.
+  - Private partner application and commission admin: `/partners-admin.html`.
+  - Clerk production authentication is used; the Trust Lab Worker verifies the session and matches the verified email to an approved `affiliate_applications` record.
+- New migration: `cloudflare/migrations/20261111_partner_attribution.sql`. It adds a unique partner code, links customers to partner applications, and creates click, referral and commission ledger tables. Apply it to the existing shared `avr-trust-lab` D1 database only after the PR is approved and before deploying the Worker changes.
+- Referral links use `https://star69ai.com/get-started.html?ref=PARTNERCODE`. The public site captures a click, stores a first-party 90-day attribution cookie, and records the discovery lead through the Trust Lab Worker before the existing native Formspree POST. The Formspree endpoint remains `https://formspree.io/f/mrppjqdb`; the normal inquiry submission is not blocked if referral tracking is unavailable.
+- Attribution is first-touch per normalized lead email. Existing Star69AI customers are not eligible for a new referral. Admin customer creation links a matching unexpired referred lead to the customer record. A referral is shown as a paying conversion only after a qualifying Stripe invoice payment succeeds.
+- The platform Worker records recurring commissions from positive, non-proration subscription invoice lines in `invoice.payment_succeeded` events. It uses the approved partner's 20% standard rate, 25% founding rate, 25% after 5 active referred subscriptions, and 30% after 15. Setup fees and non-subscription invoice lines are excluded. Each commission has a 30-day validation hold; administrators manually mark eligible commissions paid and can record a payout reference.
+- Stripe webhook configuration must include `invoice.payment_succeeded` in addition to the existing checkout, subscription and payment-failure events. Confirm the live webhook endpoint and test invoices before advertising automatic commission crediting as active.
+- Public privacy copy now explains partner referral attribution. The partner application admin no longer exposes Systeme.io enrollment fields; approving a partner generates a referral code/link and sends a branded Partner Center approval email.
+- Validation still required before production: inspect the complete PR diff; run JavaScript syntax checks for both Workers and browser scripts; apply the migration to a non-production copy or approved production D1 change window; test click capture, 90-day attribution, first-touch duplicate handling, Clerk partner/admin access isolation, customer matching, Stripe signed webhook idempotency, non-subscription/proration exclusion, tier thresholds, 30-day hold and manual payout. Deploy Trust Lab and platform Workers separately only after migration and approval. Browser QA of the Partner Center and admin ledger is also pending.
+
+
+### Partner ledger accounting refinements — 2026-11-11
+
+- Referral records distinguish `lead`, `customer` (Star69AI customer record created), and `converted` (a qualifying Stripe subscription invoice has been paid). The partner-facing paying-customer count includes only the final converted state.
+- Partner commissions are calculated only from positive, non-proration subscription invoice lines. Setup fees, usage overage, phone-number rental, carrier charges and third-party pass-through items are excluded by the current implementation and public program terms.
+- The admin payout endpoint enforces both the 30-day validation hold and the $50 minimum aggregate eligible balance. Administrators can record payout references and manually reverse commissions for refunds, chargebacks or accounting corrections.
+- The partner approval action now creates the partner code/referral link and sends a branded email with the Partner Center sign-in URL. The partner must use the same verified email address as the approved application.
+
+
+### Partner tracking privacy and anti-abuse safeguards — 2026-11-11
+
+- Public click capture is limited to 60 clicks per hashed network identifier per 10-minute window; lead capture is limited to 10 submitted leads per hashed network identifier per hour. The tables retain a one-way hash, not a readable IP address.
+- A lead's customer-conversion deadline is tied to the original qualifying click's `expires_at`, not reset for another 90 days when the form is submitted.
+- Repeated visits to a referral link are counted as clicks. A normalized email can be attributed only once (first recorded lead wins); existing Star69AI customers are excluded.
+- The Partner Center's paying-customer count includes only referred customers whose subscription status is currently active or trialing. Lifetime converted leads remain visible in the referral activity list.
+- The admin-assigned founding, growth and premier commission tiers are honored; automatic active-customer thresholds can raise the rate to 25% at 5 active referrals and 30% at 15.
+
+
+### Partner Center final review notes — 2026-11-11
+
+- Direct self-referrals matching the approved partner's own application email are rejected by the lead capture API.
+- The partner dashboard reports the effective current commission percentage and counts currently active/trialing referred subscriptions as paying customers; lifetime conversion remains visible in referral activity.
+- The public application page now describes first-party Partner Center activation and no longer refers to manual enrollment in an external affiliate system.
+- PR #102 is open and currently reports mergeable. It remains unmerged. No production migration, Worker deployment, Stripe webhook configuration change or GitHub Pages publication has been performed.

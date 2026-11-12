@@ -3,6 +3,70 @@
 // 2) Replace the value below with your form endpoint, e.g. https://formspree.io/f/abcdwxyz
 // 3) Commit and publish this file. Do not put API keys or private credentials here.
 const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
+const PARTNER_COOKIE = "star69ai_partner_ref";
+function readPartnerAttribution() {
+  const entry = document.cookie.split("; ").find(item => item.startsWith(PARTNER_COOKIE + "="));
+  if (!entry) return null;
+  try {
+    const value = JSON.parse(decodeURIComponent(entry.slice(PARTNER_COOKIE.length + 1)));
+    if (!value.partnerCode || (value.expiresAt && Date.now() > value.expiresAt)) return null;
+    return value;
+  } catch { return null; }
+}
+function writePartnerAttribution(value) {
+  const expiresAt = Date.now() + 90 * 86400000;
+  document.cookie = PARTNER_COOKIE + "=" + encodeURIComponent(JSON.stringify({...value,expiresAt})) + "; Max-Age=7776000; Path=/; Domain=.star69ai.com; SameSite=Lax; Secure";
+}
+const partnerAttributionReady = (async () => {
+  const incoming = String(new URLSearchParams(window.location.search).get("ref") || "").trim().toUpperCase();
+  if (!/^[A-Z0-9]{6,16}$/.test(incoming)) return readPartnerAttribution();
+  const fallback={partnerCode:incoming,clickId:""};writePartnerAttribution(fallback);
+  try {
+    const response = await fetch(API_BASE + "/api/partners/click", {
+      method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({partnerCode:incoming,landingPath:location.pathname,referrer:document.referrer})
+    });
+    const result = await response.json().catch(() => ({}));
+    if (response.ok && result.clickId) {
+      const value={partnerCode:incoming,clickId:result.clickId};writePartnerAttribution(value);return value;
+    }
+  } catch {}
+  return fallback;
+})();
+async function capturePartnerLead(payload) {
+  const attribution=await Promise.race([partnerAttributionReady,new Promise(resolve=>setTimeout(()=>resolve(readPartnerAttribution()),1200))]);
+  if(!attribution?.partnerCode||!String(payload.email||"").trim())return false;
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),1800);
+  try {
+    const response=await fetch(API_BASE+"/api/partners/lead",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},signal:controller.signal,body:JSON.stringify({
+      partnerCode:attribution.partnerCode,clickId:attribution.clickId||"",name:String(payload.name||"").slice(0,120),
+      email:String(payload.email||"").slice(0,254),business:String(payload.business||"").slice(0,160),landingPath:location.pathname
+    })});
+    return response.ok;
+  } catch { return false; } finally { clearTimeout(timeout); }
+}
+window.star69aiCapturePartnerLead=capturePartnerLead;
+window.star69aiGetPartnerAttribution=()=>readPartnerAttribution();
+document.querySelectorAll('form[action*="formspree.io/f/mrppjqdb"]:not(#intake-form)').forEach(partnerForm=>{
+  partnerForm.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const data=new FormData(partnerForm),payload={name:data.get("name"),email:data.get("email"),business:data.get("business")};
+    const button=partnerForm.querySelector('button[type="submit"]');if(button)button.disabled=true;
+    try{
+      const attribution=await Promise.race([partnerAttributionReady,new Promise(resolve=>setTimeout(()=>resolve(readPartnerAttribution()),1200))]);
+      if(attribution?.partnerCode){
+        for(const [name,value] of [["partner_code",attribution.partnerCode],["partner_click_id",attribution.clickId||""]]){
+          let input=partnerForm.querySelector('input[type="hidden"][name="'+name+'"]');
+          if(!input){input=document.createElement("input");input.type="hidden";input.name=name;partnerForm.appendChild(input);}
+          input.value=value;
+        }
+      }
+      await capturePartnerLead(payload);
+    }catch{}
+    HTMLFormElement.prototype.submit.call(partnerForm);
+  });
+});
+
 
 /* Keep the client portal entry point visible in every public-page header. */
 (() => {
@@ -145,7 +209,7 @@ document.querySelectorAll("[data-plan]").forEach(link => {
 });
 
 // Formspree's normal HTML POST avoids browser CORS/fetch failures on mobile browsers.
-form.addEventListener("submit", event => {
+form.addEventListener("submit", async event => {
   event.preventDefault();
   if (!validateStep()) return;
 
@@ -206,6 +270,17 @@ form.addEventListener("submit", event => {
   form.method = "POST";
   form.action = "https://formspree.io/f/mrppjqdb";
   // Submit through the browser's native form navigation rather than fetch().
+  const attribution = readPartnerAttribution();
+  if (attribution?.partnerCode) {
+    hiddenFields.partner_code = attribution.partnerCode;
+    hiddenFields.partner_click_id = attribution.clickId || "";
+    for (const [name,value] of [["partner_code",hiddenFields.partner_code],["partner_click_id",hiddenFields.partner_click_id]]) {
+      let input=form.querySelector('input[type="hidden"][name="'+name+'"]');
+      if(!input){input=document.createElement("input");input.type="hidden";input.name=name;form.appendChild(input);}
+      input.value=value;
+    }
+  }
+  try { await capturePartnerLead(payload); } catch {}
   HTMLFormElement.prototype.submit.call(form);
 });
 
