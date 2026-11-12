@@ -567,3 +567,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - Repeated visits to a referral link are counted as clicks. A normalized email can be attributed only once (first recorded lead wins); existing Star69AI customers are excluded.
 - The Partner Center's paying-customer count includes only referred customers whose subscription status is currently active or trialing. Lifetime converted leads remain visible in the referral activity list.
 - The admin-assigned founding, growth and premier commission tiers are honored; automatic active-customer thresholds can raise the rate to 25% at 5 active referrals and 30% at 15.
+
+
+### Partner Center final review notes — 2026-11-11
+
+- Direct self-referrals matching the approved partner's own application email are rejected by the lead capture API.
+- The partner dashboard reports the effective current commission percentage and counts currently active/trialing referred subscriptions as paying customers; lifetime conversion remains visible in referral activity.
+- The public application page now describes first-party Partner Center activation and no longer refers to manual enrollment in an external affiliate system.
+- PR #102 is open and currently reports mergeable. It remains unmerged. No production migration, Worker deployment, Stripe webhook configuration change or GitHub Pages publication has been performed.
