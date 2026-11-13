@@ -431,7 +431,7 @@ async function route(req,env){
     }));
     return json({agents,numbers:n.results||[]},200,origin,env)
    }
-   const clientPromptMatch=path.match(/^\/api\\/admin\\/agents\\/([^/]+)\\/client-prompt$/);
+   const clientPromptMatch=path.match(/^\/api\/admin\/agents\/([^/]+)\/client-prompt$/);
    if(clientPromptMatch&&req.method==="PUT"){
     const agentId=decodeURIComponent(clientPromptMatch[1]),p=await body(req,14000),prompt=String(p.prompt??"").trim();
     if(!prompt)throw Error("approved_client_prompt_required");
