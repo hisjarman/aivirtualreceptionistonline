@@ -287,3 +287,34 @@ Retell's feature set and interface can change. Before applying these playbooks, 
 - Retell trust center: https://trust.retellai.com/
 
 **Important:** A configured prompt is not a technical guarantee. A website statement or this document does not prove that a Retell guardrail, transfer, tool permission, consent notice, retention setting or integration is enabled. Verify each control in the actual agent and test environment. Star69AI must not advertise regulated-industry compliance based solely on a provider's certification or a template.
+
+
+## Client-visible prompt excerpt convention
+
+For every production agent, maintain a separate, reviewed business-facing excerpt inside the Retell `general_prompt`. This excerpt is the only prompt text eligible to appear in the client portal. It is not the complete system prompt.
+
+Use the exact delimiters below and keep the content strictly limited to client-approved business behavior. Do not place secrets, credentials, private tool instructions, security implementation details, personal information or internal agency procedures inside this block.
+
+```text
+[[CLIENT_VISIBLE_PROMPT]]
+You are the AI receptionist for [Business Name].
+
+Your role:
+- Welcome callers professionally and clearly identify yourself as the business's AI receptionist.
+- Help callers with the approved services and information listed in the business knowledge base.
+- Ask concise questions to understand the caller's needs and capture the details the business has approved.
+
+Call handling:
+- Follow the approved call flow for this business.
+- Explain next steps clearly without promising an appointment, price, dispatch time or service outcome unless the relevant system confirms it.
+- If a caller needs help outside your approved scope, offer the approved human handoff path.
+
+Business-specific details:
+- Business hours: [Approved hours]
+- Service area: [Approved service area]
+- Services: [Approved services]
+- Human escalation: [Approved handoff description]
+[[/CLIENT_VISIBLE_PROMPT]]
+```
+
+The client portal displays only this delimited excerpt (or explicitly client-facing Markdown sections supported by the API). Review the rendered preview against the live prompt before activation. The portal must show a clear “preview not published” state rather than exposing the raw prompt when no approved excerpt exists.
