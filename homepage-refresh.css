@@ -1041,74 +1041,51 @@ body#top .reference-hero .hero-lead-panel{display:none!important}
 }
 
 
-/* Homepage candy palette: vanilla cream, berry, blueberry and watermelon-green accents. */
-body#top{background:var(--candy-vanilla)!important;color:var(--candy-ink)!important}
-body#top .reference-topbar{background:rgba(45,27,53,.97)!important;border-bottom:1px solid #513956!important;color:var(--candy-vanilla)!important}
-body#top .reference-brand,body#top .reference-nav a,body#top .global-language-menu{color:var(--candy-vanilla)!important}
-body#top .reference-nav a:hover,body#top .reference-nav a.active{color:var(--candy-lime)!important}
-body#top .reference-hero{background:radial-gradient(ellipse at 78% 42%,rgba(255,111,145,.20),transparent 34%),linear-gradient(112deg,#fff9ed 0%,#fff4e9 52%,#f4e9ff 100%)!important;color:var(--candy-ink)!important}
-body#top .reference-hero h1,body#top .reference-hero h2,body#top .reference-hero h3,body#top .reference-hero p,body#top .reference-hero li{color:var(--candy-ink)!important;text-shadow:none!important}
-body#top .reference-hero .eyebrow,body#top .reference-hero .hero-kicker{color:#8d315a!important}
-body#top .reference-hero strong,body#top .reference-hero .highlight{color:#a52d61!important}
-body#top .reference-hero .button,body#top .reference-hero .btn{background:var(--candy-lime)!important;color:var(--candy-plum)!important;border-color:var(--candy-lime)!important}
-body#top .reference-hero .hero-art img{filter:saturate(1.08) contrast(1.03) drop-shadow(0 16px 36px rgba(98,91,214,.16))}
-body#top .conversation-section,body#top .demo-conversation,body#top .discovery-section{background:linear-gradient(135deg,#fff9ed,#fff0f3)!important;color:var(--candy-ink)!important}
-body#top .conversation-section h1,body#top .conversation-section h2,body#top .conversation-section p,body#top .demo-conversation h2,body#top .demo-conversation p,body#top .discovery-section h2,body#top .discovery-section p{color:var(--candy-ink)!important}
-body#top .conversation-section label,body#top .discovery-section label{color:var(--candy-plum)!important}
-body#top .conversation-section input,body#top .conversation-section select,body#top .conversation-section textarea,body#top .discovery-section input,body#top .discovery-section select,body#top .discovery-section textarea{background:#fff!important;color:var(--candy-ink)!important;border:1px solid #d9c8d8!important}
-body#top .conversation-section input::placeholder,body#top .conversation-section textarea::placeholder{color:#786a7d!important}
-body#top .reference-hero .button:hover,body#top .conversation-section .button:hover{background:#A5F0A5!important}
-body#top .section-wrap h2,body#top main h2,body#top main h3{color:var(--candy-plum)}
-body#top main p,body#top main li{color:var(--candy-ink)}
-body#top .reference-footer,body#top footer{background:var(--candy-plum)!important;color:var(--candy-vanilla)!important}
-body#top footer p,body#top footer li,body#top footer small{color:#f5eaf1!important}
-body#top footer a{color:var(--candy-lime)!important}
-
-
-/* Star69AI neon-trio homepage finish — dark premium treatment. */
-body#top{background:#090B16!important;color:#F4F7FF!important;color-scheme:dark}
-body#top .reference-topbar{background:rgba(9,11,22,.97)!important;border-bottom:1px solid rgba(67,180,254,.28)!important;color:#F4F7FF!important}
-body#top .reference-brand,body#top .reference-nav a,body#top .global-language-menu{color:#F4F7FF!important}
-body#top .reference-nav a:hover,body#top .reference-nav a.active{color:#34FD78!important}
-body#top .reference-hero{background:radial-gradient(ellipse at 18% 22%,rgba(244,97,254,.16),transparent 38%),radial-gradient(ellipse at 83% 48%,rgba(67,180,254,.18),transparent 42%),linear-gradient(115deg,#070A15 0%,#0B1225 54%,#090B16 100%)!important;color:#F4F7FF!important}
-body#top .reference-hero h1,body#top .reference-hero h2,body#top .reference-hero h3,body#top .reference-hero p,body#top .reference-hero li{color:#F4F7FF!important;text-shadow:none!important}
-body#top .reference-hero .eyebrow,body#top .reference-hero .hero-kicker,body#top .reference-hero .hero-preheadline{color:#43B4FE!important}
-body#top .reference-hero h1 em,body#top .reference-hero strong,body#top .reference-hero .highlight{color:#F461FE!important}
-body#top .reference-hero .hero-lede,body#top .reference-hero .hero-proof,body#top .reference-hero .hero-personal-service,body#top .reference-hero .hero-stats-note{color:#D7E0F2!important}
-body#top .reference-hero .button,body#top .reference-hero .btn,body#top .reference-primary-cta{background:#34FD78!important;color:#07130D!important;border-color:#34FD78!important}
-body#top .reference-secondary-cta{background:rgba(17,22,41,.82)!important;color:#43B4FE!important;border-color:#43B4FE!important}
-body#top .hero-platform-stats>div{background:rgba(17,22,41,.88)!important;border:1px solid rgba(67,180,254,.28)!important}
-body#top .hero-platform-stats strong{color:#F4F7FF!important}body#top .hero-platform-stats span{color:#B8C1D5!important}
-body#top .onboarding-speech{background:rgba(17,22,41,.96)!important;color:#F4F7FF!important;border:1px solid rgba(244,97,254,.55)!important}
-body#top .onboarding-speech:after{background:rgba(17,22,41,.96)!important;border-color:rgba(244,97,254,.55)!important}
-body#top .dashboard-quick-preview,body#top .story-promo,body#top .home-paths,body#top .reference-language{background:#0D1222!important;color:#F4F7FF!important;border-color:#27334E!important}
-body#top .dashboard-quick-preview :where(h1,h2,h3,p,li),body#top .story-promo :where(h1,h2,h3,p,li),body#top .home-paths :where(h1,h2,h3,p,li),body#top .reference-language :where(h1,h2,h3,p,li){color:#E6ECF8!important}
-body#top .story-eyebrow,body#top .home-path-card>span{color:#F461FE!important}
-body#top .story-text-link,body#top .home-path-card>b{color:#43B4FE!important}
-body#top .home-path-card,body#top .story-subscribe,body#top .dashboard-preview-window,body#top .language-card{background:#111629!important;border-color:#2B3650!important;color:#F4F7FF!important}
-body#top .home-path-card h3,body#top .home-path-card p,body#top .story-subscribe label,body#top .language-card b,body#top .language-card small{color:#E6ECF8!important}
-body#top .story-subscribe input[type=email]{background:#090B16!important;color:#F4F7FF!important;border-color:#3A4562!important}
-body#top .story-subscribe button{background:#34FD78!important;color:#07130D!important;border-color:#34FD78!important}
-body#top .footer,body#top .site-footer,body#top footer{background:#070A14!important;color:#E6ECF8!important;border-top:1px solid #2B3650!important}
-body#top footer :where(p,li,small,a){color:#D7E0F2!important}body#top footer a:hover{color:#34FD78!important}
+/* Photo-matched neon accents over the existing translucent white-film treatment. */
+body#top{background:#F5F8FB!important;color:#172B40!important}
+body#top .reference-topbar{background:rgba(255,255,255,.90)!important;border-bottom:1px solid rgba(215,226,234,.9)!important}
+body#top .reference-nav a:hover,body#top .reference-nav a.active{color:#A52AB8!important}
+body#top .reference-topbar .reference-start,body#top .reference-topbar .nav-login[href="./client/"]{background:#14D251!important;border-color:#14D251!important;color:#092414!important;box-shadow:0 6px 18px rgba(20,210,81,.18)!important}
+body#top .reference-hero{background-color:#EAF2F7!important;background-image:url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;background-position:center center!important;background-size:cover!important;background-repeat:no-repeat!important;color:#172B40!important}
+/* Preserve the milky glass veil, but let the original neon artwork show through. */
+body#top .reference-hero:before{background:radial-gradient(ellipse at 20% 22%,rgba(225,86,255,.10),transparent 34%),radial-gradient(ellipse at 82% 45%,rgba(33,183,255,.13),transparent 38%),radial-gradient(ellipse at 72% 82%,rgba(20,210,81,.09),transparent 32%),linear-gradient(115deg,rgba(255,255,255,.91) 0%,rgba(255,255,255,.84) 43%,rgba(255,255,255,.62) 72%,rgba(255,255,255,.43) 100%)!important}
+body#top .reference-hero:after{background:linear-gradient(180deg,rgba(248,252,255,.12),rgba(235,243,248,.24))!important}
+body#top .reference-hero .hero-copy h2{color:#172B40!important;text-shadow:none!important}
+body#top .reference-hero .hero-copy h2 em,body#top .reference-hero .hero-copy strong,body#top .reference-hero .hero-copy .highlight{color:#A52AB8!important}
+body#top .reference-hero :where(.eyebrow,.hero-preheadline,.hero-kicker){color:#0875A9!important}
+body#top .reference-hero :where(.hero-lede,.hero-personal-service,.hero-proof,.hero-stats-note){color:#40596E!important;text-shadow:none!important}
+body#top .reference-hero .hero-lede strong{color:#172B40!important}
+body#top .reference-hero .hero-stats-note a{color:#0875A9!important}
+body#top .reference-hero .hero-platform-stats>div{background:rgba(255,255,255,.78)!important;border:1px solid rgba(33,183,255,.28)!important;box-shadow:0 8px 24px rgba(25,57,78,.09),0 0 18px rgba(33,183,255,.07)!important}
+body#top .reference-hero .hero-platform-stats strong{color:#172B40!important}
+body#top .reference-hero .hero-platform-stats span{color:#536A7D!important}
+body#top .reference-hero .hero-model-glow{background:radial-gradient(ellipse,rgba(225,86,255,.18),rgba(33,183,255,.13) 52%,rgba(20,210,81,.08) 70%,transparent 80%)!important}
+body#top .reference-hero .hero-model-image{filter:drop-shadow(0 14px 28px rgba(25,57,78,.20))!important}
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{border-color:rgba(225,86,255,.36)!important;box-shadow:0 12px 30px rgba(30,66,91,.12),0 0 18px rgba(225,86,255,.09)!important}
+body#top .reference-hero .onboarding-speech-kicker{color:#A52AB8!important}
+body#top .reference-hero .onboarding-speech-text{color:#234158!important}
+body#top .reference-hero .concierge-bubble-hint{color:#64798A!important}
+body#top .hero-lead-panel{border-color:rgba(33,183,255,.26)!important;box-shadow:0 18px 48px rgba(34,66,88,.12),0 0 20px rgba(33,183,255,.06)!important}
+body#top .hero-lead-panel h2{color:#172F44!important}
+body#top .hero-lead-panel>p{color:#536A7D!important}
+body#top .hero-lead-form label{color:#29465B!important}
+body#top .hero-lead-form input,body#top .hero-lead-form select{color:#172D40!important;border-color:#C7D9E5!important}
+body#top .hero-lead-form input:focus,body#top .hero-lead-form select:focus{outline:3px solid rgba(33,183,255,.22)!important;border-color:#0875A9!important}
+body#top .hero-lead-form button,body#top .conversation-form-card .hero-lead-form button{background:#14D251!important;border-color:#14D251!important;color:#092414!important;box-shadow:0 8px 20px rgba(20,210,81,.20)!important}
+body#top .hero-lead-form button:hover,body#top .conversation-form-card .hero-lead-form button:hover{background:#38E875!important;border-color:#38E875!important}
+body#top .homepage-conversation{background:radial-gradient(ellipse at 12% 12%,rgba(225,86,255,.09),transparent 34%),radial-gradient(ellipse at 88% 15%,rgba(33,183,255,.11),transparent 38%),linear-gradient(135deg,#F5F8FB 0%,#EDF4F8 52%,#F8FAFC 100%)!important}
+body#top .conversation-eyebrow{color:#A52AB8!important}
+body#top .conversation-eyebrow i{background:#14D251!important;box-shadow:0 0 0 5px rgba(20,210,81,.13)!important}
+body#top .conversation-points b{background:rgba(225,86,255,.12)!important;color:#A52AB8!important}
+body#top .conversation-form-card{border-color:rgba(33,183,255,.28)!important;box-shadow:0 18px 48px rgba(34,66,88,.11),0 0 20px rgba(33,183,255,.05)!important}
+body#top .dashboard-quick-preview,body#top .story-promo,body#top .home-paths{background:#F5F8FB!important;color:#172D40!important}
+body#top .story-eyebrow,body#top .home-path-card>span{color:#A52AB8!important}
+body#top .story-text-link,body#top .home-path-card>b{color:#0875A9!important}
+body#top .dashboard-preview-window,body#top .home-path-card,body#top .story-subscribe,body#top .reference-language .language-card{border-color:#D7E2EA!important}
+body#top .footer,body#top .site-footer,body#top footer{background:#EEF3F6!important;border-top:1px solid #D7E2EA!important}
+body#top footer :where(p,li,small){color:#40596E!important}
+body#top footer a{color:#0875A9!important}
+body#top footer a:hover{color:#A52AB8!important}
+@media(max-width:900px){body#top .reference-hero:before{background:radial-gradient(ellipse at 18% 12%,rgba(225,86,255,.09),transparent 35%),radial-gradient(ellipse at 82% 25%,rgba(33,183,255,.10),transparent 38%),linear-gradient(180deg,rgba(255,255,255,.89) 0%,rgba(255,255,255,.82) 55%,rgba(255,255,255,.61) 100%)!important}}
+@media(max-width:600px){body#top .reference-hero:before{background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.86) 62%,rgba(255,255,255,.69) 100%)!important}}
 @media(prefers-reduced-motion:reduce){body#top *{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
-
-
-/* Preserve the supplied Earth-at-night artwork under the approved neon palette. */
-body#top .reference-hero{
-  background-color:#090B16!important;
-  background-image:
-    linear-gradient(90deg,rgba(9,11,22,.94) 0%,rgba(9,11,22,.78) 42%,rgba(9,11,22,.34) 100%),
-    url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
-  background-position:center center!important;
-  background-size:cover!important;
-  background-repeat:no-repeat!important;
-}
-@media(max-width:700px){
-  body#top .reference-hero{
-    background-image:
-      linear-gradient(180deg,rgba(9,11,22,.91) 0%,rgba(9,11,22,.72) 58%,rgba(9,11,22,.40) 100%),
-      url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
-    background-position:58% center!important;
-  }
-}
