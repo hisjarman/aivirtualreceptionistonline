@@ -355,7 +355,7 @@ async function route(req,env){
    const demoRequestMatch=path.match(/^\/api\/admin\/demo-requests\/([a-f0-9-]{36})$/i);
    if(demoRequestMatch&&req.method==="PATCH"){
     const id=demoRequestMatch[1],p=await body(req,5000),status=String(p.status||"");
-    if(!["new","reviewing","approved","demo_presented","converted","declined"].includes(status))throw Error("invalid_demo_request_status");
+    if(!["new","reviewing","approved","demo_created","demo_presented","converted","declined"].includes(status))throw Error("invalid_demo_request_status");
     const existing=await env.DB.prepare("SELECT id,status FROM avr_demo_requests WHERE id=?").bind(id).first();if(!existing)throw Error("demo_request_not_found");
     if(existing.status==="demo_created"&&["new","reviewing","approved"].includes(status))throw Error("demo_already_created");
     const note=p.adminNotes===undefined?null:String(p.adminNotes).trim().slice(0,2000);
