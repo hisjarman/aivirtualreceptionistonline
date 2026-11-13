@@ -408,7 +408,7 @@ async function route(req,env){
     await audit(env,u,"demo_request_updated",null,{requestId:id,previousStatus:existing.status,status});
     return json({saved:true},200,origin,env);
    }
-   const createCustomerMatch=path.match(/^\\/api\\/admin\\/demo-requests\\/([a-f0-9-]{36})\\/create-customer$/i);
+   const createCustomerMatch=path.match(/^\/api\/admin\/demo-requests\/([a-f0-9-]{36})\/create-customer$/i);
    if(createCustomerMatch&&req.method==="POST"){
     const id=createCustomerMatch[1],lead=await env.DB.prepare("SELECT id,contact_name,email,phone,business_name,status,agent_id,customer_id FROM avr_demo_requests WHERE id=?").bind(id).first();
     if(!lead)throw Error("demo_request_not_found");
