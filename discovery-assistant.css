@@ -124,3 +124,30 @@
     min-height:700px!important;
   }
 }
+
+
+/* 2026-11-13: Prioritize the live coach conversation over introductory copy. */
+#start .discovery-assistant-panel--inline>header{padding:10px 14px!important}
+#start .discovery-assistant-panel--inline>header strong{font-size:15px!important}
+#start .discovery-assistant-panel--inline>header span{font-size:11px!important}
+#start .discovery-assistant-intro{padding:7px 14px 8px!important}
+#start .discovery-assistant-intro p{font-size:12px!important;line-height:1.4!important;color:#dcebf2!important}
+#start .discovery-assistant-panel--inline .discovery-assistant-privacy.disclosure-compact{
+  flex:0 0 auto!important;margin:0!important;padding:0 14px 7px!important;
+  border:0!important;background:#0b202d!important;color:#c9dce5!important;
+}
+#start .discovery-assistant-panel--inline .disclosure-compact summary{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  color:#8edfff!important;font-size:11px!important;line-height:1.35!important;
+  text-decoration:underline;text-underline-offset:3px;
+}
+#start .discovery-assistant-panel--inline .disclosure-compact p{
+  margin:7px 0 2px!important;color:#d2e0e7!important;
+  font-size:11px!important;line-height:1.45!important;
+}
+#start .discovery-assistant-panel--inline iframe{flex:1 1 0!important;min-height:0!important}
+@media(max-width:650px){
+  #start .discovery-assistant-panel--inline>header{padding:9px 12px!important}
+  #start .discovery-assistant-intro{padding:6px 12px!important}
+  #start .discovery-assistant-panel--inline .disclosure-compact{padding:0 12px 6px!important}
+}
