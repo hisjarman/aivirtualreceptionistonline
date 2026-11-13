@@ -187,3 +187,8 @@ button,.button,.btn{background:#45C957!important;color:#24172d!important;border-
 input,select,textarea{background:#fff9ed!important;color:#302037!important;border-color:#d9c7d8!important}
 input::placeholder,textarea::placeholder{color:#786a7d!important;opacity:1}
 .card,.panel,.modal,.stat-card,.call-card{background:#34223d;border-color:#604765}
+
+
+/* Client-facing, read-only agent prompt preview */
+.agent-prompt-preview{margin-top:18px;padding:18px;border:1px solid rgba(120,230,205,.24);border-radius:14px;background:linear-gradient(145deg,rgba(11,29,40,.88),rgba(16,37,48,.72));min-width:0}.agent-prompt-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.agent-prompt-head small{color:#8ed9f4;font:700 10px "DM Mono",monospace;letter-spacing:.12em}.agent-prompt-head h3{margin:7px 0 0;color:#f1f8ff;font-size:16px}.read-only-tag{flex:0 0 auto;padding:6px 9px;border:1px solid rgba(166,255,114,.35);border-radius:999px;color:#caffad;background:rgba(166,255,114,.08);font-size:10px;font-weight:700}.agent-prompt-preview pre{max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:16px 0;padding:16px;border:1px solid #304d62;border-radius:10px;background:#0b1927;color:#e5f2f8;font:12px/1.75 "DM Sans",sans-serif}.agent-prompt-preview>.small{color:#a9c0d1;line-height:1.6;margin:12px 0 0}
+@media(max-width:680px){.agent-prompt-preview{padding:13px}.agent-prompt-head{flex-direction:column}.agent-prompt-preview pre{max-height:360px;padding:12px;font-size:11px}}
