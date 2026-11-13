@@ -8,7 +8,7 @@ These standards are the source of truth for visual consistency. Do not introduce
 ## 1. Brand and visual consistency
 
 - Preserve the Star69AI premium, modern visual identity.
-- Use the dark space-inspired palette where appropriate, lime green as the primary accent, and sky blue as a supporting accent.
+- Use the approved photo-matched neon palette: purple `#E156FF`, blue `#21B7FF`, and green `#14D251`. Keep the translucent white/glass film over the Earth-at-night hero artwork. Use vivid neon colors for decorative lighting and accents, with darker accessible companions (`#A52AB8`, `#0875A9`, `#167A3D`) for small text on white.
 - Accent colors are for emphasis, links, focus states and actions—not long paragraphs or large blocks of body copy.
 - Use consistent card radii, border treatments, shadows, button styles, section spacing and content widths.
 - A light section must use dark text; a dark section must use light text. Never rely on inherited colors when changing a section background.

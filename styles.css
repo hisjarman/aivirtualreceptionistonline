@@ -404,10 +404,6 @@ body#top .footer{background:#010611;border-top:1px solid #12345b}
 @media(max-width:420px){.reference-topbar .client-login-global{padding:8px 7px!important;font-size:7px!important}.reference-topbar .reference-start{padding:8px 7px;font-size:7px}}
 
 
-
-}
-
-
 /* Academic-inspired light design system: clear hierarchy, generous whitespace, accessible contrast. */
 :root{--bg:#fff;--panel:#f7fafc;--panel2:#eef7fb;--ink:#14283d;--muted:#5f7183;--line:#dce7ee;--lime:#83c91b;--lime-dark:#4c850d;--sky:#168fe0;--sky-dark:#0876c2;--white:#fff;--soft:#f3f8fb;--teal:#83c91b;--teal2:#64a914}
 html{scroll-padding-top:88px}body{background:#fff;color:#14283d}.topbar{background:rgba(255,255,255,.96)!important;color:#14283d!important;border-bottom:1px solid #e3ebf1!important;box-shadow:0 4px 22px rgba(21,55,82,.045);backdrop-filter:blur(16px)}.brand{color:#14283d!important}.brand b{color:#65a915!important}.brand-mark{background:#f6fbef!important;border:1px solid #d9edb9!important;border-radius:12px}.nav a{color:#4c5f70!important}.nav a:hover,.nav a.active{color:#087fc8!important}.button,.button-small,.button-dark{background:#168fe0!important;border-color:#168fe0!important;color:#fff!important;box-shadow:0 8px 18px rgba(22,143,224,.16)}.button:hover,.button-small:hover,.button-dark:hover{background:#0876c2!important;border-color:#0876c2!important;transform:translateY(-1px)}.section-kicker,.eyebrow,.plan-eyebrow,.step-no{color:#5b9715}h1,h2,h3,h4{color:#14283d}.section,.capabilities,.pricing-section{background:#fff}.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.final-cta{background:#f3f8fb!important;color:#14283d!important;border-color:#e0ebf1!important}.dark-band h2,.industry-section h2,.final-inner h2,.trust-inner b,.footer h2,.footer a{color:#14283d!important}.dark-band p,.industry-section p,.final-inner>p,.trust-inner span,.footer p,.footer-disclaimer{color:#5f7183!important}.step-card,.industry-grid article{background:#fff!important;border:1px solid #dce8ef!important;box-shadow:0 8px 24px rgba(20,55,80,.045)}.step-card h3,.industry-grid h3{color:#14283d!important}.step-card p,.industry-grid p{color:#5f7183!important}.step-foot{color:#5b9715!important;border-color:#e2ebef!important}.cap-card{background:#fff}.cap-icon{background:#f3fae9;border-color:#d9edbd;color:#548e12}.price-card{box-shadow:0 8px 24px rgba(20,55,80,.045)}.price-card.recommended{border-color:#8bcf20;box-shadow:0 12px 30px rgba(95,151,21,.10)}.price-cta,.faq-layout .text-link{color:#087fc8}.faq-section,.onboard-section{background:#f5f9fb!important}.form-panel{box-shadow:0 14px 40px rgba(20,55,80,.08);border-color:#dce7ee}.form-panel input:focus,.form-panel textarea:focus,.form-panel select:focus{border-color:#168fe0;box-shadow:0 0 0 3px rgba(22,143,224,.13)}input[type=checkbox],input[type=radio],input[type=range]{accent-color:#168fe0}:focus-visible{outline:3px solid rgba(22,143,224,.5)!important;outline-offset:3px}
@@ -474,59 +470,32 @@ hr{border-color:var(--candy-border)}
 .topbar a:hover,.site-header a:hover,.reference-topbar a:hover{color:var(--candy-lime)}
 
 
-/* Star69AI official neon-trio palette — 2026-11-12
-   Purple #F461FE | Blue #43B4FE | Green #34FD78
-   Use bright colors as accents; keep long-form text high-contrast. */
+/* Star69AI photo-matched neon palette — approved 2026-11-12.
+   Original accents: purple #E156FF, blue #21B7FF, green #14D251.
+   Use vivid colors as accents/glows; use accessible darker companions for text on white. */
 :root{
-  --brand-purple:#F461FE;
-  --brand-blue:#43B4FE;
-  --brand-green:#34FD78;
-  --brand-night:#090B16;
-  --brand-panel:#111629;
-  --brand-panel-raised:#171D34;
-  --brand-text:#F4F7FF;
-  --brand-muted:#B8C1D5;
-  --brand-line:#2B3650;
-  --candy-lime:var(--brand-green);
-  --candy-strawberry:var(--brand-purple);
-  --candy-raspberry:var(--brand-purple);
-  --candy-orange:var(--brand-blue);
-  --candy-blueberry:var(--brand-blue);
-  --candy-vanilla:var(--brand-night);
-  --candy-cream:var(--brand-panel);
-  --candy-plum:var(--brand-text);
-  --candy-ink:var(--brand-text);
-  --candy-muted:var(--brand-muted);
-  --candy-border:var(--brand-line);
-  --teal:var(--brand-green);
-  --teal2:var(--brand-blue);
-  --avr-lime:var(--brand-green);
-  --avr-lime-on-light:#167A42;
-  --avr-sky:var(--brand-blue);
-  --avr-sky-on-light:#075B86;
+  --brand-purple:#E156FF;--brand-blue:#21B7FF;--brand-green:#14D251;
+  --brand-purple-text:#A52AB8;--brand-blue-text:#0875A9;--brand-green-text:#167A3D;
+  --brand-night:#111B2A;--brand-panel:#FFFFFF;--brand-panel-raised:#F5F8FB;
+  --brand-text:#172B40;--brand-muted:#536A7D;--brand-line:#D7E2EA;
+  --candy-lime:var(--brand-green);--candy-strawberry:var(--brand-purple);
+  --candy-raspberry:var(--brand-purple-text);--candy-orange:var(--brand-blue);
+  --candy-blueberry:var(--brand-blue-text);--candy-vanilla:#FFFFFF;
+  --candy-cream:#F5F8FB;--candy-plum:#172B40;--candy-ink:#172B40;
+  --candy-muted:#536A7D;--candy-border:#D7E2EA;
+  --teal:var(--brand-green);--teal2:var(--brand-blue);
+  --avr-lime:var(--brand-green);--avr-lime-on-light:var(--brand-green-text);
+  --avr-sky:var(--brand-blue);--avr-sky-on-light:var(--brand-blue-text);
 }
-body{color:var(--brand-text)}
-body :where(.section-kicker,.eyebrow,.plan-eyebrow,.form-title>span,.story-eyebrow,.section-label){color:var(--brand-purple)!important}
-body :where(a:not(.button):not(.btn),.text-link,.story-text-link){color:var(--brand-blue)}
-body :where(a:not(.button):not(.btn):hover,.text-link:hover,.story-text-link:hover){color:var(--brand-purple)}
-body :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)}
-body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(a:not(.button):not(.btn),.text-link,.section-kicker,.eyebrow,.video-label,.step-no,.step-foot,.speaker,.live-pill){color:var(--brand-blue)!important}
-body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)!important}
-body :where(.button,.btn,button.button,button.btn){background:var(--brand-green);border-color:var(--brand-green);color:#07130D;font-weight:800}
-body :where(.button:hover,.btn:hover,button.button:hover,button.btn:hover){background:#72FF9F;border-color:#72FF9F;color:#07130D}
-body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid var(--brand-blue)!important;outline-offset:3px!important}
-::selection{background:var(--brand-purple);color:#14091A}
-
-
-/* Preserve each page's existing light/dark surface choice; only unify accents. */
-:root{
-  --candy-vanilla:#FFFFFF;
-  --candy-cream:#F4F6FA;
-  --candy-plum:#17212F;
-  --candy-ink:#17212F;
-  --candy-muted:#596579;
-  --candy-border:#DDE4EE;
-  --avr-lime-on-light:#167A42;
-  --avr-sky-on-light:#075B86;
-}
-body{color:var(--candy-ink)}
+body{color:var(--brand-text);background:#fff}
+body :where(.section-kicker,.eyebrow,.plan-eyebrow,.form-title>span,.story-eyebrow,.section-label){color:var(--brand-purple-text)!important}
+body :where(a:not(.button):not(.btn),.text-link,.story-text-link){color:var(--brand-blue-text)}
+body :where(a:not(.button):not(.btn):hover,.text-link:hover,.story-text-link:hover){color:var(--brand-purple-text)}
+body :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple-text)}
+body :where(.button,.btn,button.button,button.btn){background:var(--brand-green);border-color:var(--brand-green);color:#092414;font-weight:800;box-shadow:0 8px 22px rgba(20,210,81,.18)}
+body :where(.button:hover,.btn:hover,button.button:hover,button.btn:hover){background:#38E875;border-color:#38E875;color:#092414;box-shadow:0 10px 26px rgba(20,210,81,.25)}
+body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid var(--brand-blue-text)!important;outline-offset:3px!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window){--brand-text:#F4F7FF}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window) :where(a:not(.button):not(.btn),.text-link,.section-kicker,.eyebrow){color:var(--brand-blue)!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)!important}
+::selection{background:rgba(225,86,255,.28);color:#172B40}

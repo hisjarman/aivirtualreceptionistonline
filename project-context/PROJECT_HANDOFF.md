@@ -664,10 +664,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - Work is on branch `quality/readability-and-legal-standards-2026-11-12`; do not merge until the user reviews and approves.
 
 
-## Official neon-trio brand palette — 2026-11-12
+## Official Star69AI photo-matched neon palette — 2026-11-12
 
-- Approved website accent colors from the user's supplied neon-light reference: **electric purple `#F461FE`**, **electric blue `#43B4FE`**, and **neon green `#34FD78`**.
-- Use purple for brand identity, emphasis and premium highlights; blue for links, technology cues and focus states; green for primary actions and positive/active status.
-- Keep a premium dark foundation with near-black/navy surfaces, near-white body text and muted blue-gray supporting text. Do not use neon colors for long paragraphs or small low-contrast text.
-- Maintain readable contrast, visible keyboard focus, responsive layouts and existing navigation/forms/functionality. Avoid harsh white section breaks and excessive glow effects.
-- Implementation is on branch `branding/neon-trio-palette-2026-11-12`; it is not production until reviewed and merged.
+- The user approved the vivid neon colors sampled from their supplied reference photo: **purple `#E156FF`**, **blue `#21B7FF`**, and **green `#14D251`**. These replace the earlier provisional neon values.
+- Keep the existing translucent white/glass film over the Earth-at-night hero artwork. Let the original image remain visible beneath a graduated white veil with subtle purple, blue and green light blooms.
+- Use the vivid original colors for decorative lighting, glows, icon fills, borders and green action-button fills. On white backgrounds, use accessible darker companion colors for small text: purple `#A52AB8`, blue `#0875A9`, green `#167A3D`.
+- Keep primary text deep navy (`#172B40`) on light/glass surfaces and near-white on dark surfaces. Never use the bright neon hues for long paragraphs or small text on white.
+- Keep forms, cards, links, focus states, mobile layouts, navigation and existing functionality readable and intact. Avoid harsh white section breaks and excessive glow.
+- Implementation is on branch `branding/photo-neon-white-glass-2026-11-12`; it is not production until reviewed and merged.
+
