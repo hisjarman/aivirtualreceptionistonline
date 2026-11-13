@@ -1063,3 +1063,52 @@ body#top main p,body#top main li{color:var(--candy-ink)}
 body#top .reference-footer,body#top footer{background:var(--candy-plum)!important;color:var(--candy-vanilla)!important}
 body#top footer p,body#top footer li,body#top footer small{color:#f5eaf1!important}
 body#top footer a{color:var(--candy-lime)!important}
+
+
+/* Star69AI neon-trio homepage finish — dark premium treatment. */
+body#top{background:#090B16!important;color:#F4F7FF!important;color-scheme:dark}
+body#top .reference-topbar{background:rgba(9,11,22,.97)!important;border-bottom:1px solid rgba(67,180,254,.28)!important;color:#F4F7FF!important}
+body#top .reference-brand,body#top .reference-nav a,body#top .global-language-menu{color:#F4F7FF!important}
+body#top .reference-nav a:hover,body#top .reference-nav a.active{color:#34FD78!important}
+body#top .reference-hero{background:radial-gradient(ellipse at 18% 22%,rgba(244,97,254,.16),transparent 38%),radial-gradient(ellipse at 83% 48%,rgba(67,180,254,.18),transparent 42%),linear-gradient(115deg,#070A15 0%,#0B1225 54%,#090B16 100%)!important;color:#F4F7FF!important}
+body#top .reference-hero h1,body#top .reference-hero h2,body#top .reference-hero h3,body#top .reference-hero p,body#top .reference-hero li{color:#F4F7FF!important;text-shadow:none!important}
+body#top .reference-hero .eyebrow,body#top .reference-hero .hero-kicker,body#top .reference-hero .hero-preheadline{color:#43B4FE!important}
+body#top .reference-hero h1 em,body#top .reference-hero strong,body#top .reference-hero .highlight{color:#F461FE!important}
+body#top .reference-hero .hero-lede,body#top .reference-hero .hero-proof,body#top .reference-hero .hero-personal-service,body#top .reference-hero .hero-stats-note{color:#D7E0F2!important}
+body#top .reference-hero .button,body#top .reference-hero .btn,body#top .reference-primary-cta{background:#34FD78!important;color:#07130D!important;border-color:#34FD78!important}
+body#top .reference-secondary-cta{background:rgba(17,22,41,.82)!important;color:#43B4FE!important;border-color:#43B4FE!important}
+body#top .hero-platform-stats>div{background:rgba(17,22,41,.88)!important;border:1px solid rgba(67,180,254,.28)!important}
+body#top .hero-platform-stats strong{color:#F4F7FF!important}body#top .hero-platform-stats span{color:#B8C1D5!important}
+body#top .onboarding-speech{background:rgba(17,22,41,.96)!important;color:#F4F7FF!important;border:1px solid rgba(244,97,254,.55)!important}
+body#top .onboarding-speech:after{background:rgba(17,22,41,.96)!important;border-color:rgba(244,97,254,.55)!important}
+body#top .dashboard-quick-preview,body#top .story-promo,body#top .home-paths,body#top .reference-language{background:#0D1222!important;color:#F4F7FF!important;border-color:#27334E!important}
+body#top .dashboard-quick-preview :where(h1,h2,h3,p,li),body#top .story-promo :where(h1,h2,h3,p,li),body#top .home-paths :where(h1,h2,h3,p,li),body#top .reference-language :where(h1,h2,h3,p,li){color:#E6ECF8!important}
+body#top .story-eyebrow,body#top .home-path-card>span{color:#F461FE!important}
+body#top .story-text-link,body#top .home-path-card>b{color:#43B4FE!important}
+body#top .home-path-card,body#top .story-subscribe,body#top .dashboard-preview-window,body#top .language-card{background:#111629!important;border-color:#2B3650!important;color:#F4F7FF!important}
+body#top .home-path-card h3,body#top .home-path-card p,body#top .story-subscribe label,body#top .language-card b,body#top .language-card small{color:#E6ECF8!important}
+body#top .story-subscribe input[type=email]{background:#090B16!important;color:#F4F7FF!important;border-color:#3A4562!important}
+body#top .story-subscribe button{background:#34FD78!important;color:#07130D!important;border-color:#34FD78!important}
+body#top .footer,body#top .site-footer,body#top footer{background:#070A14!important;color:#E6ECF8!important;border-top:1px solid #2B3650!important}
+body#top footer :where(p,li,small,a){color:#D7E0F2!important}body#top footer a:hover{color:#34FD78!important}
+@media(prefers-reduced-motion:reduce){body#top *{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+
+/* Preserve the supplied Earth-at-night artwork under the approved neon palette. */
+body#top .reference-hero{
+  background-color:#090B16!important;
+  background-image:
+    linear-gradient(90deg,rgba(9,11,22,.94) 0%,rgba(9,11,22,.78) 42%,rgba(9,11,22,.34) 100%),
+    url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+@media(max-width:700px){
+  body#top .reference-hero{
+    background-image:
+      linear-gradient(180deg,rgba(9,11,22,.91) 0%,rgba(9,11,22,.72) 58%,rgba(9,11,22,.40) 100%),
+      url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
+    background-position:58% center!important;
+  }
+}
