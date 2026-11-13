@@ -262,7 +262,9 @@ form.addEventListener("submit", async event => {
     form.hidden = true;
     const success = document.querySelector("#form-success");
     if (success) {
-      success.querySelector("p").textContent = "Your complete business discovery brief has been received. Our team will review your answers before preparing your demo.";
+      success.querySelector("p").textContent = result.notificationSent
+        ? "Your complete business discovery brief has been received. A confirmation email is on its way."
+        : "Your complete business discovery brief has been saved. Our team will review your answers; a confirmation email may not arrive.";
       success.hidden = false;
     }
   } catch (error) {
