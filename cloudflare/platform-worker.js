@@ -131,7 +131,7 @@ async function retellAgentConfiguration(env,agentId,channel="voice",listed={}){
  const engineId=engine.llm_id||engine.llmId||engine.conversation_flow_id||engine.conversationFlowId||engine.response_engine_id||null;
  let engineDetail=null,prompt="",promptType="",supported=false,note="";
  if(engineType==="retell-llm"&&engineId){
-  const version=engine.version??engineDetail?.version;
+  const version=engine.version;
   engineDetail=await retellApi(env,"/get-retell-llm/"+encodeURIComponent(engineId)+(version!==undefined?"?version="+encodeURIComponent(version):""));
   prompt=String(engineDetail.general_prompt||engineDetail.generalPrompt||"");promptType="general_prompt";supported=true;
  }else if(engineType==="conversation-flow"&&engineId){
@@ -431,12 +431,12 @@ async function route(req,env){
     }));
     return json({agents,numbers:n.results||[]},200,origin,env)
    }
-   const clientPromptMatch=path.match(/^\\/api\\/admin\\/agents\\/([^/]+)\\/client-prompt$/);
+   const clientPromptMatch=path.match(/^\/api\\/admin\\/agents\\/([^/]+)\\/client-prompt$/);
    if(clientPromptMatch&&req.method==="PUT"){
     const agentId=decodeURIComponent(clientPromptMatch[1]),p=await body(req,14000),prompt=String(p.prompt??"").trim();
     if(!prompt)throw Error("approved_client_prompt_required");
     if(prompt.length>12000)throw Error("client_prompt_exceeds_12000_characters");
-    if(/(?:Bearer\\s+[A-Za-z0-9._~-]{12,}|(?:sk|rk|whsec|pk)_[A-Za-z0-9_-]{12,}|(?:api[_ -]?key|secret|password)\\s*[:=]\\s*\\S+)/i.test(prompt))throw Error("remove_credentials_before_publishing_client_prompt");
+    if(/(?:Bearer\s+[A-Za-z0-9._~-]{12,}|(?:sk|rk|whsec|pk)_[A-Za-z0-9_-]{12,}|(?:api[_ -]?key|secret|password)\s*[:=]\s*\S+)/i.test(prompt))throw Error("remove_credentials_before_publishing_client_prompt");
     const row=await env.DB.prepare("SELECT agent_id,customer_id,raw_json FROM avr_agents WHERE agent_id=?").bind(agentId).first();
     if(!row)throw Error("agent_not_found");
     let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}
@@ -451,7 +451,7 @@ async function route(req,env){
      draftVersion=Number(cfg.agent.version??0);
     }
     if(!Number.isInteger(draftVersion)||draftVersion<0)throw Error("retell_draft_version_unavailable");
-    await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId)+"?version="+encodeURIComponent(draftVersion),"PATCH",{general_prompt:prompt});
+    const engineVersion=Number(draft?.response_engine?.version??draftVersion);\n    await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId)+"?version="+encodeURIComponent(engineVersion),"PATCH",{general_prompt:prompt});
     await retellApi(env,"/publish-agent-version/"+encodeURIComponent(agentId),"POST",{version:draftVersion,version_description:"Star69AI approved client-specific instructions"});
     const verified=await retellAgentConfiguration(env,agentId,cfg.channel,cached);
     if(verified.prompt!==prompt)throw Error("retell_publish_verification_mismatch");
