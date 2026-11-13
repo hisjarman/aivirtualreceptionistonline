@@ -681,3 +681,28 @@ Known prior issue to recheck against current source: a portal request reported `
 - Correct the emphasized hero headline and the assistant speech-bubble/caption text to accessible dark green `#167A3D` on the translucent white/glass hero surface. Keep neon green `#14D251` for accents and glows, not small body text on white.
 - Override older compact avatar CSS rules: target approximately 460px max width on desktop, 390px on tablet, and 290px on mobile, retaining `object-fit:contain`, auto height, and no cropping. Keep the speech bubble readable and positioned beneath/near the assistant without covering the face.
 - Implemented on branch `fix/hero-green-text-larger-assistant-2026-11-12`; do not merge until reviewed and approved. Verify desktop, tablet and mobile layouts after merge.
+
+
+## Industry-specific AI configuration and guardrails — 2026-11-12
+
+- Added a dedicated “Not just an AI voice. A business-specific playbook.” section to `industries.html`, linked from the existing Industries navigation route.
+- Covers eight business groupings: home services; contractors/property services; healthcare/wellness; legal/professional services; real estate/finance; automotive/transport; hospitality/food; and retail/personal services/community organizations.
+- Each grouping explains the intended receptionist configuration and specific boundaries, including emergency escalation, no unapproved advice/diagnosis, no invented quotes or availability, sensitive-data restrictions, and human handoff rules where applicable.
+- Added shared baseline guardrails: approved business knowledge only, clear AI identity and applicable recording/messaging notices, no unauthorized commitments, data minimization, risk/uncertainty escalation, and scenario testing with client approval before activation.
+- Added a prominent qualification that these are configuration standards, not a guarantee of error-free operation or a claim of legal compliance; regulated/high-risk workflows require additional review and may be restricted or declined.
+- Added scoped responsive styling in `industry-guardrails.css`, using the approved Star69AI neon palette against a dark readable surface, accessible body text sizing, mobile single-column behavior and reduced-motion consideration.
+- Updated the Industries page title and meta description. Existing navigation, footer, industry landing-page links and demo CTA remain in place.
+- Implementation branch: `feature/industry-specific-ai-guardrails-2026-11-12`. Not merged or published. Static source checks confirmed the new stylesheet link, section anchor, eight industry guardrail panels, balanced article tags, common guardrail block and demo CTA. Desktop/mobile browser rendering, keyboard accessibility and live GitHub Pages deployment remain to be verified.
+- Important operational caveat: website copy does not itself enforce agent behavior. Before selling these workflows, each client agent must be configured and tested against the stated rules, with written scope/approval and provider capabilities verified.
+
+
+## Industry agent configuration playbooks and QA — 2026-11-12
+
+- Added `docs/INDUSTRY_AGENT_CONFIGURATION_PLAYBOOKS.md` on `feature/industry-specific-ai-guardrails-2026-11-12`.
+- The playbook converts the public industry guardrail categories into a repeatable client setup record, reusable baseline prompt, standard call flow, eight industry modules, universal adversarial/failure test suite (U01–U15), launch gates, ongoing QA and client approval record.
+- Industry modules cover home services, contractors/property services, healthcare/wellness, legal/professional services, real estate/property/mortgage, automotive/towing, hospitality/food/events, and personal services/retail/community organizations.
+- Added conservative defaults for emergencies, regulated advice, sensitive data, identity verification, pricing/booking/dispatch confirmation, human handoff and tool failure.
+- Healthcare deployment posture is administrative-only unless the specific deployment, vendor configuration, contractual requirements and applicable legal obligations are separately reviewed. No Star69AI HIPAA certification/compliance claim is made.
+- The document links to current Retell materials for knowledge bases, safety guardrails, webhook/function testing and simulation/batch testing. These are implementation references only; feature availability and actual settings must be verified in the client's account.
+- No Retell agents, prompts, knowledge bases, tools, guardrail settings, phone numbers, client records, Cloudflare Workers or D1 data were changed. No production deployment or activation occurred.
+- Next operational step: turn the playbook into client-specific agent configurations only after a real client setup record and authorized written approvals exist; run the full relevant test suite and retain versioned approval evidence before activation.
