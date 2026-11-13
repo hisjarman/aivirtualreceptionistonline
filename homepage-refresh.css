@@ -1092,3 +1092,23 @@ body#top .story-subscribe button{background:#34FD78!important;color:#07130D!impo
 body#top .footer,body#top .site-footer,body#top footer{background:#070A14!important;color:#E6ECF8!important;border-top:1px solid #2B3650!important}
 body#top footer :where(p,li,small,a){color:#D7E0F2!important}body#top footer a:hover{color:#34FD78!important}
 @media(prefers-reduced-motion:reduce){body#top *{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+
+/* Preserve the supplied Earth-at-night artwork under the approved neon palette. */
+body#top .reference-hero{
+  background-color:#090B16!important;
+  background-image:
+    linear-gradient(90deg,rgba(9,11,22,.94) 0%,rgba(9,11,22,.78) 42%,rgba(9,11,22,.34) 100%),
+    url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+@media(max-width:700px){
+  body#top .reference-hero{
+    background-image:
+      linear-gradient(180deg,rgba(9,11,22,.91) 0%,rgba(9,11,22,.72) 58%,rgba(9,11,22,.40) 100%),
+      url("./assets/Conexi%C3%B3n%20global_%20Tierra%20e%20inteligencia%20artificial.png")!important;
+    background-position:58% center!important;
+  }
+}
