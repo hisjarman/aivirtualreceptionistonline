@@ -673,3 +673,11 @@ Known prior issue to recheck against current source: a portal request reported `
 - Keep forms, cards, links, focus states, mobile layouts, navigation and existing functionality readable and intact. Avoid harsh white section breaks and excessive glow.
 - Implementation is on branch `branding/photo-neon-white-glass-2026-11-12`; it is not production until reviewed and merged.
 
+
+
+## Hero readability and AI assistant scale correction — 2026-11-12
+
+- User reported that hero text was unreadable and should have been green, and that the AI assistant model image was too small.
+- Correct the emphasized hero headline and the assistant speech-bubble/caption text to accessible dark green `#167A3D` on the translucent white/glass hero surface. Keep neon green `#14D251` for accents and glows, not small body text on white.
+- Override older compact avatar CSS rules: target approximately 460px max width on desktop, 390px on tablet, and 290px on mobile, retaining `object-fit:contain`, auto height, and no cropping. Keep the speech bubble readable and positioned beneath/near the assistant without covering the face.
+- Implemented on branch `fix/hero-green-text-larger-assistant-2026-11-12`; do not merge until reviewed and approved. Verify desktop, tablet and mobile layouts after merge.
