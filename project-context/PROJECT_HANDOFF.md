@@ -716,3 +716,19 @@ Known prior issue to recheck against current source: a portal request reported `
 - Client UI presents the prompt excerpt as a read-only panel alongside existing voice, language, greeting, model and capability settings. When no safe excerpt is detected, the UI says a client-approved preview has not yet been published; it never falls back to displaying the raw prompt.
 - This content-selection safeguard is best-effort, not a formal security boundary. Review actual prompts and ensure allowlisted sections contain only business-approved information before production use. A dedicated admin-managed public prompt field is the preferred future hardening.
 - No Worker deployment, D1 migration or GitHub Pages publication is performed by this branch. Browser, tenant-isolation, mobile and live API verification remain required.
+
+
+## Client AI agent prompt transparency — merged 2026-11-13
+
+- PR #110 merged to `main` at squash commit `5a1cb83dd2d8b1814a791bb2cb86d69cf55e3412`.
+- The client portal's authenticated agent-configuration endpoint now returns a client-facing prompt excerpt only when an approved delimited block or allowlisted Markdown section is detected. The portal displays it read-only and does not fall back to the raw system prompt.
+- The portal continues to derive the signed-in customer's identity server-side and restricts the agent query to that customer's `customer_id`. The code change itself has not been deployed to the Cloudflare Worker or browser-verified.
+- Active Retell agents still need reviewed `[[CLIENT_VISIBLE_PROMPT]] ... [[/CLIENT_VISIBLE_PROMPT]]` sections before the client preview can display the intended business-facing prompt. The daily scheduled audit checks this readiness when source/provider access is available.
+
+## Site-wide readability hardening — implementation branch 2026-11-13
+
+- Branch: `quality/sitewide-readability-hardening-2026-11-13`.
+- Added root `readability.css` and linked it last in the document head across the main public pages, legal pages, Trust Lab pages, Insights index/articles, blog index, challenge, industry landing pages, partner pages and client/admin portals.
+- The shared layer enforces minimum body-copy, label, table, metadata and dashboard-demo text sizes; improves default light-surface text/link contrast, preserves light text on explicitly dark panels, improves placeholder/focus visibility, and prevents small-screen typography reductions.
+- Removed the old blanket rule that forced every descendant in the homepage dashboard preview to white text regardless of its surface. Existing page-specific styles remain in place, with the shared layer as the final readability guardrail.
+- This is a source-level hardening pass. It has not yet had full browser visual review at 360px, 768px and 1280px, automated axe/WCAG scans, or measured contrast checks. Check all page families before merging. Do not claim GitHub Pages has published these changes until live deployment is verified.
