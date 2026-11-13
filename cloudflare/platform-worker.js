@@ -144,7 +144,7 @@ async function retellAgentConfiguration(env,agentId,channel="voice",listed={}){
 async function syncRetell(env){
  const [listedAgents,numbers]=await Promise.all([retellList(env,"/v2/list-agents","POST",{}),retellList(env,"/v2/list-phone-numbers","GET")]);
  const agents=await Promise.all(listedAgents.map(async a=>{
-  try{const cfg=await retellAgentConfiguration(env,a.agent_id,a.channel,a);return {...cfg.agent,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId,_avr_engine_detail:cfg.engineDetail}}
+  try{const cfg=await retellAgentConfiguration(env,a.agent_id,a.channel,a);return {...cfg.agent,channel:a.channel,latest_published_version:a.latest_published_version,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId,_avr_engine_detail:cfg.engineDetail}}
   catch(e){return {...a,_avr_sync_error:String(e.message||"agent_detail_unavailable")}}
  }));
  for(const a of agents){await env.DB.prepare("INSERT INTO avr_agents(agent_id,agent_name,voice_id,language,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(agent_id) DO UPDATE SET agent_name=excluded.agent_name,voice_id=excluded.voice_id,language=excluded.language,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(a.agent_id,a.agent_name||a.agent_id,a.voice_id||null,a.language||null,JSON.stringify(a),new Date().toISOString()).run()}
@@ -457,7 +457,7 @@ async function route(req,env){
     await retellApi(env,"/publish-agent-version/"+encodeURIComponent(agentId),"POST",{version:draftVersion,version_description:"Star69AI approved client-specific instructions"});
     const verified=await retellAgentConfiguration(env,agentId,cfg.channel,cached);
     if(verified.prompt!==prompt)throw Error("retell_publish_verification_mismatch");
-    await env.DB.prepare("UPDATE avr_agents SET client_visible_prompt=?,raw_json=?,synced_at=? WHERE agent_id=?").bind(prompt,JSON.stringify({...cfg.agent,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId}),new Date().toISOString(),agentId).run();
+    await env.DB.prepare("UPDATE avr_agents SET client_visible_prompt=?,raw_json=?,synced_at=? WHERE agent_id=?").bind(prompt,JSON.stringify({...cfg.agent,channel:cfg.channel,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId}),new Date().toISOString(),agentId).run();
     await audit(env,u,"retell_agent_prompt_published",row.customer_id,{agentId,engineType:cfg.engineType,version:draftVersion,characters:prompt.length});
     return json({saved:true,published:true,characters:prompt.length,version:draftVersion,engineType:cfg.engineType},200,origin,env)
    }
