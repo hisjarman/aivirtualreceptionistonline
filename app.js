@@ -3,6 +3,7 @@
 // 2) Replace the value below with your form endpoint, e.g. https://formspree.io/f/abcdwxyz
 // 3) Commit and publish this file. Do not put API keys or private credentials here.
 const API_BASE = "https://avr-trust-lab-api.hisjarman.workers.dev";
+const DEMO_API_BASE = "https://avr-platform-api.hisjarman.workers.dev";
 const PARTNER_COOKIE = "star69ai_partner_ref";
 function readPartnerAttribution() {
   const entry = document.cookie.split("; ").find(item => item.startsWith(PARTNER_COOKIE + "="));
@@ -208,11 +209,10 @@ document.querySelectorAll("[data-plan]").forEach(link => {
   });
 });
 
-// Formspree's normal HTML POST avoids browser CORS/fetch failures on mobile browsers.
+// The full discovery brief is the source of truth for demo-agent configuration.
 form.addEventListener("submit", async event => {
   event.preventDefault();
   if (!validateStep()) return;
-
   submit.disabled = true;
   submit.textContent = "Sending…";
   errorBox.hidden = true;
@@ -220,68 +220,55 @@ form.addEventListener("submit", async event => {
   const formData = new FormData(form);
   const payload = Object.fromEntries(formData.entries());
   payload.additionalNeeds = formData.getAll("additionalNeeds");
-  const submittedAt = new Date().toISOString();
-  const brief = [
-    ["Contact name", payload.name],
-    ["Email", payload.email],
-    ["Phone", payload.phone],
-    ["Business", payload.business],
-    ["Industry", payload.industry],
-    ["Industry details", payload.industryOther],
-    ["Website", payload.website],
-    ["Service area", payload.serviceArea],
-    ["Services", payload.services],
-    ["Monthly call volume", payload.callVolume],
-    ["Business hours", payload.hours],
-    ["Caller tasks", payload.callTasks],
-    ["Common questions", payload.faqs],
-    ["Recording preference", payload.recordingPreference],
-    ["Additional features requested", Array.isArray(payload.additionalNeeds) ? payload.additionalNeeds.join(", ") : payload.additionalNeeds],
-    ["Outbound AI calls", payload.outboundAiCalls],
-    ["Automated SMS", payload.automatedSms],
-    ["Human escalation", payload.humanEscalation],
-    ["Phone setup", payload.phoneSetup],
-    ["Plan interest", payload.planInterest],
-    ["Additional notes", payload.notes],
-    ["Privacy acknowledgement", payload.privacyConsent ? "Confirmed" : "Not confirmed"],
-    ["Submitted at", submittedAt],
-    ["Source", "Star69AI business discovery form"]
-  ].map(([label, value]) => label + ": " + (String(value || "").trim() || "Not provided")).join("\\n");
-
-  const hiddenFields = {
-    _subject: "New business discovery request — Star69AI",
-    _replyto: payload.email || "",
-    _next: "https://star69ai.com/get-started.html?submitted=1#start",
-    message: brief,
-    submittedAt,
-    source: "Star69AI business discovery form"
-  };
-  for (const [name, value] of Object.entries(hiddenFields)) {
-    let input = form.querySelector('input[type="hidden"][name="' + name + '"]');
-    if (!input) {
-      input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      form.appendChild(input);
-    }
-    input.value = value;
-  }
-
-  form.method = "POST";
-  form.action = "https://formspree.io/f/mrppjqdb";
-  // Submit through the browser's native form navigation rather than fetch().
+  payload.industry = payload.industry === "Other / not listed" ? (payload.industryOther || payload.industry) : payload.industry;
+  payload.discoveryComplete = true;
+  payload.leadSource = "Full Star69AI business discovery form";
+  payload.submittedAt = new Date().toISOString();
+  payload.source = "Star69AI business discovery form";
+  payload.privacyConsent = formData.get("privacyConsent") === "on";
+  payload.humanEscalation = String(formData.get("humanEscalation") || "");
+  payload.planInterest = String(formData.get("planInterest") || "");
+  payload.website = String(formData.get("website") || "");
+  payload.serviceArea = String(formData.get("serviceArea") || "");
+  payload.services = String(formData.get("services") || "");
+  payload.callVolume = String(formData.get("callVolume") || "");
+  payload.hours = String(formData.get("hours") || "");
+  payload.callTasks = String(formData.get("callTasks") || "");
+  payload.faqs = String(formData.get("faqs") || "");
+  payload.recordingPreference = String(formData.get("recordingPreference") || "");
+  payload.outboundAiCalls = String(formData.get("outboundAiCalls") || "");
+  payload.automatedSms = String(formData.get("automatedSms") || "");
+  payload.phoneSetup = String(formData.get("phoneSetup") || "");
+  payload.notes = String(formData.get("notes") || "");
+  payload.details = payload.notes;
+  payload.websiteHoneypot = "";
   const attribution = readPartnerAttribution();
   if (attribution?.partnerCode) {
-    hiddenFields.partner_code = attribution.partnerCode;
-    hiddenFields.partner_click_id = attribution.clickId || "";
-    for (const [name,value] of [["partner_code",hiddenFields.partner_code],["partner_click_id",hiddenFields.partner_click_id]]) {
-      let input=form.querySelector('input[type="hidden"][name="'+name+'"]');
-      if(!input){input=document.createElement("input");input.type="hidden";input.name=name;form.appendChild(input);}
-      input.value=value;
-    }
+    payload.partnerCode = attribution.partnerCode;
+    payload.partnerClickId = attribution.clickId || "";
   }
-  try { await capturePartnerLead(payload); } catch {}
-  HTMLFormElement.prototype.submit.call(form);
+
+  try {
+    const response = await fetch(DEMO_API_BASE + "/api/demo-requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.accepted) throw new Error(result.error || "We couldn't submit your discovery brief. Please try again.");
+    try { await capturePartnerLead(payload); } catch {}
+    form.hidden = true;
+    const success = document.querySelector("#form-success");
+    if (success) {
+      success.querySelector("p").textContent = "Your complete business discovery brief has been received. Our team will review your answers before preparing your demo.";
+      success.hidden = false;
+    }
+  } catch (error) {
+    errorBox.textContent = error.message || "Submission failed. Please try again or email support@star69ai.com.";
+    errorBox.hidden = false;
+    submit.disabled = false;
+    submit.textContent = "Submit onboarding request →";
+  }
 });
 
 // Formspree redirects here only after accepting a native form submission.
