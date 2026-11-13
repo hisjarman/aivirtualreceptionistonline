@@ -662,3 +662,12 @@ Known prior issue to recheck against current source: a portal request reported `
 - Standardized legal body and list text at 16px, heading hierarchy, link contrast/underline, focus visibility, callout styling, page width and mobile layout.
 - This is a visual and editorial consistency pass only. It does not constitute legal advice, attorney review, a legal certification, or verification of live consent/provider behavior. Preserve the documented owner actions and customer-agreement requirements.
 - Work is on branch `quality/readability-and-legal-standards-2026-11-12`; do not merge until the user reviews and approves.
+
+
+## Official neon-trio brand palette — 2026-11-12
+
+- Approved website accent colors from the user's supplied neon-light reference: **electric purple `#F461FE`**, **electric blue `#43B4FE`**, and **neon green `#34FD78`**.
+- Use purple for brand identity, emphasis and premium highlights; blue for links, technology cues and focus states; green for primary actions and positive/active status.
+- Keep a premium dark foundation with near-black/navy surfaces, near-white body text and muted blue-gray supporting text. Do not use neon colors for long paragraphs or small low-contrast text.
+- Maintain readable contrast, visible keyboard focus, responsive layouts and existing navigation/forms/functionality. Avoid harsh white section breaks and excessive glow effects.
+- Implementation is on branch `branding/neon-trio-palette-2026-11-12`; it is not production until reviewed and merged.
