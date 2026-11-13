@@ -442,16 +442,18 @@ async function route(req,env){
     let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}
     const cfg=await retellAgentConfiguration(env,agentId,cached.channel||"voice",cached);
     if(cfg.engineType!=="retell-llm"||!cfg.engineId)throw Error("conversation_flow_or_custom_engine_requires_version_safe_configuration_workflow");
-    let draftVersion;
+    let draftVersion,engineVersion;
     if(cfg.agent.is_published===true){
      const baseVersion=Number(cfg.agent.latest_published_version??cfg.agent.version??0);
      const draft=await retellApi(env,"/create-agent-version/"+encodeURIComponent(agentId),"POST",{base_version:baseVersion});
      draftVersion=Number(draft.version);
+     engineVersion=Number(draft.response_engine?.version??draftVersion);
     }else{
      draftVersion=Number(cfg.agent.version??0);
+     engineVersion=Number(cfg.engine.version??draftVersion);
     }
-    if(!Number.isInteger(draftVersion)||draftVersion<0)throw Error("retell_draft_version_unavailable");
-    const engineVersion=Number(draft?.response_engine?.version??draftVersion);\n    await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId)+"?version="+encodeURIComponent(engineVersion),"PATCH",{general_prompt:prompt});
+    if(!Number.isInteger(draftVersion)||draftVersion<0||!Number.isInteger(engineVersion)||engineVersion<0)throw Error("retell_draft_version_unavailable");
+    await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId)+"?version="+encodeURIComponent(engineVersion),"PATCH",{general_prompt:prompt});
     await retellApi(env,"/publish-agent-version/"+encodeURIComponent(agentId),"POST",{version:draftVersion,version_description:"Star69AI approved client-specific instructions"});
     const verified=await retellAgentConfiguration(env,agentId,cfg.channel,cached);
     if(verified.prompt!==prompt)throw Error("retell_publish_verification_mismatch");
