@@ -443,8 +443,9 @@ async function route(req,env){
     const cfg=await retellAgentConfiguration(env,agentId,cached.channel||"voice",cached);
     if(cfg.engineType!=="retell-llm"||!cfg.engineId)throw Error("conversation_flow_or_custom_engine_requires_version_safe_configuration_workflow");
     let draftVersion,engineVersion;
-    if(cfg.agent.is_published===true){
-     const baseVersion=Number(cfg.agent.latest_published_version??cfg.agent.version??0);
+    const published=cfg.agent.is_published===true||(cfg.agent.is_published!==false&&Number(cached.latest_published_version||0)>0&&Number(cfg.agent.version??cached.latest_published_version)===Number(cached.latest_published_version));
+    if(published){
+     const baseVersion=Number(cfg.agent.latest_published_version??cached.latest_published_version??cfg.agent.version??0);
      const draft=await retellApi(env,"/create-agent-version/"+encodeURIComponent(agentId),"POST",{base_version:baseVersion});
      draftVersion=Number(draft.version);
      engineVersion=Number(draft.response_engine?.version??draftVersion);
