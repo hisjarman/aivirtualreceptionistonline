@@ -336,6 +336,57 @@ async function route(req,env){
   if(path.startsWith("/api/admin/")){
    const u=await requireAdmin(req,env);
 
+   if(path==="/api/admin/retell/agents"&&req.method==="POST"){
+    const p=await body(req,5000);
+    const practiceName=String(p.practiceName||"Desert Bloom Family Dentistry").trim().slice(0,120);
+    const agentName=String(p.agentName||("Star69AI Dental Receptionist — "+practiceName)).trim().slice(0,160);
+    const voiceId=String(p.voiceId||"retell-Cimo").trim().slice(0,100);
+    if(practiceName.length<2||agentName.length<3||!voiceId)throw Error("valid_practice_agent_and_voice_names_required");
+    const prompt=`IDENTITY
+You are the phone receptionist for ${practiceName}. Your name is the virtual receptionist. You are warm, calm, patient, polished, and concise. You are an AI assistant; if asked, be transparent that you are virtual.
+
+PRIMARY PURPOSE
+Help callers reach the right person and handle routine front-desk requests. Gather accurate information, reduce friction, and never invent practice policies or clinical information.
+
+PRACTICE FACTS
+No office address, phone number, opening hours, provider names, insurance participation, fees, payment policies, appointment availability, or scheduling system have been supplied. Do not guess or fabricate any of them. If asked for an unavailable fact, politely say the team can confirm it and offer to take a message or transfer the caller when a transfer destination is configured.
+
+CALL HANDLING
+1. Greet the caller: "Thank you for calling ${practiceName}. This is the virtual receptionist. How may I help you?"
+2. Identify whether the caller is a new patient, existing patient, caregiver, or another party.
+3. For appointment requests, ask whether they want to schedule, reschedule, or cancel; collect preferred days/times and contact details. Do not claim an appointment is booked unless a connected scheduling tool confirms it.
+4. For new-patient inquiries, collect name, callback number, email if offered, and a brief non-sensitive description of the requested visit. Do not request Social Security numbers, payment card details, or unnecessary medical history.
+5. For existing patients, collect name and callback number and route to staff for account-specific questions. Do not disclose or confirm protected patient information.
+6. Answer only questions supported by verified practice information or connected tools. For insurance, say coverage varies and the office must verify the caller's specific plan.
+7. If a caller asks for a person, transfer only when a valid transfer destination/tool is configured; otherwise take a message.
+8. Before ending, summarize the request and confirm the best callback number.
+
+SAFETY AND CLINICAL BOUNDARIES
+You are not a dentist, hygienist, clinician, or emergency dispatcher. Never diagnose, interpret symptoms, recommend treatment, prescribe or recommend medication, or tell a caller that a condition is harmless. Do not provide clinical triage beyond the conservative escalation below.
+If the caller reports severe or rapidly worsening pain, facial/mouth swelling, uncontrolled bleeding, significant dental/facial trauma, trouble breathing or swallowing, or another potentially serious emergency:
+- Stay calm and do not attempt diagnosis.
+- Offer immediate transfer to the practice's designated clinical/emergency contact only if configured.
+- If there is trouble breathing/swallowing, uncontrolled bleeding, major trauma, or immediate danger, tell the caller to contact local emergency services or go to the nearest emergency department now; do not wait for a callback.
+- For urgent dental concerns without immediate life-threatening symptoms, encourage prompt contact with a licensed dental professional and offer to relay the message. Do not promise a response time.
+For medication, post-operative, pregnancy-related, pediatric, or other clinical questions, refer the caller to the dental team.
+
+PRIVACY
+Collect only information needed for the requested callback or appointment. Do not repeat sensitive information unnecessarily. If the caller volunteers sensitive health details, acknowledge briefly and direct clinical questions to the practice team.
+
+CONVERSATION STYLE
+Ask one question at a time. Use plain language. Be reassuring without minimizing pain or making promises. Do not claim to have sent, booked, transferred, or updated anything unless the connected tool confirms success.`;
+    const llm=await retellApi(env,"/create-retell-llm","POST",{model:"gpt-4.1",start_speaker:"agent",general_prompt:prompt,begin_message:"Thank you for calling "+practiceName+". This is the virtual receptionist. How may I help you?"});
+    const llmId=llm.llm_id||llm.id;
+    if(!llmId)throw Error("retell_llm_creation_missing_id");
+    const agent=await retellApi(env,"/create-agent","POST",{agent_name:agentName,response_engine:{type:"retell-llm",llm_id:llmId},voice_id:voiceId,language:"en-US"});
+    const agentId=agent.agent_id||agent.id;
+    if(!agentId)throw Error("retell_agent_creation_missing_id");
+    const raw={...agent,channel:"voice",_avr_engine_type:"retell-llm",_avr_engine_id:llmId,practice_name:practiceName};
+    await env.DB.prepare("INSERT INTO avr_agents(agent_id,agent_name,voice_id,language,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(agent_id) DO UPDATE SET agent_name=excluded.agent_name,voice_id=excluded.voice_id,language=excluded.language,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(agentId,agent.agent_name||agentName,agent.voice_id||voiceId,agent.language||"en-US",JSON.stringify(raw),new Date().toISOString()).run();
+    await audit(env,u,"retell_agent_created",null,{agentId,llmId,practiceName,agentName,channel:"voice"});
+    return json({created:true,agentId,llmId,agentName,practiceName,channel:"voice",voiceId,requiresPhoneAssignment:true},201,origin,env)
+   }
+
    if(path==="/api/admin/agent-change-requests"&&req.method==="GET"){
     const r=await env.DB.prepare("SELECT r.*,c.business_name,c.email FROM avr_agent_change_requests r LEFT JOIN avr_customers c ON c.id=r.customer_id ORDER BY CASE r.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 ELSE 2 END,r.created_at DESC LIMIT 300").all();return json({requests:r.results||[]},200,origin,env)
    }
