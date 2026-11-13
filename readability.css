@@ -63,3 +63,10 @@ body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px so
  body :where(.topbar .nav a,.reference-topbar .nav a){font-size:12px!important}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}body *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Protect control readability from older, more-specific compact UI rules. */
+body :where(button,.button,.btn,input,select,textarea,summary){font-size:13px!important}
+body :where(input,select,textarea){font-size:16px!important}
+body :where(.footer-column h2,.footer-contact h2){font-size:14px!important}
+body :where(.demo-card-action,.dashboard-demo-top small,.dashboard-demo-pill,.demo-card-desc,.dashboard-demo-disclaimer){font-size:12px!important}
+body :where(.client-nav-item,.sidebar-caption,.sidebar-help,.sidebar-footer,.client-page-label){font-size:12px!important}
