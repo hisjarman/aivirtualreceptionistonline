@@ -387,7 +387,7 @@ async function route(req,env){
    const u=await requireAdmin(req,env);
 
    if(path==="/api/admin/demo-requests"&&req.method==="GET"){
-    const r=await env.DB.prepare("SELECT id,contact_name,email,phone,business_name,industry,details,lead_source,discovery_json,discovery_complete,status,agent_id,llm_id,admin_notes,created_at,updated_at FROM avr_demo_requests ORDER BY CASE status WHEN 'new' THEN 0 WHEN 'reviewing' THEN 1 WHEN 'approved' THEN 2 WHEN 'creating_demo' THEN 3 ELSE 4 END,created_at DESC LIMIT 300").all();
+    const r=await env.DB.prepare("SELECT id,contact_name,email,phone,business_name,industry,details,lead_source,discovery_json,discovery_complete,status,agent_id,llm_id,customer_id,admin_notes,created_at,updated_at FROM avr_demo_requests ORDER BY CASE status WHEN 'new' THEN 0 WHEN 'reviewing' THEN 1 WHEN 'approved' THEN 2 WHEN 'creating_demo' THEN 3 ELSE 4 END,created_at DESC LIMIT 300").all();
     return json({requests:r.results||[]},200,origin,env);
    }
    const demoRequestMatch=path.match(/^\/api\/admin\/demo-requests\/([a-f0-9-]{36})$/i);
@@ -407,6 +407,34 @@ async function route(req,env){
     await env.DB.prepare("UPDATE avr_demo_requests SET status=?,admin_notes=COALESCE(?,admin_notes),updated_at=? WHERE id=?").bind(status,note,new Date().toISOString(),id).run();
     await audit(env,u,"demo_request_updated",null,{requestId:id,previousStatus:existing.status,status});
     return json({saved:true},200,origin,env);
+   }
+   const createCustomerMatch=path.match(/^\\/api\\/admin\\/demo-requests\\/([a-f0-9-]{36})\\/create-customer$/i);
+   if(createCustomerMatch&&req.method==="POST"){
+    const id=createCustomerMatch[1],lead=await env.DB.prepare("SELECT id,contact_name,email,phone,business_name,status,agent_id,customer_id FROM avr_demo_requests WHERE id=?").bind(id).first();
+    if(!lead)throw Error("demo_request_not_found");
+    if(lead.status!=="converted"||!lead.agent_id)throw Error("prospect_must_accept_a_presented_demo_before_customer_onboarding");
+    if(lead.customer_id){
+     const linked=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(lead.customer_id).first();
+     if(linked)return json({created:true,customerId:lead.customer_id,alreadyCreated:true},200,origin,env);
+     throw Error("customer_onboarding_creation_in_progress_refresh_shortly");
+    }
+    const duplicate=await env.DB.prepare("SELECT id,business_name FROM avr_customers WHERE lower(email)=? LIMIT 1").bind(String(lead.email).toLowerCase()).first();
+    if(duplicate)throw Error("customer_email_already_exists_review_existing_customer_account");
+    const customerId=crypto.randomUUID(),now=new Date().toISOString();
+    const lock=await env.DB.prepare("UPDATE avr_demo_requests SET customer_id=?,updated_at=? WHERE id=? AND status='converted' AND customer_id IS NULL").bind(customerId,now,id).run();
+    if(!lock.meta?.changes){
+     const latest=await env.DB.prepare("SELECT customer_id FROM avr_demo_requests WHERE id=?").bind(id).first();
+     if(latest?.customer_id)return json({created:true,customerId:latest.customer_id,alreadyCreated:true},200,origin,env);
+     throw Error("customer_onboarding_creation_in_progress_refresh_shortly");
+    }
+    try{
+     await env.DB.prepare("INSERT INTO avr_customers(id,business_name,contact_name,email,phone,status,admin_notes,created_at,updated_at) VALUES(?,?,?,?,?,'pending',?,?,?)").bind(customerId,lead.business_name,lead.contact_name,lead.email,lead.phone,"Converted from demo request "+id+". Pending onboarding review; no plan, subscription, phone assignment, or production routing has been activated.",now,now).run();
+    }catch(e){
+     await env.DB.prepare("UPDATE avr_demo_requests SET customer_id=NULL,updated_at=? WHERE id=? AND customer_id=?").bind(new Date().toISOString(),id,customerId).run();
+     throw e;
+    }
+    await audit(env,u,"customer_onboarding_started",customerId,{demoRequestId:id,agentId:lead.agent_id,status:"pending"});
+    return json({created:true,customerId,status:"pending",productionActivation:false,phoneAssignmentRequired:true},201,origin,env);
    }
    const createDemoMatch=path.match(/^\/api\/admin\/demo-requests\/([a-f0-9-]{36})\/create-agent$/i);
    if(createDemoMatch&&req.method==="POST"){
