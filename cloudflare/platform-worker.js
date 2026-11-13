@@ -84,6 +84,22 @@ function resendFrom(env){
   return /^[^<>]+<[^<>]+>$/.test(configured)?configured:"Star69AI <"+configured+">";
 }
 
+async function sendDemoRequestAcknowledgement(env,{id,email,business,discoveryComplete}){
+ try{
+  if(!env.RESEND_API_KEY||!env.RESEND_FROM_EMAIL)return false;
+  const esc=v=>String(v??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  const subject=discoveryComplete?"We received your Star69AI business discovery brief":"We received your Star69AI demo request";
+  const message=discoveryComplete
+   ?"Your business discovery brief has been received. Our team will review the information and prepare the next steps for a customized demonstration."
+   :"Your demo request has been received. You can complete the full business discovery form at https://star69ai.com/get-started.html so we can tailor the demonstration to your business.";
+  const text=["Thank you for contacting Star69AI.","Business: "+business,"",message,"","Creating a demo does not assign a production phone number, activate call routing, or start a paid subscription. Our team will contact you about the next step.","","Star69AI — Smarter Calls. Bigger Opportunity.","https://star69ai.com/"].join("\n");
+  const html=brandEmail("<div style=\"font-family:Arial,sans-serif;color:#20343b\"><h2>"+(discoveryComplete?"We received your business brief":"We received your demo request")+"</h2><p>Hello,</p><p>"+esc(message)+"</p><p><b>Business:</b> "+esc(business)+"</p>"+(discoveryComplete?"":"<p><a href=\"https://star69ai.com/get-started.html\">Complete the full business discovery form</a> to help us tailor your demo.</p>")+"<p>Creating a demo does not assign a production phone number, activate call routing, or start a paid subscription. Our team will contact you about the next step.</p><p>Star69AI — Smarter Calls. Bigger Opportunity.</p></div>");
+  const response=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"star69ai-demo-ack/"+id+"/"+(discoveryComplete?"discovery":"quick")},body:JSON.stringify({from:resendFrom(env),to:[email],subject,html,text})});
+  if(!response.ok){const result=await response.json().catch(()=>({}));console.error("demo_request_acknowledgement_failed",response.status,result);return false}
+  return true;
+ }catch(e){console.error("demo_request_acknowledgement_error",e.message);return false}
+}
+
 async function sendAutomaticCallSummary(env,customerId,callId){
  try{
   if(!env.RESEND_API_KEY||!env.RESEND_FROM_EMAIL)return;
@@ -214,7 +230,8 @@ async function route(req,env){
     id=crypto.randomUUID();
     await env.DB.prepare("INSERT INTO avr_demo_requests(id,contact_name,email,phone,business_name,industry,details,lead_source,discovery_json,discovery_complete,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,'new',?,?)").bind(id,contact,email,phone,business,industry,details,leadSource,discoveryJson,discoveryComplete?1:0,now,now).run();
    }
-   return json({accepted:true,id,discoveryComplete,message:discoveryComplete?"Your complete business discovery brief has been received.":"Your demo request has been received."},201,origin,env);
+   const notificationSent=await sendDemoRequestAcknowledgement(env,{id,email,business,discoveryComplete});
+   return json({accepted:true,id,discoveryComplete,notificationSent,message:discoveryComplete?"Your complete business discovery brief has been received.":"Your demo request has been received."},201,origin,env);
   }
   if(path==="/api/me"&&req.method==="GET"){const u=await clerkUser(req,env);return json({user:u},200,origin,env)}
   if(path==="/api/client/dashboard"&&req.method==="GET"){const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({customer:null,needsSetup:true},200,origin,env);const calls=await env.DB.prepare("SELECT call_id,agent_id,from_number,to_number,direction,call_status,duration_ms,start_timestamp,transcript,recording_url,call_summary,user_sentiment,disconnection_reason FROM avr_calls WHERE customer_id=? ORDER BY start_timestamp DESC LIMIT 50").bind(c.id).all();const usage=await env.DB.prepare("SELECT COALESCE(SUM(duration_ms),0) AS ms,COUNT(*) AS calls FROM avr_calls WHERE customer_id=? AND start_timestamp>=?").bind(c.id,new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime()).first();const agent=await env.DB.prepare("SELECT agent_id,agent_name,status FROM avr_agents WHERE customer_id=?").bind(c.id).all();const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=?").bind(c.id).all();return json({customer:{id:c.id,businessName:c.business_name,contactName:c.contact_name,email:c.email,phone:c.phone,status:c.status,plan:c.plan_key,subscriptionStatus:c.subscription_status,periodEnd:c.current_period_end,includedMinutes:c.included_minutes,hasBillingAccount:!!c.stripe_customer_id},calls:calls.results||[],agents:agent.results||[],numbers:nums.results||[],usage:{minutes:Math.ceil(Number(usage?.ms||0)/60000),calls:Number(usage?.calls||0)}},200,origin,env)}
