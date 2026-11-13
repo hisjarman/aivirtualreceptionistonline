@@ -706,3 +706,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - The document links to current Retell materials for knowledge bases, safety guardrails, webhook/function testing and simulation/batch testing. These are implementation references only; feature availability and actual settings must be verified in the client's account.
 - No Retell agents, prompts, knowledge bases, tools, guardrail settings, phone numbers, client records, Cloudflare Workers or D1 data were changed. No production deployment or activation occurred.
 - Next operational step: turn the playbook into client-specific agent configurations only after a real client setup record and authorized written approvals exist; run the full relevant test suite and retain versioned approval evidence before activation.
+
+
+## Client read-only AI agent configuration and prompt transparency — 2026-11-12
+
+- Feature branch: `feature/client-agent-prompt-transparency-2026-11-12`.
+- Extends the authenticated `GET /api/client/agent-configuration` route. It resolves the signed-in Clerk user to their customer record and selects agents only where `avr_agents.customer_id` matches that customer. No agent identifier supplied by the browser is trusted.
+- Adds a customer-facing prompt excerpt only from explicit `[[CLIENT_VISIBLE_PROMPT]] ... [[/CLIENT_VISIBLE_PROMPT]]` delimiters in the Retell `general_prompt`, or from Markdown sections whose headings match a client-facing allowlist (business, role, greeting, call flow, services, hours, location, lead, appointment, FAQ, handoff, escalation, caller, tone, objective, scope, customer, service area). Sections headed with internal/system/developer/security/private credentials, API, webhooks, tools, integrations, guardrails, injection, retention, recording or compliance are excluded. Excerpts are capped at 6,000 characters.
+- Client UI presents the prompt excerpt as a read-only panel alongside existing voice, language, greeting, model and capability settings. When no safe excerpt is detected, the UI says a client-approved preview has not yet been published; it never falls back to displaying the raw prompt.
+- This content-selection safeguard is best-effort, not a formal security boundary. Review actual prompts and ensure allowlisted sections contain only business-approved information before production use. A dedicated admin-managed public prompt field is the preferred future hardening.
+- No Worker deployment, D1 migration or GitHub Pages publication is performed by this branch. Browser, tenant-isolation, mobile and live API verification remain required.
