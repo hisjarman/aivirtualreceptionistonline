@@ -59,7 +59,7 @@ async function loadSupport(){const d=await api("/api/admin/support-tickets"),roo
 async function init(){
  try{
   if(!window.Clerk)throw Error("Clerk failed to load.");
-  await window.Clerk.load({ui:{ClerkUI:window.__internal_ClerkUICtor},appearance:{variables:{colorPrimary:"#70e1cb",colorPrimaryForeground:"#10252b",colorBackground:"#182831",colorForeground:"#eaf1f2",colorInput:"#203943",colorInputForeground:"#eaf1f2",colorBorder:"#38535c",colorMuted:"#203943",colorMutedForeground:"#b6c3c7",colorRing:"#70e1cb",borderRadius:"12px",fontFamily:'"DM Sans",sans-serif'}}});
+  window.__star69AdminClerkReady=window.__star69AdminClerkReady||window.Clerk.load({ui:{ClerkUI:window.__internal_ClerkUICtor},appearance:{variables:{colorPrimary:"#70e1cb",colorPrimaryForeground:"#10252b",colorBackground:"#182831",colorForeground:"#eaf1f2",colorInput:"#203943",colorInputForeground:"#eaf1f2",colorBorder:"#38535c",colorMuted:"#203943",colorMutedForeground:"#b6c3c7",colorRing:"#70e1cb",borderRadius:"12px",fontFamily:'"DM Sans",sans-serif'}}});await window.__star69AdminClerkReady;
   clerk=window.Clerk;
   clerk.addListener(()=>{void activate()});
   await activate();
