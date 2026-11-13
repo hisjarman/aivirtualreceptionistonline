@@ -44,13 +44,22 @@ The site includes marketing pages, pricing, FAQs, demos, industries, insights, t
 
 ### Demo/discovery form
 
-The public discovery form must keep using Formspree:
+The public homepage quick lead form and the full `get-started.html` discovery form use the dedicated platform Worker as the primary intake path:
 
 ```text
-https://formspree.io/f/mrppjqdb
+POST https://avr-platform-api.hisjarman.workers.dev/api/demo-requests
+Formspree backup: https://formspree.io/f/mrppjqdb
 ```
 
-The form is for demo/discovery follow-up only; it does not create an account or activate a subscription. The current form submission implementation was changed from JavaScript cross-origin `fetch()` to a native browser POST to avoid the mobile browser “Failed to fetch” error. The Formspree endpoint and live delivery still require an end-to-end test after the website update is published.
+- Homepage quick leads are stored in `avr_demo_requests` with `discovery_complete=0`.
+- The full discovery form sends the structured business brief to the same Worker and can attach it to the matching quick lead when safe; completed discovery is stored in `discovery_json` with `discovery_complete=1`.
+- The forms retain Formspree as a native fallback when JavaScript is unavailable. If the Worker request fails at the network level after JavaScript has intercepted the form, the form is submitted through Formspree for manual follow-up. A Formspree-only backup is **not** automatically inserted into the admin demo queue and must not be treated as a completed D1 discovery record.
+- An explicit HTTP error from the Worker is shown to the visitor; it is not silently bypassed by Formspree.
+- A quick lead cannot create a demo agent. Full discovery and administrator approval are required.
+- Demo creation does not purchase or assign a phone number, create a customer subscription, or activate production routing.
+- This flow still requires live browser testing on desktop and mobile, including a controlled Worker-network-failure test and verification of the Formspree inbox.
+
+The form is for demo/discovery follow-up only; it does not create an account or activate a subscription.
 
 ## Published pricing
 
