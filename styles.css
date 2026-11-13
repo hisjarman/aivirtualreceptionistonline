@@ -516,3 +516,17 @@ body :where(.button,.btn,button.button,button.btn){background:var(--brand-green)
 body :where(.button:hover,.btn:hover,button.button:hover,button.btn:hover){background:#72FF9F;border-color:#72FF9F;color:#07130D}
 body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid var(--brand-blue)!important;outline-offset:3px!important}
 ::selection{background:var(--brand-purple);color:#14091A}
+
+
+/* Preserve each page's existing light/dark surface choice; only unify accents. */
+:root{
+  --candy-vanilla:#FFFFFF;
+  --candy-cream:#F4F6FA;
+  --candy-plum:#17212F;
+  --candy-ink:#17212F;
+  --candy-muted:#596579;
+  --candy-border:#DDE4EE;
+  --avr-lime-on-light:#167A42;
+  --avr-sky-on-light:#075B86;
+}
+body{color:var(--candy-ink)}
