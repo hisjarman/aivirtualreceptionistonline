@@ -178,14 +178,4 @@
 }
 
 
-/* User-requested readability override: make all dashboard preview text white */
-#dashboard-showcase .dashboard-shell,
-#dashboard-showcase .dashboard-shell * {
-  color: #ffffff !important;
-}
-#dashboard-showcase .dashboard-shell .demo-bar,
-#dashboard-showcase .dashboard-shell .demo-bar.alt,
-#dashboard-showcase .dashboard-shell .demo-donut,
-#dashboard-showcase .dashboard-shell .demo-donut:after {
-  color: #ffffff !important;
-}
+/* Readability colors are set by the shared site-wide stylesheet. */
