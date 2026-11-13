@@ -499,3 +499,10 @@ body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-
 body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window) :where(a:not(.button):not(.btn),.text-link,.section-kicker,.eyebrow){color:var(--brand-blue)!important}
 body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)!important}
 ::selection{background:rgba(225,86,255,.28);color:#172B40}
+
+
+/* Founder portrait — responsive, optimized WebP asset */
+.founder-portrait-frame{margin:0 0 28px;max-width:330px}
+.founder-portrait{display:block;width:100%;height:auto;max-height:420px;aspect-ratio:4/5;object-fit:cover;object-position:center 28%;border:1px solid rgba(112,225,203,.45);border-radius:18px;box-shadow:0 22px 58px rgba(0,0,0,.34)}
+.founder-portrait-frame figcaption{margin-top:11px;color:#c7d7d2;font:500 12px/1.5 'DM Sans',sans-serif;letter-spacing:.025em}
+@media(max-width:800px){.founder-portrait-frame{width:min(100%,230px);max-width:230px;margin:0 0 18px}.founder-portrait{max-height:290px}}
