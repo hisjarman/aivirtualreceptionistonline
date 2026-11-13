@@ -288,7 +288,9 @@ if (new URLSearchParams(window.location.search).get("submitted") === "1") {
   const success = document.querySelector("#form-success");
   if (success) {
     success.querySelector("p").textContent =
-      "Your business brief has been received. We'll review your details and contact you about your requested demo.";
+      new URLSearchParams(window.location.search).get("backup") === "1"
+        ? "Your brief was sent through our backup form. Our team will manually review it and add it to the demo queue before preparing a demo."
+        : "Your business brief has been received. We'll review your details and contact you about your requested demo.";
     success.hidden = false;
   }
 }
