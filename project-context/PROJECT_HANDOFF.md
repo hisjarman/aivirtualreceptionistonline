@@ -743,3 +743,19 @@ Known prior issue to recheck against current source: a portal request reported `
 - Adds migration `cloudflare/migrations/20261112_client_visible_agent_prompt.sql`. **This migration must be applied to the existing platform D1 database before deploying the updated Worker.** The Worker and GitHub Pages changes are separate deployments.
 - Security boundary: never paste the shared Star69AI master/system prompt, API keys, credentials, webhook URLs, private integration secrets or other clients' information into the client-visible field. The separate field and server-side tenant lookup are the boundary; the credential pattern check is only a secondary safeguard, not a secret scanner.
 - Verification status: source changes committed on the feature branch only. No D1 migration was applied, no Cloudflare Worker was deployed, no GitHub Pages publication occurred, and no authenticated browser/tenant-isolation test was performed. Do not claim this feature is live until those steps are completed.
+
+
+## Dedicated client-specific AI prompt transparency — merged 2026-11-13
+
+- PR #113 merged to `main` (squash merge commit `b83aab7bb7e325bbccf979ca16187af7be6a588a`).
+- Replaces best-effort extraction from Retell `general_prompt` with the dedicated D1 field `avr_agents.client_visible_prompt`. The authenticated client configuration API returns only this separately published business-specific text; it does not expose the shared Star69AI master/runtime prompt.
+- Adds admin-only `PUT /api/admin/agents/:agentId/client-prompt` with existing admin authorization, audit logging, 12,000-character limit and basic credential-pattern rejection. Admin → Retell Resources can save/publish or clear each agent's client-facing prompt.
+- Client portal shows the complete published business prompt read-only; publication is managed by Star69AI. Do not paste shared master instructions, API keys, credentials, webhook URLs, private integration secrets or other tenants' information into this field. Pattern checks are not a substitute for human review.
+- Migration `cloudflare/migrations/20261112_client_visible_agent_prompt.sql` must be applied to the existing platform D1 database before deploying the updated Worker.
+- No D1 migration was applied and no Cloudflare Worker deployment or authenticated tenant-isolation/browser test has been performed. The frontend and Worker source changes are on `main`; do not describe the feature as live until the migration, Worker deployment and tests are complete.
+
+## Founder portrait on About page — 2026-11-13
+
+- Added `assets/Solomon_Jarman_Star69AI.webp` to `about.html` as the founder portrait, with descriptive alt text, explicit dimensions, lazy loading and asynchronous decoding.
+- Added responsive `.founder-photo` styling in `styles.css`; desktop uses a larger portrait and mobile layouts reduce it to fit the founder sidebar.
+- Source changes committed directly to `main`. Confirm the GitHub Pages build/live page and review desktop/mobile cropping before calling it fully verified.
