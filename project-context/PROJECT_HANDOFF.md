@@ -759,3 +759,13 @@ Known prior issue to recheck against current source: a portal request reported `
 - Added `assets/Solomon_Jarman_Star69AI.webp` to `about.html` as the founder portrait, with descriptive alt text, explicit dimensions, lazy loading and asynchronous decoding.
 - Added responsive `.founder-photo` styling in `styles.css`; desktop uses a larger portrait and mobile layouts reduce it to fit the founder sidebar.
 - Source changes committed directly to `main`. Confirm the GitHub Pages build/live page and review desktop/mobile cropping before calling it fully verified.
+
+
+## Admin Clerk session and sign-in UX follow-up — 2026-11-13
+
+- Branch: `fix/admin-inline-clerk-signin-session-2026-11-13`.
+- The agency admin page now mounts Clerk's embedded sign-in form when no active session is detected, so the email field is visible on the page rather than requiring a separate sign-in popup.
+- Admin session activation now follows Clerk's listener lifecycle, serializes repeated activation events, and refreshes the dashboard when Clerk reports an active session.
+- Authenticated admin API requests retry once with a freshly requested Clerk token after a 401 response. A 403 remains an authorization denial and is not retried or bypassed.
+- The Cloudflare Worker `requireAdmin` check and `ADMIN_EMAILS` allowlist are unchanged. Admin access remains server-authorized.
+- This is a proposed GitHub Pages frontend change; it is not live until its PR is reviewed and merged. Verify the existing client session is recognized, the embedded email sign-in works when signed out, and an authorized admin can load protected data after publication.
