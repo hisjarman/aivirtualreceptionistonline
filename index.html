@@ -86,6 +86,9 @@
           </select>
         </label>
         <label class="hero-lead-honeypot" aria-hidden="true">Leave this field empty<input name="_gotcha" type="text" tabindex="-1" autocomplete="off"></label>
+        <label>Anything specific you want your receptionist to handle? <textarea name="details" rows="3" maxlength="3000" placeholder="Optional: calls, appointments, FAQs, lead capture…"></textarea></label>
+        <label class="hero-lead-honeypot" aria-hidden="true">Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+        <div id="demo-request-status" class="form-status" role="status" aria-live="polite" hidden></div>
         <button type="submit">Get My Custom Demo <span aria-hidden="true">→</span></button>
         <small>We’ll use your details to respond to your request and, if applicable, record partner referral attribution. No obligation to buy.</small>
       </form>
@@ -179,7 +182,7 @@
   document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !panel.hidden) setOpen(false); });
 })();
 </script>
-<script defer src="./app.js"></script><script defer src="./story-series.js"></script><script defer src="./experience.js"></script>
+<script defer src="./demo-request.js"></script><script defer src="./app.js"></script><script defer src="./story-series.js"></script><script defer src="./experience.js"></script>
 <script>
 (() => {
   const header = document.querySelector(".reference-topbar");
