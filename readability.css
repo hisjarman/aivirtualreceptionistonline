@@ -1,0 +1,65 @@
+/* Star69AI site-wide readability guardrails.
+   Loaded last on every public, partner, client and admin page.
+   Keep body copy readable; metadata may be smaller but never tiny. */
+:root{
+  --readable-ink:#203448;
+  --readable-muted:#50677b;
+  --readable-link:#075f91;
+  --readable-dark-ink:#f4f8fc;
+  --readable-dark-muted:#d0deea;
+  --readable-dark-link:#91dcff;
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-size:16px;line-height:1.6}
+body :where(p,li,dd,dt,blockquote,.description,.section-copy,.feature-copy,.card-copy,.helper-text,.form-hint,.disclaimer,.legal-page,.legal-callout){
+  font-size:max(15px,1em)!important;
+  line-height:1.65;
+}
+body :where(label,legend,th,td,.field-label,.form-label){font-size:max(14px,1em)!important;line-height:1.5}
+body :where(small,.small,.small-text,.eyebrow,.kicker,.meta,.metadata,.timestamp,.caption,.fine-print,.legal-footer,.legal-effective-date){
+  font-size:max(12px,.75rem)!important;
+  line-height:1.5;
+}
+body :where(button,.button,.btn,input,select,textarea,summary){font-size:max(13px,.8125rem)}
+body :where(input,select,textarea){min-height:42px}
+body :where(textarea){min-height:110px;line-height:1.55}
+body :where(input,textarea,select)::placeholder{color:#64798b!important;opacity:1}
+body :where(a:not(.button):not(.btn)){text-decoration-thickness:1px;text-underline-offset:3px}
+body :where(p,li,dd,dt,label,legend,th,td,small,.small,.small-text,.helper-text,.form-hint,.disclaimer){overflow-wrap:anywhere}
+body :where(h1,h2,h3,h4){line-height:1.2;text-wrap:balance}
+body :where(p,li){max-width:78ch}
+body :where(.topbar .nav a,.reference-topbar .nav a,.client-nav-item,.menu-toggle,.nav-login){font-size:max(12px,.75rem)!important}
+body :where(.topbar,.reference-topbar){min-width:0}
+body :where(.topbar .nav,.reference-topbar .nav){min-width:0}
+body :where(.footer-column a,.footer-contact a,.footer-bottom a){font-size:12px!important;line-height:1.55}
+body :where(.dashboard-demo,.dashboard-demo *){font-size:inherit}
+body :where(.dashboard-demo p,.dashboard-demo li,.dashboard-demo span,.dashboard-demo small,.dashboard-demo label,.dashboard-demo td,.dashboard-demo th){font-size:max(12px,.75rem)!important;line-height:1.5}
+body :where(.dashboard-demo .demo-table td,.dashboard-demo .demo-table th){font-size:12px!important}
+body :where(.dashboard-demo .demo-card-desc,.dashboard-demo .dashboard-demo-disclaimer,.dashboard-demo .demo-table td){font-size:12px!important}
+body :where(.dashboard-demo .demo-card-action,.dashboard-demo .dashboard-demo-top small,.dashboard-demo .dashboard-demo-pill){font-size:12px!important}
+body :where(.agent-config-cards small,.agent-prompt-head small,.read-only-tag){font-size:12px!important}
+body :where(.agent-prompt-preview pre){font-size:14px!important;line-height:1.65}
+/* Default light reading surfaces */
+body :where(main p,main li,main dd,main dt,main label,main .muted,main .description,main .disclaimer){color:#40566a}
+body :where(main h1,main h2,main h3,main h4){color:#172b40}
+body :where(main a:not(.button):not(.btn)){color:var(--readable-link)}
+body :where(main a:not(.button):not(.btn):hover){color:#8d286d}
+/* Explicit dark panels retain light text and accessible link contrast. */
+body :where(.dark-shell,.reference-hero,.product-stage,.console,.dashboard-preview-window,.client-workspace-layout,.client-sidebar,.client-workspace-header,.client-page,.client-page-content,.client-page .card,.client-page .panel,.admin-modal-panel,.voice-modal-panel,.agent-prompt-preview,.tl-hero,.tl-section,.tl-feed,.tp-hero,.tp-cta){
+  color:var(--readable-dark-ink);
+}
+body :where(.dark-shell,.reference-hero,.product-stage,.console,.dashboard-preview-window,.client-workspace-layout,.client-sidebar,.client-workspace-header,.client-page,.client-page-content,.client-page .card,.client-page .panel,.admin-modal-panel,.voice-modal-panel,.agent-prompt-preview,.tl-hero,.tl-section,.tl-feed,.tp-hero,.tp-cta) :where(p,li,dd,dt,label,legend,small,.small,.small-text,.muted,.hint,.helper-text,.disclaimer,td,th){
+  color:var(--readable-dark-muted)!important;
+}
+body :where(.dark-shell,.reference-hero,.product-stage,.console,.dashboard-preview-window,.client-workspace-layout,.client-sidebar,.client-workspace-header,.client-page,.client-page-content,.client-page .card,.client-page .panel,.admin-modal-panel,.voice-modal-panel,.agent-prompt-preview,.tl-hero,.tl-section,.tl-feed,.tp-hero,.tp-cta) :where(h1,h2,h3,h4,strong,b){color:var(--readable-dark-ink)}
+body :where(.dark-shell,.reference-hero,.product-stage,.console,.dashboard-preview-window,.client-workspace-layout,.client-sidebar,.client-workspace-header,.client-page,.client-page-content,.client-page .card,.client-page .panel,.admin-modal-panel,.voice-modal-panel,.agent-prompt-preview,.tl-hero,.tl-section,.tl-feed,.tp-hero,.tp-cta) :where(a:not(.button):not(.btn)){color:var(--readable-dark-link)}
+body :where(.dark-shell,.reference-hero,.product-stage,.console,.dashboard-preview-window) :where(.hero-lede,.hero-proof,.stage-caption,.call-status span,.console-foot,.capture-items small,.transcript .line p){color:#d0deea!important}
+/* Form focus must remain visible without removing native keyboard navigation. */
+body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid #0875a9!important;outline-offset:3px!important}
+@media(max-width:700px){
+ body{font-size:16px}
+ body :where(.section-wrap){width:min(100% - 32px,1160px)}
+ body :where(.dashboard-demo .demo-table){overflow-x:auto}
+ body :where(.topbar .nav a,.reference-topbar .nav a){font-size:12px!important}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}body *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
