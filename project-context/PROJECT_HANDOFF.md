@@ -58,6 +58,7 @@ Formspree backup: https://formspree.io/f/mrppjqdb
 - An explicit HTTP error from the Worker is shown to the visitor; it is not silently bypassed by Formspree.
 - A quick lead cannot create a demo agent. Full discovery and administrator approval are required.
 - Demo creation does not purchase or assign a phone number, create a customer subscription, or activate production routing.
+- After an administrator records that a demo was presented and the prospect accepts (status `converted`), the Admin Console can create a linked **pending** customer workspace. This action does not assign the demo agent or a phone number, choose a plan, create a Stripe subscription, or activate production routing. D1 migration `0004_demo_request_customer_link.sql` must be applied before deploying this Worker change.
 - This flow still requires live browser testing on desktop and mobile, including a controlled Worker-network-failure test and verification of the Formspree inbox.
 
 The form is for demo/discovery follow-up only; it does not create an account or activate a subscription.
