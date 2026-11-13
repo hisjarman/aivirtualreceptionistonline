@@ -70,7 +70,7 @@ The public discovery form uses the existing Formspree endpoint:
 https://formspree.io/f/mrppjqdb
 ```
 
-The form collects business and contact details so the team can prepare and respond to a demo request. It does not create a customer account or activate a paid subscription. The form submission code now uses a native browser POST rather than a cross-origin JavaScript `fetch()` request to avoid the browser fetch/CORS failure previously reported on mobile. A successful live Formspree delivery still requires an end-to-end test.
+- Demo intake: homepage quick leads and full discovery briefs submit to the Cloudflare platform Worker first; Formspree (`https://formspree.io/f/mrppjqdb`) is retained as a backup processor. Formspree-only backups require manual admin review and do not automatically enter the D1 demo queue.
 
 ## Email identity
 
