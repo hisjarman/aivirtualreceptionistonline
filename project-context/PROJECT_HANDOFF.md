@@ -786,3 +786,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - Did not add a noscript iframe or alter the supplied snippet.
 - Excluded authenticated/private surfaces (`admin/`, `client/`, partner portal, and private admin dashboards) to avoid sending logged-in customer or administrative activity into a general website analytics container.
 - Implemented on branch `analytics/install-gtm-n7rbhg8k-2026-11-13`. No merge to `main` or production deployment has been performed. GTM tag firing and Analytics receipt still require browser/Tag Assistant verification after merge and publication.
+
+
+## Published Insight — Law firm client intake — 2026-11-13
+
+- **Article:** How Small Law Firms Can Stop Losing New Clients to Missed Calls
+- **URL/slug:** https://star69ai.com/insights/law-firm-client-intake-missed-calls.html (`law-firm-client-intake-missed-calls.html`).
+- **Target industry:** Small law firms.
+- **Primary SEO keyword:** law firm client intake.
+- **Article length:** 864 words in the article body; meta description is 136 characters.
+- **Publication:** Article HTML, Insights index card and sitemap entry were committed directly to `main` under the user's explicit authorization for automated daily article publishing. This is a narrow publishing exception; the general no-unapproved-merge rule for software changes remains unchanged.
+- **Content guardrails:** General business-operations guidance only. The article tells firms to follow their own conflict-checking, confidentiality, intake and communication procedures; it does not offer legal advice or promise client outcomes.
+- **Verification:** GitHub source verification is required after the commits. A successful commit does not by itself confirm that GitHub Pages has finished deploying; live HTTP verification is reported separately.
