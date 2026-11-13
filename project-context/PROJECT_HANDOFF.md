@@ -53,6 +53,7 @@ Formspree backup: https://formspree.io/f/mrppjqdb
 
 - Homepage quick leads are stored in `avr_demo_requests` with `discovery_complete=0`.
 - The full discovery form sends the structured business brief to the same Worker and can attach it to the matching quick lead when safe; completed discovery is stored in `discovery_json` with `discovery_complete=1`.
+- The Worker attempts a transactional Resend receipt email after storing the lead. Email failure does not undo the saved inquiry; the response tells the visitor when a confirmation email may not arrive.
 - The forms retain Formspree as a native fallback when JavaScript is unavailable. If the Worker request fails at the network level after JavaScript has intercepted the form, the form is submitted through Formspree for manual follow-up. A Formspree-only backup is **not** automatically inserted into the admin demo queue and must not be treated as a completed D1 discovery record.
 - An explicit HTTP error from the Worker is shown to the visitor; it is not silently bypassed by Formspree.
 - A quick lead cannot create a demo agent. Full discovery and administrator approval are required.
