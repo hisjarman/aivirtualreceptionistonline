@@ -123,26 +123,28 @@ async function retellList(env,path,method="GET",data){
  }while(cursor);
  return all;
 }
-async function retellAgentConfiguration(env,agentId){
- const agent=await retellApi(env,"/get-agent/"+encodeURIComponent(agentId));
- const engine=agent.response_engine||{};
+async function retellAgentConfiguration(env,agentId,channel="voice",listed={}){
+ const endpoint=String(channel).toLowerCase()==="chat"?"/get-chat-agent/":"/get-agent/";
+ const agent=await retellApi(env,endpoint+encodeURIComponent(agentId));
+ const engine=agent.response_engine||agent.responseEngine||{};
  const engineType=String(engine.type||agent.response_engine_type||"").toLowerCase();
- const engineId=engine.llm_id||engine.conversation_flow_id||engine.response_engine_id||null;
+ const engineId=engine.llm_id||engine.llmId||engine.conversation_flow_id||engine.conversationFlowId||engine.response_engine_id||null;
  let engineDetail=null,prompt="",promptType="",supported=false,note="";
  if(engineType==="retell-llm"&&engineId){
-  engineDetail=await retellApi(env,"/get-retell-llm/"+encodeURIComponent(engineId));
-  prompt=String(engineDetail.general_prompt||"");promptType="general_prompt";supported=true;
+  const version=engine.version??engineDetail?.version;
+  engineDetail=await retellApi(env,"/get-retell-llm/"+encodeURIComponent(engineId)+(version!==undefined?"?version="+encodeURIComponent(version):""));
+  prompt=String(engineDetail.general_prompt||engineDetail.generalPrompt||"");promptType="general_prompt";supported=true;
  }else if(engineType==="conversation-flow"&&engineId){
   engineDetail=await retellApi(env,"/get-conversation-flow/"+encodeURIComponent(engineId));
-  prompt=String(engineDetail.global_prompt||"");promptType="global_prompt";supported=true;
-  if(Number(agent.latest_published_version||0)>0)note="This agent has a published version. Retell requires a new flow version before changing its published flow.";
+  prompt=String(engineDetail.global_prompt||engineDetail.globalPrompt||"");promptType="global_prompt";
+  note="Conversation Flow agents are imported for review, but their published flow graph requires a separate version-safe deployment workflow. No flow changes will be made by this button.";
  }else{note="This response-engine type is not supported for prompt publishing."}
- return {agent,engine,engineType,engineId,engineDetail,prompt,promptType,supported,note};
+ return {agent,engine,engineType,engineId,engineDetail,prompt,promptType,supported: supported&&engineType==="retell-llm",note,channel};
 }
 async function syncRetell(env){
  const [listedAgents,numbers]=await Promise.all([retellList(env,"/v2/list-agents","POST",{}),retellList(env,"/v2/list-phone-numbers","GET")]);
  const agents=await Promise.all(listedAgents.map(async a=>{
-  try{const cfg=await retellAgentConfiguration(env,a.agent_id);return {...cfg.agent,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId,_avr_engine_detail:cfg.engineDetail}}
+  try{const cfg=await retellAgentConfiguration(env,a.agent_id,a.channel,a);return {...cfg.agent,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId,_avr_engine_detail:cfg.engineDetail}}
   catch(e){return {...a,_avr_sync_error:String(e.message||"agent_detail_unavailable")}}
  }));
  for(const a of agents){await env.DB.prepare("INSERT INTO avr_agents(agent_id,agent_name,voice_id,language,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(agent_id) DO UPDATE SET agent_name=excluded.agent_name,voice_id=excluded.voice_id,language=excluded.language,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(a.agent_id,a.agent_name||a.agent_id,a.voice_id||null,a.language||null,JSON.stringify(a),new Date().toISOString()).run()}
@@ -424,7 +426,7 @@ async function route(req,env){
    if(path==="/api/admin/retell/resources"&&req.method==="GET"){
     const [a,n]=await Promise.all([env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.customer_id,a.client_visible_prompt,a.raw_json,c.business_name FROM avr_agents a LEFT JOIN avr_customers c ON c.id=a.customer_id ORDER BY a.agent_name").all(),env.DB.prepare("SELECT n.*,c.business_name FROM avr_numbers n LEFT JOIN avr_customers c ON c.id=n.customer_id ORDER BY n.phone_number").all()]);
     const agents=await Promise.all((a.results||[]).map(async row=>{
-     try{const cfg=await retellAgentConfiguration(env,row.agent_id);return {...row,retell_prompt:cfg.prompt,retell_prompt_type:cfg.promptType,response_engine_type:cfg.engineType,response_engine_id:cfg.engineId,retell_prompt_supported:cfg.supported,retell_prompt_note:cfg.note,retell_sync_error:""}}
+     try{let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}const cfg=await retellAgentConfiguration(env,row.agent_id,cached.channel||"voice",cached);return {...row,retell_prompt:cfg.prompt,retell_prompt_type:cfg.promptType,response_engine_type:cfg.engineType,response_engine_id:cfg.engineId,retell_prompt_supported:cfg.supported,retell_prompt_note:cfg.note,retell_sync_error:""}}
      catch(e){return {...row,retell_prompt:"",retell_prompt_type:"",response_engine_type:"",response_engine_id:"",retell_prompt_supported:false,retell_prompt_note:"Could not import this agent's current Retell configuration.",retell_sync_error:String(e.message||"retell_read_failed")}}
     }));
     return json({agents,numbers:n.results||[]},200,origin,env)
@@ -435,17 +437,27 @@ async function route(req,env){
     if(!prompt)throw Error("approved_client_prompt_required");
     if(prompt.length>12000)throw Error("client_prompt_exceeds_12000_characters");
     if(/(?:Bearer\\s+[A-Za-z0-9._~-]{12,}|(?:sk|rk|whsec|pk)_[A-Za-z0-9_-]{12,}|(?:api[_ -]?key|secret|password)\\s*[:=]\\s*\\S+)/i.test(prompt))throw Error("remove_credentials_before_publishing_client_prompt");
-    const agent=await env.DB.prepare("SELECT agent_id,customer_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();
-    if(!agent)throw Error("agent_not_found");
-    const cfg=await retellAgentConfiguration(env,agentId);
-    if(!cfg.supported)throw Error("retell_prompt_type_not_supported");
-    if(cfg.engineType==="conversation-flow"&&Number(cfg.agent.latest_published_version||0)>0)throw Error("conversation_flow_published_requires_new_flow_version_before_editing");
-    if(cfg.engineType==="retell-llm")await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId),"PATCH",{general_prompt:prompt});
-    else if(cfg.engineType==="conversation-flow")await retellApi(env,"/update-conversation-flow/"+encodeURIComponent(cfg.engineId),"PATCH",{global_prompt:prompt});
-    const published=await retellApi(env,"/publish-agent-version/"+encodeURIComponent(agentId),"POST",{});
+    const row=await env.DB.prepare("SELECT agent_id,customer_id,raw_json FROM avr_agents WHERE agent_id=?").bind(agentId).first();
+    if(!row)throw Error("agent_not_found");
+    let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}
+    const cfg=await retellAgentConfiguration(env,agentId,cached.channel||"voice",cached);
+    if(cfg.engineType!=="retell-llm"||!cfg.engineId)throw Error("conversation_flow_or_custom_engine_requires_version_safe_configuration_workflow");
+    let draftVersion;
+    if(cfg.agent.is_published===true){
+     const baseVersion=Number(cfg.agent.latest_published_version??cfg.agent.version??0);
+     const draft=await retellApi(env,"/create-agent-version/"+encodeURIComponent(agentId),"POST",{base_version:baseVersion});
+     draftVersion=Number(draft.version);
+    }else{
+     draftVersion=Number(cfg.agent.version??0);
+    }
+    if(!Number.isInteger(draftVersion)||draftVersion<0)throw Error("retell_draft_version_unavailable");
+    await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId)+"?version="+encodeURIComponent(draftVersion),"PATCH",{general_prompt:prompt});
+    await retellApi(env,"/publish-agent-version/"+encodeURIComponent(agentId),"POST",{version:draftVersion,version_description:"Star69AI approved client-specific instructions"});
+    const verified=await retellAgentConfiguration(env,agentId,cfg.channel,cached);
+    if(verified.prompt!==prompt)throw Error("retell_publish_verification_mismatch");
     await env.DB.prepare("UPDATE avr_agents SET client_visible_prompt=?,raw_json=?,synced_at=? WHERE agent_id=?").bind(prompt,JSON.stringify({...cfg.agent,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId}),new Date().toISOString(),agentId).run();
-    await audit(env,u,"retell_agent_prompt_published",agent.customer_id,{agentId,engineType:cfg.engineType,characters:prompt.length,version:published.version||null});
-    return json({saved:true,published:true,characters:prompt.length,version:published.version||null,engineType:cfg.engineType},200,origin,env)
+    await audit(env,u,"retell_agent_prompt_published",row.customer_id,{agentId,engineType:cfg.engineType,version:draftVersion,characters:prompt.length});
+    return json({saved:true,published:true,characters:prompt.length,version:draftVersion,engineType:cfg.engineType},200,origin,env)
    }
    if(path==="/api/admin/assignments"&&req.method==="POST"){const p=await body(req),customerId=String(p.customerId||""),agentId=String(p.agentId||""),phone=String(p.phoneNumber||"");const c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(customerId).first();if(!c)throw Error("customer_not_found");if(agentId){const a=await env.DB.prepare("SELECT agent_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();if(!a)throw Error("agent_not_found")}if(phone){const n=await env.DB.prepare("SELECT phone_number FROM avr_numbers WHERE phone_number=?").bind(phone).first();if(!n)throw Error("phone_number_not_found");if(!agentId)throw Error("select_agent_for_phone_number");await retellApi(env,"/update-phone-number/"+encodeURIComponent(phone),"PATCH",{inbound_agents:[{agent_id:agentId,weight:1}],outbound_agents:[{agent_id:agentId,weight:1}]})}
     if(agentId)await env.DB.prepare("UPDATE avr_agents SET customer_id=? WHERE agent_id=?").bind(customerId,agentId).run();if(phone)await env.DB.prepare("UPDATE avr_numbers SET customer_id=?,agent_id=? WHERE phone_number=?").bind(customerId,agentId||null,phone).run();await audit(env,u,"resources_assigned",customerId,{agentId,phone});return json({saved:true},200,origin,env)}
