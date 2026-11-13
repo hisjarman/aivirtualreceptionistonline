@@ -186,7 +186,7 @@ async function route(req,env){
   if(path==="/api/demo-requests"&&req.method==="POST"){
    if(!origin||!origins(env).includes(origin))return json({error:"origin_not_allowed"},403,origin,env);
    const p=await body(req,30000);
-   if(String(p.websiteHoneypot||p._gotcha||"").trim())return json({accepted:true},202,origin,env);
+   if(String(p.websiteHoneypot||p._gotcha||(!p.discoveryComplete&&p.website)||"").trim())return json({accepted:true},202,origin,env);
    const contact=String(p.contactName||p.name||"").trim().slice(0,120),email=String(p.email||"").trim().toLowerCase(),phone=String(p.phone||"").trim().slice(0,40),business=String(p.businessName||p.business||"").trim().slice(0,160),industry=String(p.industry||"").trim().slice(0,100),details=String(p.details||p.notes||"").trim().slice(0,3000),leadSource=String(p.leadSource||"Website demo request").trim().slice(0,120);
    if(contact.length<2||business.length<2||phone.length<5||! /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)||industry.length<2)throw Error("complete_contact_business_and_industry_details_required");
    const recent=await env.DB.prepare("SELECT COUNT(*) AS total FROM avr_demo_requests WHERE lower(email)=? AND created_at>=?").bind(email,new Date(Date.now()-3600000).toISOString()).first();
