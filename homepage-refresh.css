@@ -1089,3 +1089,115 @@ body#top footer a:hover{color:#A52AB8!important}
 @media(max-width:900px){body#top .reference-hero:before{background:radial-gradient(ellipse at 18% 12%,rgba(225,86,255,.09),transparent 35%),radial-gradient(ellipse at 82% 25%,rgba(33,183,255,.10),transparent 38%),linear-gradient(180deg,rgba(255,255,255,.89) 0%,rgba(255,255,255,.82) 55%,rgba(255,255,255,.61) 100%)!important}}
 @media(max-width:600px){body#top .reference-hero:before{background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.86) 62%,rgba(255,255,255,.69) 100%)!important}}
 @media(prefers-reduced-motion:reduce){body#top *{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+
+/* 2026-11-12: improve hero text contrast and restore the AI assistant's visual prominence.
+   Final override intentionally supersedes older compact-avatar rules above. */
+body#top .reference-hero .hero-copy h2 em,
+body#top .reference-hero .hero-copy h2 .highlight{
+  color:#167A3D!important;
+  text-shadow:none!important;
+}
+body#top .reference-hero .hero-model-column{
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:12px!important;
+  overflow:visible!important;
+}
+body#top .reference-hero .hero-model-image{
+  position:relative!important;
+  inset:auto!important;
+  display:block!important;
+  flex:0 0 auto!important;
+  width:min(100%,460px)!important;
+  max-width:460px!important;
+  height:auto!important;
+  max-height:560px!important;
+  object-fit:contain!important;
+  object-position:center top!important;
+  margin:0 auto!important;
+  transform:none!important;
+}
+body#top .reference-hero .hero-model-glow{
+  position:absolute!important;
+  left:50%!important;
+  top:8%!important;
+  bottom:auto!important;
+  width:min(100%,480px)!important;
+  height:420px!important;
+  transform:translateX(-50%)!important;
+  pointer-events:none!important;
+}
+body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+  position:relative!important;
+  inset:auto!important;
+  width:min(100%,340px)!important;
+  max-width:340px!important;
+  min-height:0!important;
+  margin:4px auto 0!important;
+  color:#167A3D!important;
+  background:rgba(255,255,255,.94)!important;
+  border:1px solid rgba(20,210,81,.42)!important;
+  box-shadow:0 10px 28px rgba(20,90,48,.12),0 0 18px rgba(20,210,81,.08)!important;
+}
+body#top .reference-hero .onboarding-speech-kicker,
+body#top .reference-hero .onboarding-speech-text,
+body#top .reference-hero .concierge-bubble-hint{
+  color:#167A3D!important;
+  opacity:1!important;
+}
+body#top .reference-hero .hero-model-caption{
+  color:#167A3D!important;
+}
+@media(min-width:901px){
+  body#top .reference-hero .hero-grid{
+    grid-template-columns:minmax(320px,.92fr) minmax(0,1.08fr)!important;
+    align-items:center!important;
+    column-gap:clamp(26px,3.4vw,48px)!important;
+  }
+  body#top .reference-hero .hero-model-image{
+    width:min(100%,460px)!important;
+    max-width:460px!important;
+    max-height:560px!important;
+  }
+}
+@media(min-width:601px) and (max-width:900px){
+  body#top .reference-hero .hero-model-image{
+    width:min(72vw,390px)!important;
+    max-width:390px!important;
+    max-height:470px!important;
+  }
+}
+@media(max-width:600px){
+  body#top .reference-hero .hero-model-column{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    padding:8px 0 12px!important;
+  }
+  body#top .reference-hero .hero-model-image{
+    position:relative!important;
+    width:min(78vw,290px)!important;
+    max-width:290px!important;
+    height:auto!important;
+    max-height:360px!important;
+  }
+  body#top .reference-hero .hero-model-glow{
+    width:min(90vw,320px)!important;
+    height:290px!important;
+    top:0!important;
+  }
+  body#top .reference-hero .onboarding-speech.concierge-bubble-trigger{
+    width:min(100%,320px)!important;
+    max-width:320px!important;
+    margin:8px auto 0!important;
+  }
+}
