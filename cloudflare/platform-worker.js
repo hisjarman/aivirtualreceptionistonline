@@ -439,6 +439,7 @@ async function route(req,env){
     if(/(?:Bearer\s+[A-Za-z0-9._~-]{12,}|(?:sk|rk|whsec|pk)_[A-Za-z0-9_-]{12,}|(?:api[_ -]?key|secret|password)\s*[:=]\s*\S+)/i.test(prompt))throw Error("remove_credentials_before_publishing_client_prompt");
     const row=await env.DB.prepare("SELECT agent_id,customer_id,raw_json FROM avr_agents WHERE agent_id=?").bind(agentId).first();
     if(!row)throw Error("agent_not_found");
+    if(!row.customer_id)throw Error("assign_agent_to_client_before_publishing");
     let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}
     const cfg=await retellAgentConfiguration(env,agentId,cached.channel||"voice",cached);
     if(cfg.engineType!=="retell-llm"||!cfg.engineId)throw Error("conversation_flow_or_custom_engine_requires_version_safe_configuration_workflow");
