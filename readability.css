@@ -70,3 +70,5 @@ body :where(input,select,textarea){font-size:16px!important}
 body :where(.footer-column h2,.footer-contact h2){font-size:14px!important}
 body :where(.demo-card-action,.dashboard-demo-top small,.dashboard-demo-pill,.demo-card-desc,.dashboard-demo-disclaimer){font-size:12px!important}
 body :where(.client-nav-item,.sidebar-caption,.sidebar-help,.sidebar-footer,.client-page-label){font-size:12px!important}
+
+body :where(.menu-toggle){font-size:22px!important}
