@@ -472,3 +472,47 @@ hr{border-color:var(--candy-border)}
 .topbar,.site-header,.reference-topbar{background:var(--candy-plum);color:var(--candy-vanilla);border-color:#49324e}
 .topbar a,.site-header a,.reference-topbar a{color:var(--candy-vanilla)}
 .topbar a:hover,.site-header a:hover,.reference-topbar a:hover{color:var(--candy-lime)}
+
+
+/* Star69AI official neon-trio palette — 2026-11-12
+   Purple #F461FE | Blue #43B4FE | Green #34FD78
+   Use bright colors as accents; keep long-form text high-contrast. */
+:root{
+  --brand-purple:#F461FE;
+  --brand-blue:#43B4FE;
+  --brand-green:#34FD78;
+  --brand-night:#090B16;
+  --brand-panel:#111629;
+  --brand-panel-raised:#171D34;
+  --brand-text:#F4F7FF;
+  --brand-muted:#B8C1D5;
+  --brand-line:#2B3650;
+  --candy-lime:var(--brand-green);
+  --candy-strawberry:var(--brand-purple);
+  --candy-raspberry:var(--brand-purple);
+  --candy-orange:var(--brand-blue);
+  --candy-blueberry:var(--brand-blue);
+  --candy-vanilla:var(--brand-night);
+  --candy-cream:var(--brand-panel);
+  --candy-plum:var(--brand-text);
+  --candy-ink:var(--brand-text);
+  --candy-muted:var(--brand-muted);
+  --candy-border:var(--brand-line);
+  --teal:var(--brand-green);
+  --teal2:var(--brand-blue);
+  --avr-lime:var(--brand-green);
+  --avr-lime-on-light:#167A42;
+  --avr-sky:var(--brand-blue);
+  --avr-sky-on-light:#075B86;
+}
+body{color:var(--brand-text)}
+body :where(.section-kicker,.eyebrow,.plan-eyebrow,.form-title>span,.story-eyebrow,.section-label){color:var(--brand-purple)!important}
+body :where(a:not(.button):not(.btn),.text-link,.story-text-link){color:var(--brand-blue)}
+body :where(a:not(.button):not(.btn):hover,.text-link:hover,.story-text-link:hover){color:var(--brand-purple)}
+body :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(a:not(.button):not(.btn),.text-link,.section-kicker,.eyebrow,.video-label,.step-no,.step-foot,.speaker,.live-pill){color:var(--brand-blue)!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)!important}
+body :where(.button,.btn,button.button,button.btn){background:var(--brand-green);border-color:var(--brand-green);color:#07130D;font-weight:800}
+body :where(.button:hover,.btn:hover,button.button:hover,button.btn:hover){background:#72FF9F;border-color:#72FF9F;color:#07130D}
+body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid var(--brand-blue)!important;outline-offset:3px!important}
+::selection{background:var(--brand-purple);color:#14091A}
