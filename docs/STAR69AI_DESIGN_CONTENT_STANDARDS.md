@@ -140,3 +140,12 @@ Do not mark a check as passed when it was not actually performed. Record browser
 - Work on a dedicated branch and keep commits focused.
 - Do not merge to `main` without the user's explicit approval.
 - Report the branch, changed files, tests performed, known limitations and any owner action required.
+
+
+## 12 Site-wide readability enforcement — 2026-11-13
+
+- Every public, Insights, blog, challenge, legal, partner, client and admin HTML page must load `/readability.css` as the final stylesheet in its document head. Keep it after page-specific styles so older compact rules cannot silently reduce body copy or metadata readability.
+- The shared layer establishes a 15px minimum for ordinary paragraphs/list copy, 14px for labels and table content, 12px for metadata and compact dashboard labels, and 16px for form inputs to avoid mobile browser zoom. It also sets consistent line spacing, placeholder contrast, keyboard focus and readable dashboard-demo labels.
+- Avoid global blanket text-color rules such as setting every descendant of a dashboard shell to white. Apply colors by surface/context so text remains readable on both light and dark cards.
+- Any new page, microsite or portal route must include the shared stylesheet and be checked for small text, low-contrast foreground/background pairs, overflow, and focus visibility. Add a page-specific scoped rule only when a component needs a documented exception.
+- Before release, inspect all page types at 360px, 768px and 1280px. Automated source checks do not substitute for browser visual review or measured WCAG contrast checks.
