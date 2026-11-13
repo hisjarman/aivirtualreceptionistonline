@@ -769,3 +769,20 @@ Known prior issue to recheck against current source: a portal request reported `
 - Authenticated admin API requests retry once with a freshly requested Clerk token after a 401 response. A 403 remains an authorization denial and is not retried or bypassed.
 - The Cloudflare Worker `requireAdmin` check and `ADMIN_EMAILS` allowlist are unchanged. Admin access remains server-authorized.
 - This is a proposed GitHub Pages frontend change; it is not live until its PR is reviewed and merged. Verify the existing client session is recognized, the embedded email sign-in works when signed out, and an authorized admin can load protected data after publication.
+
+
+## Google Tag Manager installation — 2026-11-13
+
+- Added the exact user-supplied Google tag snippet for container `GTM-N7RBHG8K` immediately before the closing `</head>` tag on all 28 public-facing HTML pages, including the homepage, marketing pages, pricing, legal pages, public Trust Lab, partner application, blog, challenge, industry pages and insights.
+- The snippet was preserved exactly as supplied:
+  ```html
+  <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-N7RBHG8K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script>
+  ```
+- Did not add a noscript iframe or alter the supplied snippet.
+- Excluded authenticated/private surfaces (`admin/`, `client/`, partner portal, and private admin dashboards) to avoid sending logged-in customer or administrative activity into a general website analytics container.
+- Implemented on branch `analytics/install-gtm-n7rbhg8k-2026-11-13`. No merge to `main` or production deployment has been performed. GTM tag firing and Analytics receipt still require browser/Tag Assistant verification after merge and publication.
