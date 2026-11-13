@@ -732,3 +732,14 @@ Known prior issue to recheck against current source: a portal request reported `
 - The shared layer enforces minimum body-copy, label, table, metadata and dashboard-demo text sizes; improves default light-surface text/link contrast, preserves light text on explicitly dark panels, improves placeholder/focus visibility, and prevents small-screen typography reductions.
 - Removed the old blanket rule that forced every descendant in the homepage dashboard preview to white text regardless of its surface. Existing page-specific styles remain in place, with the shared layer as the final readability guardrail.
 - This is a source-level hardening pass. It has not yet had full browser visual review at 360px, 768px and 1280px, automated axe/WCAG scans, or measured contrast checks. Check all page families before merging. Do not claim GitHub Pages has published these changes until live deployment is verified.
+
+
+## Dedicated client-specific prompt publication — implementation branch 2026-11-12
+
+- Feature branch: `feature/full-client-prompt-transparency-2026-11-12`, based on current `main`.
+- Replaces heading-based extraction from Retell `general_prompt` with a dedicated nullable `avr_agents.client_visible_prompt` D1 field. The client portal API returns only this separately published business-specific prompt; it never derives the client-visible text from the Retell runtime/global prompt.
+- Adds an admin-only prompt publishing endpoint: `PUT /api/admin/agents/:agentId/client-prompt`. It requires the existing server-side admin authorization, validates a 12,000-character maximum and rejects common credential/token patterns, stores the text separately from Retell `raw_json`, and writes an audit event.
+- The admin Retell Resources screen now lets the operator review/edit/publish the complete business-specific prompt per agent, or clear publication. The client portal displays the complete published text as read-only and retains the existing change-request workflow.
+- Adds migration `cloudflare/migrations/20261112_client_visible_agent_prompt.sql`. **This migration must be applied to the existing platform D1 database before deploying the updated Worker.** The Worker and GitHub Pages changes are separate deployments.
+- Security boundary: never paste the shared Star69AI master/system prompt, API keys, credentials, webhook URLs, private integration secrets or other clients' information into the client-visible field. The separate field and server-side tenant lookup are the boundary; the credential pattern check is only a secondary safeguard, not a secret scanner.
+- Verification status: source changes committed on the feature branch only. No D1 migration was applied, no Cloudflare Worker was deployed, no GitHub Pages publication occurred, and no authenticated browser/tenant-isolation test was performed. Do not claim this feature is live until those steps are completed.

@@ -166,23 +166,15 @@ async function route(req,env){
 
   if(path==="/api/client/agent-configuration"&&req.method==="GET"){
    const u=await clerkUser(req,env),c=await customerFor(u,env);if(!c)return json({error:"customer_account_not_found"},404,origin,env);
-   const rows=await env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.raw_json,a.synced_at FROM avr_agents a WHERE a.customer_id=? ORDER BY a.agent_name").bind(c.id).all();
+   const rows=await env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.raw_json,a.client_visible_prompt,a.synced_at FROM avr_agents a WHERE a.customer_id=? ORDER BY a.agent_name").bind(c.id).all();
    const configuration=(rows.results||[]).map(row=>{
     let raw={};try{raw=JSON.parse(row.raw_json||"{}")}catch{}
     const engine=raw.response_engine||raw.responseEngine||{};
     const tools=Array.isArray(raw.tools)?raw.tools:[];
-    // Publish only explicitly customer-facing prompt sections, never the full system prompt.
-    const source=String(raw.general_prompt||raw.generalPrompt||"").replace(/\r\n/g,"\n");
-    const excluded=/internal|developer|system|security|private|credential|secret|api|webhook|tool|function|integration|guardrail|injection|retention|recording|compliance/i;
-    const allowed=/business|role|greeting|call flow|services|hours|location|lead|appointment|faq|handoff|escalation|caller|tone|objective|scope|customer|service area/i;
-    let promptPreview="";
-    const marker=source.match(/\[\[CLIENT_VISIBLE_PROMPT\]\]([\s\S]*?)\[\[\/CLIENT_VISIBLE_PROMPT\]\]/i);
-    if(marker) promptPreview=marker[1].trim().slice(0,6000);
-    else {
-     const blocks=source.split(/(?=^#{1,3}\s+[^\n]+$)/m);
-     promptPreview=blocks.filter(part=>{const heading=(part.split("\n")[0]||"").replace(/^#+\s*/,"").trim();return heading&&allowed.test(heading)&&!excluded.test(heading)}).join("\n\n").trim().slice(0,6000);
-    }
-    return {agentName:row.agent_name||"Assigned receptionist",status:row.status||"active",language:raw.language||null,voiceLabel:raw.voice_name||raw.voiceName||"Configured voice",voiceSpeed:raw.voice_speed??raw.voiceSpeed??null,voiceTemperature:raw.voice_temperature??raw.voiceTemperature??null,responsiveness:raw.responsiveness??null,backchannel:typeof raw.enable_backchannel==="boolean"?(raw.enable_backchannel?"Enabled":"Disabled"):null,ambientSound:raw.ambient_sound||null,modelLabel:engine.llm_id||engine.model||raw.llm_id||raw.model||null,greeting:raw.begin_message||raw.beginMessage||null,knowledgeBaseCount:Array.isArray(raw.knowledge_base_ids)?raw.knowledge_base_ids.length:Array.isArray(raw.knowledgeBaseIds)?raw.knowledgeBaseIds.length:null,toolNames:tools.map(t=>String(t.name||t.type||"Capability")).filter(Boolean).slice(0,12),promptPreview,promptPreviewAvailable:!!promptPreview,syncedAt:row.synced_at};
+    // Only the separately published, client-specific business prompt is returned.
+    // Never derive this value from Retell's shared/runtime general_prompt.
+    const clientPrompt=String(row.client_visible_prompt||"").trim();
+    return {agentName:row.agent_name||"Assigned receptionist",status:row.status||"active",language:raw.language||null,voiceLabel:raw.voice_name||raw.voiceName||"Configured voice",voiceSpeed:raw.voice_speed??raw.voiceSpeed??null,voiceTemperature:raw.voice_temperature??raw.voiceTemperature??null,responsiveness:raw.responsiveness??null,backchannel:typeof raw.enable_backchannel==="boolean"?(raw.enable_backchannel?"Enabled":"Disabled"):null,ambientSound:raw.ambient_sound||null,modelLabel:engine.llm_id||engine.model||raw.llm_id||raw.model||null,greeting:raw.begin_message||raw.beginMessage||null,knowledgeBaseCount:Array.isArray(raw.knowledge_base_ids)?raw.knowledge_base_ids.length:Array.isArray(raw.knowledgeBaseIds)?raw.knowledgeBaseIds.length:null,toolNames:tools.map(t=>String(t.name||t.type||"Capability")).filter(Boolean).slice(0,12),clientVisiblePrompt:clientPrompt,clientVisiblePromptAvailable:!!clientPrompt,syncedAt:row.synced_at};
    });
    const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=? ORDER BY phone_number").bind(c.id).all();
    return json({configuration,phoneNumbers:nums.results||[]},200,origin,env)
@@ -409,7 +401,18 @@ async function route(req,env){
    }
    const cm=path.match(/^\/api\/admin\/customers\/([a-f0-9-]{36})$/i);if(cm&&req.method==="PATCH"){const p=await body(req),id=cm[1],c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(id).first();if(!c)throw Error("customer_not_found");const status=p.status,plan=p.plan;if(status&&!["pending","active","suspended","closed"].includes(status))throw Error("invalid_status");if(plan&&!planInfo[plan])throw Error("invalid_plan");await env.DB.prepare("UPDATE avr_customers SET status=COALESCE(?,status),plan_key=COALESCE(?,plan_key),included_minutes=CASE WHEN ?='starter' THEN 300 WHEN ?='growth' THEN 600 WHEN ?='pro' THEN 1000 ELSE included_minutes END,admin_notes=COALESCE(?,admin_notes),updated_at=? WHERE id=?").bind(status||null,plan||null,plan||"",plan||"",plan||"",p.notes===undefined?null:String(p.notes).slice(0,2000),new Date().toISOString(),id).run();await audit(env,u,"customer_updated",id,p);return json({saved:true},200,origin,env)}
    if(path==="/api/admin/retell/sync"&&req.method==="POST"){const result=await syncRetell(env);await audit(env,u,"retell_sync",null,result);return json(result,200,origin,env)}
-   if(path==="/api/admin/retell/resources"&&req.method==="GET"){const [a,n]=await Promise.all([env.DB.prepare("SELECT a.*,c.business_name FROM avr_agents a LEFT JOIN avr_customers c ON c.id=a.customer_id ORDER BY a.agent_name").all(),env.DB.prepare("SELECT n.*,c.business_name FROM avr_numbers n LEFT JOIN avr_customers c ON c.id=n.customer_id ORDER BY n.phone_number").all()]);return json({agents:a.results||[],numbers:n.results||[]},200,origin,env)}
+   if(path==="/api/admin/retell/resources"&&req.method==="GET"){const [a,n]=await Promise.all([env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.customer_id,a.client_visible_prompt,c.business_name FROM avr_agents a LEFT JOIN avr_customers c ON c.id=a.customer_id ORDER BY a.agent_name").all(),env.DB.prepare("SELECT n.*,c.business_name FROM avr_numbers n LEFT JOIN avr_customers c ON c.id=n.customer_id ORDER BY n.phone_number").all()]);return json({agents:a.results||[],numbers:n.results||[]},200,origin,env)}
+   const clientPromptMatch=path.match(/^\/api\/admin\/agents\/([^/]+)\/client-prompt$/);
+   if(clientPromptMatch&&req.method==="PUT"){
+    const agentId=decodeURIComponent(clientPromptMatch[1]),p=await body(req,14000),prompt=String(p.prompt??"").trim();
+    if(prompt.length>12000)throw Error("client_prompt_exceeds_12000_characters");
+    if(/(?:Bearer\s+[A-Za-z0-9._~-]{12,}|(?:sk|rk|whsec|pk)_[A-Za-z0-9_-]{12,}|(?:api[_ -]?key|secret|password)\s*[:=]\s*\S+)/i.test(prompt))throw Error("remove_credentials_before_publishing_client_prompt");
+    const agent=await env.DB.prepare("SELECT agent_id,customer_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();
+    if(!agent)throw Error("agent_not_found");
+    await env.DB.prepare("UPDATE avr_agents SET client_visible_prompt=? WHERE agent_id=?").bind(prompt||null,agentId).run();
+    await audit(env,u,"client_visible_agent_prompt_updated",agent.customer_id,{agentId,published:!!prompt,characters:prompt.length});
+    return json({saved:true,published:!!prompt,characters:prompt.length},200,origin,env)
+   }
    if(path==="/api/admin/assignments"&&req.method==="POST"){const p=await body(req),customerId=String(p.customerId||""),agentId=String(p.agentId||""),phone=String(p.phoneNumber||"");const c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(customerId).first();if(!c)throw Error("customer_not_found");if(agentId){const a=await env.DB.prepare("SELECT agent_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();if(!a)throw Error("agent_not_found")}if(phone){const n=await env.DB.prepare("SELECT phone_number FROM avr_numbers WHERE phone_number=?").bind(phone).first();if(!n)throw Error("phone_number_not_found");if(!agentId)throw Error("select_agent_for_phone_number");await retellApi(env,"/update-phone-number/"+encodeURIComponent(phone),"PATCH",{inbound_agents:[{agent_id:agentId,weight:1}],outbound_agents:[{agent_id:agentId,weight:1}]})}
     if(agentId)await env.DB.prepare("UPDATE avr_agents SET customer_id=? WHERE agent_id=?").bind(customerId,agentId).run();if(phone)await env.DB.prepare("UPDATE avr_numbers SET customer_id=?,agent_id=? WHERE phone_number=?").bind(customerId,agentId||null,phone).run();await audit(env,u,"resources_assigned",customerId,{agentId,phone});return json({saved:true},200,origin,env)}
    if(path==="/api/admin/calls"&&req.method==="GET"){const r=await env.DB.prepare("SELECT x.*,c.business_name FROM avr_calls x LEFT JOIN avr_customers c ON c.id=x.customer_id ORDER BY x.start_timestamp DESC LIMIT 200").all();return json({calls:r.results||[]},200,origin,env)}
