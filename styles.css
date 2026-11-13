@@ -474,59 +474,32 @@ hr{border-color:var(--candy-border)}
 .topbar a:hover,.site-header a:hover,.reference-topbar a:hover{color:var(--candy-lime)}
 
 
-/* Star69AI official neon-trio palette — 2026-11-12
-   Purple #F461FE | Blue #43B4FE | Green #34FD78
-   Use bright colors as accents; keep long-form text high-contrast. */
+/* Star69AI photo-matched neon palette — approved 2026-11-12.
+   Original accents: purple #E156FF, blue #21B7FF, green #14D251.
+   Use vivid colors as accents/glows; use accessible darker companions for text on white. */
 :root{
-  --brand-purple:#F461FE;
-  --brand-blue:#43B4FE;
-  --brand-green:#34FD78;
-  --brand-night:#090B16;
-  --brand-panel:#111629;
-  --brand-panel-raised:#171D34;
-  --brand-text:#F4F7FF;
-  --brand-muted:#B8C1D5;
-  --brand-line:#2B3650;
-  --candy-lime:var(--brand-green);
-  --candy-strawberry:var(--brand-purple);
-  --candy-raspberry:var(--brand-purple);
-  --candy-orange:var(--brand-blue);
-  --candy-blueberry:var(--brand-blue);
-  --candy-vanilla:var(--brand-night);
-  --candy-cream:var(--brand-panel);
-  --candy-plum:var(--brand-text);
-  --candy-ink:var(--brand-text);
-  --candy-muted:var(--brand-muted);
-  --candy-border:var(--brand-line);
-  --teal:var(--brand-green);
-  --teal2:var(--brand-blue);
-  --avr-lime:var(--brand-green);
-  --avr-lime-on-light:#167A42;
-  --avr-sky:var(--brand-blue);
-  --avr-sky-on-light:#075B86;
+  --brand-purple:#E156FF;--brand-blue:#21B7FF;--brand-green:#14D251;
+  --brand-purple-text:#A52AB8;--brand-blue-text:#0875A9;--brand-green-text:#167A3D;
+  --brand-night:#111B2A;--brand-panel:#FFFFFF;--brand-panel-raised:#F5F8FB;
+  --brand-text:#172B40;--brand-muted:#536A7D;--brand-line:#D7E2EA;
+  --candy-lime:var(--brand-green);--candy-strawberry:var(--brand-purple);
+  --candy-raspberry:var(--brand-purple-text);--candy-orange:var(--brand-blue);
+  --candy-blueberry:var(--brand-blue-text);--candy-vanilla:#FFFFFF;
+  --candy-cream:#F5F8FB;--candy-plum:#172B40;--candy-ink:#172B40;
+  --candy-muted:#536A7D;--candy-border:#D7E2EA;
+  --teal:var(--brand-green);--teal2:var(--brand-blue);
+  --avr-lime:var(--brand-green);--avr-lime-on-light:var(--brand-green-text);
+  --avr-sky:var(--brand-blue);--avr-sky-on-light:var(--brand-blue-text);
 }
-body{color:var(--brand-text)}
-body :where(.section-kicker,.eyebrow,.plan-eyebrow,.form-title>span,.story-eyebrow,.section-label){color:var(--brand-purple)!important}
-body :where(a:not(.button):not(.btn),.text-link,.story-text-link){color:var(--brand-blue)}
-body :where(a:not(.button):not(.btn):hover,.text-link:hover,.story-text-link:hover){color:var(--brand-purple)}
-body :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)}
-body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(a:not(.button):not(.btn),.text-link,.section-kicker,.eyebrow,.video-label,.step-no,.step-foot,.speaker,.live-pill){color:var(--brand-blue)!important}
-body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window,.reference-hero) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)!important}
-body :where(.button,.btn,button.button,button.btn){background:var(--brand-green);border-color:var(--brand-green);color:#07130D;font-weight:800}
-body :where(.button:hover,.btn:hover,button.button:hover,button.btn:hover){background:#72FF9F;border-color:#72FF9F;color:#07130D}
-body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid var(--brand-blue)!important;outline-offset:3px!important}
-::selection{background:var(--brand-purple);color:#14091A}
-
-
-/* Preserve each page's existing light/dark surface choice; only unify accents. */
-:root{
-  --candy-vanilla:#FFFFFF;
-  --candy-cream:#F4F6FA;
-  --candy-plum:#17212F;
-  --candy-ink:#17212F;
-  --candy-muted:#596579;
-  --candy-border:#DDE4EE;
-  --avr-lime-on-light:#167A42;
-  --avr-sky-on-light:#075B86;
-}
-body{color:var(--candy-ink)}
+body{color:var(--brand-text);background:#fff}
+body :where(.section-kicker,.eyebrow,.plan-eyebrow,.form-title>span,.story-eyebrow,.section-label){color:var(--brand-purple-text)!important}
+body :where(a:not(.button):not(.btn),.text-link,.story-text-link){color:var(--brand-blue-text)}
+body :where(a:not(.button):not(.btn):hover,.text-link:hover,.story-text-link:hover){color:var(--brand-purple-text)}
+body :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple-text)}
+body :where(.button,.btn,button.button,button.btn){background:var(--brand-green);border-color:var(--brand-green);color:#092414;font-weight:800;box-shadow:0 8px 22px rgba(20,210,81,.18)}
+body :where(.button:hover,.btn:hover,button.button:hover,button.btn:hover){background:#38E875;border-color:#38E875;color:#092414;box-shadow:0 10px 26px rgba(20,210,81,.25)}
+body :where(a,button,input,textarea,select,summary):focus-visible{outline:3px solid var(--brand-blue-text)!important;outline-offset:3px!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window){--brand-text:#F4F7FF}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window) :where(a:not(.button):not(.btn),.text-link,.section-kicker,.eyebrow){color:var(--brand-blue)!important}
+body :where(.dark-shell,.dark-band,.industry-section,.trust-strip,.footer,.site-footer,.product-stage,.console,.dashboard-preview-window) :where(h1 em,h2 em,h3 em,.accent,.highlight,.brand b){color:var(--brand-purple)!important}
+::selection{background:rgba(225,86,255,.28);color:#172B40}
