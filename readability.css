@@ -72,3 +72,21 @@ body :where(.demo-card-action,.dashboard-demo-top small,.dashboard-demo-pill,.de
 body :where(.client-nav-item,.sidebar-caption,.sidebar-help,.sidebar-footer,.client-page-label){font-size:12px!important}
 
 body :where(.menu-toggle){font-size:22px!important}
+
+/* Dark standalone microsites must not inherit the public light-page text color. */
+body.trust-lab-body,body.tl-public-body,body.insights-page,body.story-page{color:#eef5f7!important}
+body.trust-lab-body :where(p,li,dd,dt,label,legend,small,.small,.muted,.tl-muted,.tl-privacy,td,th),
+body.tl-public-body :where(p,li,dd,dt,label,legend,small,.small,.muted,.tp-section-head,.tp-feed-head,td,th),
+body.insights-page :where(p,li,dd,dt,label,legend,small,.small,.insight-card,.insight-meta),
+body.story-page :where(p,li,dd,dt,label,legend,small,.small,.story-scene,.story-takeaway,td,th){color:#cbd9df!important}
+body.trust-lab-body :where(h1,h2,h3,h4,strong,b),
+body.tl-public-body :where(h1,h2,h3,h4,strong,b),
+body.insights-page :where(h1,h2,h3,h4,strong,b),
+body.story-page :where(h1,h2,h3,h4,strong,b){color:#f4f8fb}
+body.trust-lab-body a:not(.button):not(.btn),
+body.tl-public-body a:not(.button):not(.btn),
+body.insights-page a:not(.button):not(.btn),
+body.story-page a:not(.button):not(.btn){color:#91dcff!important}
+body :where(.p-wrap,.p-top,.p-hero,.p-main,.p-section,.p-footer,.p-apply,.p-panel,.p-card,.pp-shell,.pp-top,.pp-auth,.pp-panel,.pp-link-card) :where(p,li,dd,dt,label,legend,small,.small,.muted,.hint,td,th){color:#d0deea!important}
+body :where(.p-wrap,.p-top,.p-hero,.p-main,.p-section,.p-footer,.p-apply,.p-panel,.p-card,.pp-shell,.pp-top,.pp-auth,.pp-panel,.pp-link-card) :where(h1,h2,h3,h4,strong,b){color:#f4f8fb}
+body :where(.p-wrap,.p-top,.p-hero,.p-main,.p-section,.p-footer,.p-apply,.p-panel,.p-card,.pp-shell,.pp-top,.pp-auth,.pp-panel,.pp-link-card) a:not(.button):not(.btn){color:#91dcff}
