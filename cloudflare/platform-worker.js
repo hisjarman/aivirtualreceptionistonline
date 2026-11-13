@@ -123,11 +123,33 @@ async function retellList(env,path,method="GET",data){
  }while(cursor);
  return all;
 }
+async function retellAgentConfiguration(env,agentId,channel="voice",listed={}){
+ const endpoint=String(channel).toLowerCase()==="chat"?"/get-chat-agent/":"/get-agent/";
+ const agent=await retellApi(env,endpoint+encodeURIComponent(agentId));
+ const engine=agent.response_engine||agent.responseEngine||{};
+ const engineType=String(engine.type||agent.response_engine_type||"").toLowerCase();
+ const engineId=engine.llm_id||engine.llmId||engine.conversation_flow_id||engine.conversationFlowId||engine.response_engine_id||null;
+ let engineDetail=null,prompt="",promptType="",supported=false,note="";
+ if(engineType==="retell-llm"&&engineId){
+  const version=engine.version;
+  engineDetail=await retellApi(env,"/get-retell-llm/"+encodeURIComponent(engineId)+(version!==undefined?"?version="+encodeURIComponent(version):""));
+  prompt=String(engineDetail.general_prompt||engineDetail.generalPrompt||"");promptType="general_prompt";supported=true;
+ }else if(engineType==="conversation-flow"&&engineId){
+  engineDetail=await retellApi(env,"/get-conversation-flow/"+encodeURIComponent(engineId));
+  prompt=String(engineDetail.global_prompt||engineDetail.globalPrompt||"");promptType="global_prompt";
+  note="Conversation Flow agents are imported for review, but their published flow graph requires a separate version-safe deployment workflow. No flow changes will be made by this button.";
+ }else{note="This response-engine type is not supported for prompt publishing."}
+ return {agent,engine,engineType,engineId,engineDetail,prompt,promptType,supported: supported&&engineType==="retell-llm",note,channel};
+}
 async function syncRetell(env){
- const [agents,numbers]=await Promise.all([retellList(env,"/v2/list-agents","POST",{}),retellList(env,"/v2/list-phone-numbers","GET")]);
+ const [listedAgents,numbers]=await Promise.all([retellList(env,"/v2/list-agents","POST",{}),retellList(env,"/v2/list-phone-numbers","GET")]);
+ const agents=await Promise.all(listedAgents.map(async a=>{
+  try{const cfg=await retellAgentConfiguration(env,a.agent_id,a.channel,a);return {...cfg.agent,channel:a.channel,latest_published_version:a.latest_published_version,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId,_avr_engine_detail:cfg.engineDetail}}
+  catch(e){return {...a,_avr_sync_error:String(e.message||"agent_detail_unavailable")}}
+ }));
  for(const a of agents){await env.DB.prepare("INSERT INTO avr_agents(agent_id,agent_name,voice_id,language,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(agent_id) DO UPDATE SET agent_name=excluded.agent_name,voice_id=excluded.voice_id,language=excluded.language,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(a.agent_id,a.agent_name||a.agent_id,a.voice_id||null,a.language||null,JSON.stringify(a),new Date().toISOString()).run()}
  for(const n of numbers){const phone=n.phone_number;const inbound=n.inbound_agents?.[0]?.agent_id||n.inbound_agent_id||null;await env.DB.prepare("INSERT INTO avr_numbers(phone_number,nickname,agent_id,phone_number_type,raw_json,synced_at) VALUES(?,?,?,?,?,?) ON CONFLICT(phone_number) DO UPDATE SET nickname=excluded.nickname,agent_id=COALESCE(avr_numbers.agent_id,excluded.agent_id),phone_number_type=excluded.phone_number_type,raw_json=excluded.raw_json,synced_at=excluded.synced_at").bind(phone,n.nickname||null,inbound,n.phone_number_type||null,JSON.stringify(n),new Date().toISOString()).run()}
- return {agents:agents.length,numbers:numbers.length}
+ return {agents:agents.length,numbers:numbers.length,agentDetailsFetched:agents.filter(a=>!a._avr_sync_error).length}
 }
 async function retellWebhook(req,env){
  const raw=await req.text();
@@ -401,17 +423,45 @@ async function route(req,env){
    }
    const cm=path.match(/^\/api\/admin\/customers\/([a-f0-9-]{36})$/i);if(cm&&req.method==="PATCH"){const p=await body(req),id=cm[1],c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(id).first();if(!c)throw Error("customer_not_found");const status=p.status,plan=p.plan;if(status&&!["pending","active","suspended","closed"].includes(status))throw Error("invalid_status");if(plan&&!planInfo[plan])throw Error("invalid_plan");await env.DB.prepare("UPDATE avr_customers SET status=COALESCE(?,status),plan_key=COALESCE(?,plan_key),included_minutes=CASE WHEN ?='starter' THEN 300 WHEN ?='growth' THEN 600 WHEN ?='pro' THEN 1000 ELSE included_minutes END,admin_notes=COALESCE(?,admin_notes),updated_at=? WHERE id=?").bind(status||null,plan||null,plan||"",plan||"",plan||"",p.notes===undefined?null:String(p.notes).slice(0,2000),new Date().toISOString(),id).run();await audit(env,u,"customer_updated",id,p);return json({saved:true},200,origin,env)}
    if(path==="/api/admin/retell/sync"&&req.method==="POST"){const result=await syncRetell(env);await audit(env,u,"retell_sync",null,result);return json(result,200,origin,env)}
-   if(path==="/api/admin/retell/resources"&&req.method==="GET"){const [a,n]=await Promise.all([env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.customer_id,a.client_visible_prompt,c.business_name FROM avr_agents a LEFT JOIN avr_customers c ON c.id=a.customer_id ORDER BY a.agent_name").all(),env.DB.prepare("SELECT n.*,c.business_name FROM avr_numbers n LEFT JOIN avr_customers c ON c.id=n.customer_id ORDER BY n.phone_number").all()]);return json({agents:a.results||[],numbers:n.results||[]},200,origin,env)}
+   if(path==="/api/admin/retell/resources"&&req.method==="GET"){
+    const [a,n]=await Promise.all([env.DB.prepare("SELECT a.agent_id,a.agent_name,a.status,a.customer_id,a.client_visible_prompt,a.raw_json,c.business_name FROM avr_agents a LEFT JOIN avr_customers c ON c.id=a.customer_id ORDER BY a.agent_name").all(),env.DB.prepare("SELECT n.*,c.business_name FROM avr_numbers n LEFT JOIN avr_customers c ON c.id=n.customer_id ORDER BY n.phone_number").all()]);
+    const agents=await Promise.all((a.results||[]).map(async row=>{
+     try{let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}const cfg=await retellAgentConfiguration(env,row.agent_id,cached.channel||"voice",cached);return {...row,retell_prompt:cfg.prompt,retell_prompt_type:cfg.promptType,response_engine_type:cfg.engineType,response_engine_id:cfg.engineId,retell_prompt_supported:cfg.supported,retell_prompt_note:cfg.note,retell_sync_error:""}}
+     catch(e){return {...row,retell_prompt:"",retell_prompt_type:"",response_engine_type:"",response_engine_id:"",retell_prompt_supported:false,retell_prompt_note:"Could not import this agent's current Retell configuration.",retell_sync_error:String(e.message||"retell_read_failed")}}
+    }));
+    return json({agents,numbers:n.results||[]},200,origin,env)
+   }
    const clientPromptMatch=path.match(/^\/api\/admin\/agents\/([^/]+)\/client-prompt$/);
    if(clientPromptMatch&&req.method==="PUT"){
     const agentId=decodeURIComponent(clientPromptMatch[1]),p=await body(req,14000),prompt=String(p.prompt??"").trim();
+    if(!prompt)throw Error("approved_client_prompt_required");
     if(prompt.length>12000)throw Error("client_prompt_exceeds_12000_characters");
     if(/(?:Bearer\s+[A-Za-z0-9._~-]{12,}|(?:sk|rk|whsec|pk)_[A-Za-z0-9_-]{12,}|(?:api[_ -]?key|secret|password)\s*[:=]\s*\S+)/i.test(prompt))throw Error("remove_credentials_before_publishing_client_prompt");
-    const agent=await env.DB.prepare("SELECT agent_id,customer_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();
-    if(!agent)throw Error("agent_not_found");
-    await env.DB.prepare("UPDATE avr_agents SET client_visible_prompt=? WHERE agent_id=?").bind(prompt||null,agentId).run();
-    await audit(env,u,"client_visible_agent_prompt_updated",agent.customer_id,{agentId,published:!!prompt,characters:prompt.length});
-    return json({saved:true,published:!!prompt,characters:prompt.length},200,origin,env)
+    const row=await env.DB.prepare("SELECT agent_id,customer_id,raw_json FROM avr_agents WHERE agent_id=?").bind(agentId).first();
+    if(!row)throw Error("agent_not_found");
+    if(!row.customer_id)throw Error("assign_agent_to_client_before_publishing");
+    let cached={};try{cached=JSON.parse(row.raw_json||"{}")}catch{}
+    const cfg=await retellAgentConfiguration(env,agentId,cached.channel||"voice",cached);
+    if(cfg.engineType!=="retell-llm"||!cfg.engineId)throw Error("conversation_flow_or_custom_engine_requires_version_safe_configuration_workflow");
+    let draftVersion,engineVersion;
+    const published=cfg.agent.is_published===true||(cfg.agent.is_published!==false&&Number(cached.latest_published_version||0)>0&&Number(cfg.agent.version??cached.latest_published_version)===Number(cached.latest_published_version));
+    if(published){
+     const baseVersion=Number(cfg.agent.latest_published_version??cached.latest_published_version??cfg.agent.version??0);
+     const draft=await retellApi(env,"/create-agent-version/"+encodeURIComponent(agentId),"POST",{base_version:baseVersion});
+     draftVersion=Number(draft.version);
+     engineVersion=Number(draft.response_engine?.version??draftVersion);
+    }else{
+     draftVersion=Number(cfg.agent.version??0);
+     engineVersion=Number(cfg.engine.version??draftVersion);
+    }
+    if(!Number.isInteger(draftVersion)||draftVersion<0||!Number.isInteger(engineVersion)||engineVersion<0)throw Error("retell_draft_version_unavailable");
+    await retellApi(env,"/update-retell-llm/"+encodeURIComponent(cfg.engineId)+"?version="+encodeURIComponent(engineVersion),"PATCH",{general_prompt:prompt});
+    await retellApi(env,"/publish-agent-version/"+encodeURIComponent(agentId),"POST",{version:draftVersion,version_description:"Star69AI approved client-specific instructions"});
+    const verified=await retellAgentConfiguration(env,agentId,cfg.channel,cached);
+    if(verified.prompt!==prompt)throw Error("retell_publish_verification_mismatch");
+    await env.DB.prepare("UPDATE avr_agents SET client_visible_prompt=?,raw_json=?,synced_at=? WHERE agent_id=?").bind(prompt,JSON.stringify({...cfg.agent,channel:cfg.channel,_avr_engine_type:cfg.engineType,_avr_engine_id:cfg.engineId}),new Date().toISOString(),agentId).run();
+    await audit(env,u,"retell_agent_prompt_published",row.customer_id,{agentId,engineType:cfg.engineType,version:draftVersion,characters:prompt.length});
+    return json({saved:true,published:true,characters:prompt.length,version:draftVersion,engineType:cfg.engineType},200,origin,env)
    }
    if(path==="/api/admin/assignments"&&req.method==="POST"){const p=await body(req),customerId=String(p.customerId||""),agentId=String(p.agentId||""),phone=String(p.phoneNumber||"");const c=await env.DB.prepare("SELECT id FROM avr_customers WHERE id=?").bind(customerId).first();if(!c)throw Error("customer_not_found");if(agentId){const a=await env.DB.prepare("SELECT agent_id FROM avr_agents WHERE agent_id=?").bind(agentId).first();if(!a)throw Error("agent_not_found")}if(phone){const n=await env.DB.prepare("SELECT phone_number FROM avr_numbers WHERE phone_number=?").bind(phone).first();if(!n)throw Error("phone_number_not_found");if(!agentId)throw Error("select_agent_for_phone_number");await retellApi(env,"/update-phone-number/"+encodeURIComponent(phone),"PATCH",{inbound_agents:[{agent_id:agentId,weight:1}],outbound_agents:[{agent_id:agentId,weight:1}]})}
     if(agentId)await env.DB.prepare("UPDATE avr_agents SET customer_id=? WHERE agent_id=?").bind(customerId,agentId).run();if(phone)await env.DB.prepare("UPDATE avr_numbers SET customer_id=?,agent_id=? WHERE phone_number=?").bind(customerId,agentId||null,phone).run();await audit(env,u,"resources_assigned",customerId,{agentId,phone});return json({saved:true},200,origin,env)}
