@@ -171,8 +171,18 @@ async function route(req,env){
     let raw={};try{raw=JSON.parse(row.raw_json||"{}")}catch{}
     const engine=raw.response_engine||raw.responseEngine||{};
     const tools=Array.isArray(raw.tools)?raw.tools:[];
-    const voice=raw.voice_id||raw.voiceId||row.agent_id;
-    return {agentName:row.agent_name||"Assigned receptionist",status:row.status||"active",language:raw.language||null,voiceLabel:raw.voice_name||raw.voiceName||"Configured voice",voiceSpeed:raw.voice_speed??raw.voiceSpeed??null,voiceTemperature:raw.voice_temperature??raw.voiceTemperature??null,responsiveness:raw.responsiveness??null,backchannel:typeof raw.enable_backchannel==="boolean"?(raw.enable_backchannel?"Enabled":"Disabled"):null,ambientSound:raw.ambient_sound||null,modelLabel:engine.llm_id||engine.model||raw.llm_id||raw.model||null,greeting:raw.begin_message||raw.beginMessage||null,knowledgeBaseCount:Array.isArray(raw.knowledge_base_ids)?raw.knowledge_base_ids.length:Array.isArray(raw.knowledgeBaseIds)?raw.knowledgeBaseIds.length:null,toolNames:tools.map(t=>String(t.name||t.type||"Capability")).filter(Boolean).slice(0,12),syncedAt:row.synced_at};
+    // Publish only explicitly customer-facing prompt sections, never the full system prompt.
+    const source=String(raw.general_prompt||raw.generalPrompt||"").replace(/\r\n/g,"\n");
+    const excluded=/internal|developer|system|security|private|credential|secret|api|webhook|tool|function|integration|guardrail|injection|retention|recording|compliance/i;
+    const allowed=/business|role|greeting|call flow|services|hours|location|lead|appointment|faq|handoff|escalation|caller|tone|objective|scope|customer|service area/i;
+    let promptPreview="";
+    const marker=source.match(/\[\[CLIENT_VISIBLE_PROMPT\]\]([\s\S]*?)\[\[\/CLIENT_VISIBLE_PROMPT\]\]/i);
+    if(marker) promptPreview=marker[1].trim().slice(0,6000);
+    else {
+     const blocks=source.split(/(?=^#{1,3}\s+[^\n]+$)/m);
+     promptPreview=blocks.filter(part=>{const heading=(part.split("\n")[0]||"").replace(/^#+\s*/,"").trim();return heading&&allowed.test(heading)&&!excluded.test(heading)}).join("\n\n").trim().slice(0,6000);
+    }
+    return {agentName:row.agent_name||"Assigned receptionist",status:row.status||"active",language:raw.language||null,voiceLabel:raw.voice_name||raw.voiceName||"Configured voice",voiceSpeed:raw.voice_speed??raw.voiceSpeed??null,voiceTemperature:raw.voice_temperature??raw.voiceTemperature??null,responsiveness:raw.responsiveness??null,backchannel:typeof raw.enable_backchannel==="boolean"?(raw.enable_backchannel?"Enabled":"Disabled"):null,ambientSound:raw.ambient_sound||null,modelLabel:engine.llm_id||engine.model||raw.llm_id||raw.model||null,greeting:raw.begin_message||raw.beginMessage||null,knowledgeBaseCount:Array.isArray(raw.knowledge_base_ids)?raw.knowledge_base_ids.length:Array.isArray(raw.knowledgeBaseIds)?raw.knowledgeBaseIds.length:null,toolNames:tools.map(t=>String(t.name||t.type||"Capability")).filter(Boolean).slice(0,12),promptPreview,promptPreviewAvailable:!!promptPreview,syncedAt:row.synced_at};
    });
    const nums=await env.DB.prepare("SELECT phone_number,nickname,agent_id FROM avr_numbers WHERE customer_id=? ORDER BY phone_number").bind(c.id).all();
    return json({configuration,phoneNumbers:nums.results||[]},200,origin,env)
