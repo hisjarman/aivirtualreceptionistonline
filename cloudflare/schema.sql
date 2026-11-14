@@ -20,9 +20,10 @@ CREATE TABLE IF NOT EXISTS avr_demo_requests (
  business_name TEXT NOT NULL, industry TEXT NOT NULL, details TEXT,
  lead_source TEXT NOT NULL DEFAULT 'Website demo request',
  status TEXT NOT NULL DEFAULT 'new' CHECK(status IN ('new','reviewing','approved','creating_demo','demo_created','demo_presented','converted','declined')),
- agent_id TEXT, llm_id TEXT, admin_notes TEXT, discovery_json TEXT, discovery_complete INTEGER NOT NULL DEFAULT 0 CHECK(discovery_complete IN (0,1)),
+ agent_id TEXT, llm_id TEXT, customer_id TEXT, admin_notes TEXT, discovery_json TEXT, discovery_complete INTEGER NOT NULL DEFAULT 0 CHECK(discovery_complete IN (0,1)),
  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
+CREATE UNIQUE INDEX IF NOT EXISTS avr_demo_requests_customer_unique_idx ON avr_demo_requests(customer_id) WHERE customer_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS avr_demo_requests_status_created_idx ON avr_demo_requests(status,created_at DESC);
 CREATE INDEX IF NOT EXISTS avr_demo_requests_email_created_idx ON avr_demo_requests(email,created_at DESC);

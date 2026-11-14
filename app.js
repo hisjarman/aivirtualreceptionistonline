@@ -248,22 +248,35 @@ form.addEventListener("submit", async event => {
     payload.partnerClickId = attribution.clickId || "";
   }
 
+  let workerResponded = false;
   try {
     const response = await fetch(DEMO_API_BASE + "/api/demo-requests", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(payload)
     });
+    workerResponded = true;
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.accepted) throw new Error(result.error || "We couldn't submit your discovery brief. Please try again.");
     try { await capturePartnerLead(payload); } catch {}
     form.hidden = true;
     const success = document.querySelector("#form-success");
     if (success) {
-      success.querySelector("p").textContent = "Your complete business discovery brief has been received. Our team will review your answers before preparing your demo.";
+      success.querySelector("p").textContent = result.notificationSent
+        ? "Your complete business discovery brief has been received. A confirmation email is on its way."
+        : "Your complete business discovery brief has been saved. Our team will review your answers; a confirmation email may not arrive.";
       success.hidden = false;
     }
   } catch (error) {
+    if (!workerResponded) {
+      errorBox.textContent = "Our secure demo queue could not be reached. We're sending your complete brief through our backup form so our team can follow up manually. A backup submission does not automatically create a demo agent.";
+      errorBox.hidden = false;
+      const subject = form.querySelector('input[name="_subject"]');
+      if (subject) subject.value = "BACKUP — Star69AI full discovery brief (manual review required)";
+      form.dataset.backupSubmit = "true";
+      HTMLFormElement.prototype.submit.call(form);
+      return;
+    }
     errorBox.textContent = error.message || "Submission failed. Please try again or email support@star69ai.com.";
     errorBox.hidden = false;
     submit.disabled = false;
@@ -277,7 +290,9 @@ if (new URLSearchParams(window.location.search).get("submitted") === "1") {
   const success = document.querySelector("#form-success");
   if (success) {
     success.querySelector("p").textContent =
-      "Your business brief has been received. We'll review your details and contact you about your requested demo.";
+      new URLSearchParams(window.location.search).get("backup") === "1"
+        ? "Your brief was sent through our backup form. Our team will manually review it and add it to the demo queue before preparing a demo."
+        : "Your business brief has been received. We'll review your details and contact you about your requested demo.";
     success.hidden = false;
   }
 }
