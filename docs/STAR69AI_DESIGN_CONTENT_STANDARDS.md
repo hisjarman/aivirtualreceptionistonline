@@ -149,3 +149,11 @@ Do not mark a check as passed when it was not actually performed. Record browser
 - Avoid global blanket text-color rules such as setting every descendant of a dashboard shell to white. Apply colors by surface/context so text remains readable on both light and dark cards.
 - Any new page, microsite or portal route must include the shared stylesheet and be checked for small text, low-contrast foreground/background pairs, overflow, and focus visibility. Add a page-specific scoped rule only when a component needs a documented exception.
 - Before release, inspect all page types at 360px, 768px and 1280px. Automated source checks do not substitute for browser visual review or measured WCAG contrast checks.
+## 13. Shared design tokens and legacy migration — 2026-11-13
+
+- The root styles.css file is the canonical source for shared design tokens. Use --brand-purple, --brand-blue, and --brand-green for the approved neon palette, and their *-strong companions for text or controls that need darker contrast on light surfaces.
+- Shared surface, text, border, radius, content-width and section-spacing tokens are defined alongside the brand palette. Prefer these tokens over new literal values in shared components.
+- Legacy --teal and --teal2 variables are compatibility aliases to the approved green and darker green. New code must use the semantic --brand-* names; do not introduce additional teal shades.
+- Palette role: green is the primary action/status accent, blue supports links and interaction, and purple is selective emphasis. Do not use all three at equal visual weight in one component.
+- This token addition is a migration foundation, not proof that every legacy page has been visually converted. Existing page-specific styles must be migrated in focused, regression-tested batches; do not append broad overrides to force a superficial recolor.
+- The homepage Earth-at-night/glass treatment remains a deliberate visual treatment. Keep text contrast and the approved palette consistent with the rest of the experience.
