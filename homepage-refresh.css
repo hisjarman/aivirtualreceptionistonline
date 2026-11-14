@@ -506,7 +506,7 @@ body#top .conversation-form-card .hero-lead-form textarea{
 }
 body#top .conversation-form-card .hero-lead-form textarea{min-height:96px;resize:vertical}
 body#top .conversation-form-card .hero-lead-form input::placeholder,
-body#top .conversation-form-card .hero-lead-form textarea::placeholder{color:#718395;opacity:1}
+body#top .conversation-form-card .hero-lead-form textarea::placeholder{color:#607488;opacity:1}
 body#top .conversation-form-card .hero-lead-form input:focus,
 body#top .conversation-form-card .hero-lead-form select:focus,
 body#top .conversation-form-card .hero-lead-form textarea:focus{
