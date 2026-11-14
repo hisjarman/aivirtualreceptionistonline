@@ -7,8 +7,8 @@
   --legal-surface-raised: #192d37;
   --legal-text: #f1f6f4;
   --legal-muted: #c3d0d2;
-  --legal-accent: #70e1cb;
-  --legal-link: #8cebd9;
+  --legal-accent: #14D251;
+  --legal-link: #91dcff;
   --legal-border: #38515b;
 }
 html { scroll-behavior: smooth; background: var(--legal-bg); }
@@ -62,7 +62,7 @@ body {
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
-.legal-page a:hover { color: #c0fff2 !important; }
+.legal-page a:hover { color: #dff5ff !important; }
 .legal-page a:focus-visible {
   outline: 3px solid var(--legal-accent);
   outline-offset: 4px;
@@ -112,7 +112,7 @@ body {
 .legal-callout {
   margin: 24px 0;
   padding: 20px 22px;
-  border: 1px solid #456b68;
+  border: 1px solid rgba(20,210,81,.38);
   border-left: 3px solid var(--legal-accent);
   border-radius: 12px;
   background: var(--legal-surface);

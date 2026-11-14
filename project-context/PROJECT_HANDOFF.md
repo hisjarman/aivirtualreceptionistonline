@@ -27,7 +27,7 @@ Depending on customer configuration and third-party provider capabilities, the s
 ## Visual and UX direction
 
 - Premium, modern interface with a dark space-inspired visual language where appropriate.
-- Lime green is the preferred brand accent; sky blue is a supporting accent.
+- The approved brand palette is purple #E156FF, blue #21B7FF, and green #14D251, with darker accessible companions #A52AB8, #0875A9, and #167A3D for text on light surfaces. Use green as the primary action/status accent, blue for supporting interaction and links, and purple for selective emphasis. The older lime/sky-blue direction is superseded by docs/STAR69AI_DESIGN_CONTENT_STANDARDS.md.
 - Prioritize readable contrast, calm spacing, accessible focus states and responsive layouts.
 - Keep navigation and Client Login visible and usable on desktop and mobile.
 - Do not put onboarding promotions in the top banner if they push navigation or login off-screen.
