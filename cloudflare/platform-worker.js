@@ -21,10 +21,25 @@ async function clerkUser(req,env){
  return {id:c.sub,email:String(em.email_address).toLowerCase(),name:[u.first_name,u.last_name].filter(Boolean).join(" ")};
 }
 async function requireAdmin(req,env){const u=await clerkUser(req,env),allowed=(env.ADMIN_EMAILS||"").split(",").map(x=>x.trim().toLowerCase());if(!allowed.includes(u.email))throw Error("admin_access_required");return u}
-function fail(e,origin,env){const m=e?.message||"request_failed",status=m==="admin_access_required"?403:m==="clerk_backend_not_configured"||m==="call_email_not_configured_contact_support"||m==="email_sender_not_configured_check_resend"||m==="email_provider_temporarily_unavailable_try_again"?503:m==="email_provider_rate_limited_try_again"?429:m==="email_provider_rejected_request_contact_support"?502:m==="sign_in_required"||m.includes("session")||m.includes("signature")?401:m==="email_verification_required"?403:400;return json({error:m},status,origin,env)}
+function fail(e,origin,env){const m=e?.message||"request_failed",status=m==="admin_access_required"||m==="customer_account_already_linked"?403:m==="customer_account_match_ambiguous_contact_support"?409:m==="clerk_backend_not_configured"||m==="call_email_not_configured_contact_support"||m==="email_sender_not_configured_check_resend"||m==="email_provider_temporarily_unavailable_try_again"?503:m==="email_provider_rate_limited_try_again"?429:m==="email_provider_rejected_request_contact_support"?502:m==="sign_in_required"||m.includes("session")||m.includes("signature")?401:m==="email_verification_required"?403:400;return json({error:m},status,origin,env)}
 async function body(req,max=20000){const t=await req.text();if(t.length>max)throw Error("payload_too_large");try{return JSON.parse(t)}catch{throw Error("invalid_json")}}
 const planInfo={starter:{name:"Starter",price:149,minutes:300,priceEnv:"STRIPE_PRICE_STARTER"},growth:{name:"Growth",price:249,minutes:600,priceEnv:"STRIPE_PRICE_GROWTH"},pro:{name:"Pro",price:399,minutes:1000,priceEnv:"STRIPE_PRICE_PRO"}};
-async function customerFor(user,env){let c=await env.DB.prepare("SELECT * FROM avr_customers WHERE clerk_user_id=? LIMIT 1").bind(user.id).first();if(!c)c=await env.DB.prepare("SELECT * FROM avr_customers WHERE lower(email)=? LIMIT 1").bind(user.email).first();if(c&&!c.clerk_user_id)await env.DB.prepare("UPDATE avr_customers SET clerk_user_id=?,updated_at=? WHERE id=?").bind(user.id,new Date().toISOString(),c.id).run();return c}
+async function customerFor(user,env){
+ let c=await env.DB.prepare("SELECT * FROM avr_customers WHERE clerk_user_id=? LIMIT 1").bind(user.id).first();
+ if(c)return c;
+ const matches=await env.DB.prepare("SELECT * FROM avr_customers WHERE lower(email)=? LIMIT 2").bind(user.email).all();
+ const rows=matches.results||[];
+ if(rows.length>1)throw Error("customer_account_match_ambiguous_contact_support");
+ c=rows[0]||null;
+ if(!c)return null;
+ if(c.clerk_user_id&&c.clerk_user_id!==user.id)throw Error("customer_account_already_linked");
+ if(!c.clerk_user_id){
+  await env.DB.prepare("UPDATE avr_customers SET clerk_user_id=?,updated_at=? WHERE id=? AND clerk_user_id IS NULL").bind(user.id,new Date().toISOString(),c.id).run();
+  c=await env.DB.prepare("SELECT * FROM avr_customers WHERE id=? LIMIT 1").bind(c.id).first();
+ }
+ if(!c||c.clerk_user_id!==user.id)throw Error("customer_account_already_linked");
+ return c;
+}
 async function audit(env,user,action,customerId,detail={}){await env.DB.prepare("INSERT INTO avr_admin_audit(id,admin_user_id,action,customer_id,detail_json) VALUES(?,?,?,?,?)").bind(crypto.randomUUID(),user.id,action,customerId||null,JSON.stringify(detail)).run()}
 async function stripeRequest(env,path,params={},method="POST"){if(!env.STRIPE_SECRET_KEY)throw Error("stripe_not_configured");const form=new URLSearchParams();for(const [k,v] of Object.entries(params))if(v!==undefined&&v!==null)form.set(k,String(v));const r=await fetch("https://api.stripe.com/v1/"+path,{method,headers:{Authorization:"Bearer "+env.STRIPE_SECRET_KEY,"Content-Type":"application/x-www-form-urlencoded"},body:method==="GET"?undefined:form.toString()});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error?.message||"stripe_request_failed");return d}
 async function createCheckout(user,c,plan,env){const p=planInfo[plan];if(!p)throw Error("invalid_plan");const price=env[p.priceEnv];if(!price||price==="price_replace_me")throw Error("stripe_price_id_missing_"+plan);
