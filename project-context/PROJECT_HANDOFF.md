@@ -809,3 +809,19 @@ Known prior issue to recheck against current source: a portal request reported `
 - **Publication:** Article HTML, Insights index card and sitemap entry were committed directly to `main` under the user's explicit authorization for automated daily article publishing. This is a narrow publishing exception; the general no-unapproved-merge rule for software changes remains unchanged.
 - **Content guardrails:** General business-operations guidance only. The article tells firms to follow their own conflict-checking, confidentiality, intake and communication procedures; it does not offer legal advice or promise client outcomes.
 - **Verification:** GitHub source verification is required after the commits. A successful commit does not by itself confirm that GitHub Pages has finished deploying; live HTTP verification is reported separately.
+
+
+## Demo pipeline deployment record — 2026-11-14
+
+- The homepage visual/sales release was merged to `main` in commit `1cd189d1bd6dcb5479e7cb29eaeaada9690018d6` (PR #131). GitHub Pages publishes from the repository root on `main`; the live page still requires browser verification because direct site access was unavailable during this deployment run.
+- Before changing production D1, a full SQL export backup was generated successfully from database `avr-trust-lab` (database ID `6cf68b12-2aa8-4ed4-9f92-8a7824520d1a`). The export contains application data; do not publish or expose its signed download URL.
+- Production D1 did not have a `d1_migrations` tracking table. Migration `0004_demo_request_customer_link.sql` was therefore applied directly through the Cloudflare D1 query API after verifying the column was absent and the backup completed:
+  - Added nullable `avr_demo_requests.customer_id`.
+  - Added partial unique index `avr_demo_requests_customer_unique_idx` on non-null `customer_id`.
+  - Verified the column with `PRAGMA table_info('avr_demo_requests')` and the index with `PRAGMA index_list('avr_demo_requests')`.
+  - The change is additive; existing demo rows remain unlinked.
+- Updated `avr-platform-api` Worker content using Cloudflare's content-only upload endpoint, which leaves existing bindings and script settings intact. Latest deployment record: `44e5c077-0aca-4966-b671-21ad7d2869a6`; upload response deployment ID: `78a635c2fa4b40cfaa4c56fbc5f9e561` (2026-11-14 14:17 UTC).
+- Post-deployment settings inspection confirmed the existing Clerk, Retell, Stripe, Resend, ADMIN_EMAILS, ALLOWED_ORIGINS and D1 bindings remained present. The D1 binding still points to the existing production database. No secret values were read or changed.
+- Worker customer lookup now requires the Clerk primary email to be verified (existing behavior), refuses ambiguous email-to-customer matches, refuses a customer record already linked to a different Clerk user, and uses a conditional update before claiming an unlinked pending customer workspace.
+- Current production database contains one customer record and two demo-request records; no duplicate customer-email groups were found. No customer records or email addresses were displayed or changed.
+- Verification limitation: no real demo lead was submitted, no Resend acknowledgement was triggered, and no Retell agent, phone number, customer subscription or production call routing was created. The Worker upload and binding preservation are confirmed, but the live `/api/demo-requests` route, Admin Console workflow, and browser form fallback still require controlled end-to-end testing.
