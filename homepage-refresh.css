@@ -709,14 +709,14 @@ body#top footer a:hover{color:#e6a4f0}
   }
   body#top .homepage-conversation-copy{max-width:680px}
 }
-@media(max-width:760px){
+@media(max-width:1000px){
   body#top .reference-topbar{
     min-height:70px;
-    padding-left:16px;
-    padding-right:16px;
+    padding-left:20px;
+    padding-right:20px;
     gap:12px;
   }
-  body#top .reference-brand img{width:210px!important;max-width:54vw!important}
+  body#top .reference-brand img{width:220px!important;max-width:34vw!important}
   body#top .reference-nav{
     display:none;
     position:absolute;
@@ -744,6 +744,15 @@ body#top footer a:hover{color:#e6a4f0}
   }
   body#top .reference-topbar .reference-start{display:none}
   body#top .reference-topbar .client-login-global{margin-left:auto}
+}
+@media(max-width:760px){
+  body#top .reference-topbar{
+    min-height:70px;
+    padding-left:16px;
+    padding-right:16px;
+    gap:12px;
+  }
+  body#top .reference-brand img{width:210px!important;max-width:54vw!important}
   body#top .reference-hero{min-height:0}
   body#top .reference-hero .hero-grid{
     grid-template-columns:minmax(0,1fr);
