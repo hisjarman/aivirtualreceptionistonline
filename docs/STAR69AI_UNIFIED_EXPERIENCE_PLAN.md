@@ -1,7 +1,6 @@
 # Star69AI Unified Experience 1.0
 
-**Branch:** design/unified-experience-1-2026-11-13  
-**Status:** Foundation work in progress; not merged or deployed.
+**Status:** Phase 1 design-token foundation merged to main in PR #128 (2026-11-13). Phase 2 shared-component consolidation is in progress on design/unified-experience-2-2026-11-13; this phase is not merged or deployed.
 
 ## Objective
 Create one readable, coherent Star69AI experience across the public site, discovery flow, legal pages, Insights, partner pages, challenge, client portal and admin console without breaking the current managed-service journey or integrations.
@@ -24,12 +23,19 @@ Create one readable, coherent Star69AI experience across the public site, discov
 
 ## Delivery sequence
 1. Establish canonical design tokens and reconcile conflicting brand documentation.
-2. Inventory page-specific CSS and identify redundant/overridden rules; reduce cascade complexity without removing working component behavior.
+2. Inventory page-specific CSS and identify redundant/overridden rules; reduce cascade complexity without removing working component behavior. The first source-level pass found that the homepage loads seven feature/page stylesheets after styles.css, then readability.css last; homepage-refresh.css contains several successive hero compositions, so those rules must be reconciled only after browser comparison.
 3. Standardize shared navigation, buttons, cards, forms, content widths and footer patterns.
 4. Bring marketing, Insights, story, challenge and partner pages into the shared system in small batches.
 5. Unify the five legal pages through legal.css; preserve legal text unless separately reviewed for accuracy.
 6. Build the discovery-to-preview experience as a separate, clearly labelled proposed configuration. Keep Formspree delivery intact and add a safe post-submit journey only after its delivery path is tested.
 7. Run source checks and inspect desktop/mobile layouts; record browser, accessibility and provider checks that cannot be completed in this environment.
+
+## Phase 2 implementation notes — 2026-11-13
+
+- Created a shared primitive refinement on styles.css: primary buttons now use the canonical green token, shared control radius, a dedicated hover token and visible blue keyboard focus. Legacy --teal aliases remain for compatibility; no global search-and-replace was performed.
+- Updated the homepage browser theme-color metadata to match the dark navigation chrome. The page retains color-scheme: light because it contains light form controls and light content surfaces.
+- Source inspection confirms index.html loads styles.css, homepage-polish.css, contact.css, story-series.css, dashboard-demo.css, experience.css, demo-center.css, homepage-refresh.css, and finally /readability.css. The refresh file contains multiple historical hero implementations; avoid deleting or flattening these without visual regression checks.
+- The current environment has not performed a real browser screenshot, WCAG contrast measurement or responsive visual test. Those remain release gates.
 
 ## Known audit items to resolve
 - homepage-refresh.css is approximately 78 KB and contains over 1,200 !important declarations. It should be decomposed and consolidated in focused changes, not mechanically stripped.
