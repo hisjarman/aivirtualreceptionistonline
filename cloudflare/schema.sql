@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS avr_demo_requests (
  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
+CREATE UNIQUE INDEX IF NOT EXISTS avr_demo_requests_customer_unique_idx ON avr_demo_requests(customer_id) WHERE customer_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS avr_demo_requests_status_created_idx ON avr_demo_requests(status,created_at DESC);
 CREATE INDEX IF NOT EXISTS avr_demo_requests_email_created_idx ON avr_demo_requests(email,created_at DESC);
