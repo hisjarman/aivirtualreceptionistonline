@@ -798,3 +798,15 @@ Known prior issue to recheck against current source: a portal request reported `
 - **Publication:** Article HTML, Insights index card and sitemap entry were committed directly to `main` under the user's explicit authorization for automated daily article publishing. This is a narrow publishing exception; the general no-unapproved-merge rule for software changes remains unchanged.
 - **Content guardrails:** General business-operations guidance only. The article tells firms to follow their own conflict-checking, confidentiality, intake and communication procedures; it does not offer legal advice or promise client outcomes.
 - **Verification:** GitHub source verification is required after the commits. A successful commit does not by itself confirm that GitHub Pages has finished deploying; live HTTP verification is reported separately.
+
+
+## Published Insight — Auto repair estimate follow-up — 2026-11-14
+
+- **Article:** How Auto Repair Shops Can Get More Repair Estimates Approved Without Chasing Customers
+- **URL/slug:** https://star69ai.com/insights/auto-repair-estimate-follow-up.html (`auto-repair-estimate-follow-up.html`).
+- **Target industry:** Independent auto repair shops.
+- **Primary SEO keyword:** auto repair estimate follow-up.
+- **Article length:** 838 words in the article body; meta description is 124 characters.
+- **Publication:** Article HTML, Insights index card, sitemap entry and this handoff update were committed directly to `main` under the user's explicit authorization for automated article publishing. This is a narrow content-publishing exception; general software changes remain subject to the normal review/approval rules.
+- **Content guardrails:** General customer-communication and shop-operations guidance only. The article does not diagnose vehicles, prescribe repairs, authorize work on a customer's behalf, or make performance guarantees. It emphasizes clear customer authorization before additional work.
+- **Verification:** The article file, Insights index card, sitemap URL and handoff entry were re-fetched from `main` after committing. GitHub source verification does not prove that GitHub Pages has completed deployment; live HTTP verification is reported separately.
